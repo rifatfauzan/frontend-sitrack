@@ -21,7 +21,10 @@ export const useAuthStore = defineStore('auth', {
       try {
         const response = await fetch('http://localhost:8080/api/auth/login', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.token}`
+        },
           body: JSON.stringify(credentials),
         })
 
@@ -57,7 +60,8 @@ export const useAuthStore = defineStore('auth', {
       fetch('http://localhost:8080/api/auth/logout', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${this.token}`
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.token}`
         }
       })
       .then(() => {
