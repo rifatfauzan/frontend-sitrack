@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.sidebar-item {
+    padding-left: 1rem; 
+    padding: 0.5rem;
+    transition: all 0.3s ease-in-out;
+    border-radius: 0.5rem;
+}
+
+
+.sidebar-item:hover {
+    background-color: #FAFAFF;
+    color: #222222;
+}
+
+
+.logout-button {
+    transition: all 0.3s ease-in-out;
+    border-radius: 0.5rem;
+}
+
+
+.logout-button:hover {
+    background-color: #FAFAFF;
+    color: #222222;
+}
