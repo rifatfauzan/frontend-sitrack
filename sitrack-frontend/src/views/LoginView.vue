@@ -1,6 +1,5 @@
 <template>
     <div class="flex h-screen">
-      <!-- Left Section -->
       <div class="w-1/2 bg-white flex items-center justify-center">
         <div class="text-center">
         <h1 class="text-5xl font-bold text-[#1C5D99]">Selamat datang di</h1>
@@ -22,7 +21,7 @@
     </div>
   </template>
   
-  <script setup lang="ts">
+<script setup lang="ts">
   import { ref } from 'vue';
   import { useAuthStore } from '@/stores/auth';
   import VInput from '@/components/VInput.vue';
@@ -38,5 +37,5 @@
   const handleLogin = () => {
     auth.login(credentials.value);
   };
-  </script>
+</script>
   
