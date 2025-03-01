@@ -23,7 +23,6 @@ export const useAuthStore = defineStore('auth', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.token}`
         },
           body: JSON.stringify(credentials),
         })
@@ -33,10 +32,10 @@ export const useAuthStore = defineStore('auth', {
         }
 
         const data: LoginResponse = await response.json()
-        this.token = data.token
+        this.token = data.data.token;
         
         try {
-          const payload = data.token.split('.')[1];
+          const payload = data.data.token.split('.')[1];
           const decodedPayload = JSON.parse(atob(payload));
           this.username = decodedPayload.username || 'Pengguna';
           localStorage.setItem('username', this.username);
@@ -44,7 +43,7 @@ export const useAuthStore = defineStore('auth', {
           console.error('Failed to extract username from token', e);
         }
         
-        localStorage.setItem('token', data.token)
+        localStorage.setItem('token', data.data.token)
 
         useToast().success("Login berhasil")
         await router.push('/home')

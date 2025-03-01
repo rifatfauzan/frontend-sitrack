@@ -4,7 +4,13 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-    token: string,
+    status: number;
+    message: string;
+    timestamp: string;
+    data: {
+      token: string;
+    };
+    dataList: null;
 }
 
 export interface AuthUser {
