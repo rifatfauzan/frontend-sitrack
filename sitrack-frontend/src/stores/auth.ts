@@ -32,7 +32,6 @@ export const useAuthStore = defineStore('auth', {
         const data: LoginResponse = await response.json()
         this.token = data.token
         
-        // Ekstrak username dari token JWT
         try {
           const payload = data.token.split('.')[1];
           const decodedPayload = JSON.parse(atob(payload));
@@ -81,7 +80,6 @@ export const useAuthStore = defineStore('auth', {
     },
     
     initUser() {
-      // Fungsi ini dipanggil saat aplikasi dimuat untuk mengekstrak username dari token yang tersimpan
       if (this.token) {
         try {
           const payload = this.token.split('.')[1];
@@ -90,7 +88,7 @@ export const useAuthStore = defineStore('auth', {
           localStorage.setItem('username', this.username);
         } catch (e) {
           console.error('Failed to decode token', e);
-          this.logout(); // Token tidak valid, logout
+          this.logout();
         }
       }
     }
