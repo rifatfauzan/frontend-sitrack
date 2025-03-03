@@ -145,6 +145,24 @@
     border-radius: 4px !important;
   }
 
+  .p-inputtext {
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+}
+
+.p-input-icon-left > i {
+    position: absolute;
+    left: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.p-input-icon-left > .p-inputtext {
+    padding-left: 2rem;
+}
+
 .search-box {
     border: 1px solid #ddd;
     border-radius: 4px;

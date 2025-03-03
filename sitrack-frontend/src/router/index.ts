@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
 import UserListView from '../views/UserListView.vue'
 import CreateUserView from '../views/CreateUserView.vue'
+import EditUserView from '../views/EditUserView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,6 +30,13 @@ const router = createRouter({
       name: 'create users',
       component: CreateUserView,
       meta: { requiresAuth: true }
+    },
+    {
+      path: '/users/edit',
+      name: 'edit users',
+      component: EditUserView,
+      meta: { requiresAuth: true },
+      props: (route) => ({ id: route.query.id }),
     },
     {
       path: '/',

@@ -3,23 +3,23 @@
         <Sidebar />
 
         <div class="flex-1 flex flex-col">
-            <HeaderComponent title="Registrasi Pengguna" />
+            <HeaderComponent title="Edit Pengguna" />
             <div class="flex-1 p-4 main-content pt-20">
                 <div class="container mx-auto" style="max-width: 50%;">
-                    <div class="create-user-view">
+                    <div class="edit-user-view">
                         <div class="header-back">
                             <VButton title="" class="bg-[#1C5D99] text-white p-2 rounded" @click="goBack" :style="{ 'background-color': '#1C5D99' }">
                                 <i class="pi pi-arrow-left" style="font-size: 1rem; margin-right: 2rem"></i>
                             </VButton>
                         </div>
 
-                        <form @submit.prevent="createUser" class="bg-white p-6 rounded-lg shadow-md">
+                        <form @submit.prevent="editUser" class="bg-white p-6 rounded-lg shadow-md">
                             <div class="mb-4">
                                 <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
                                     Username
                                 </label>
                                 <input
-                                    v-model="username"
+                                    v-model="userData.username"
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-[#E5EEFB]"
                                     id="username"
                                     type="text"
@@ -30,15 +30,14 @@
 
                             <div class="mb-4">
                                 <label class="block text-gray-700 text-sm font-bold mb-2" for="password">
-                                    Password
+                                    Password (Optional)
                                 </label>
                                 <input
-                                    v-model="password"
+                                    v-model="userData.password"
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-[#E5EEFB]"
                                     id="password"
                                     type="password"
                                     placeholder="Enter password"
-                                    required
                                 />
                             </div>
 
@@ -47,19 +46,20 @@
                                     Role
                                 </label>
                                 <select
-                                    v-model="selectedRole"
+                                    v-model="userData.role"
                                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-[#E5EEFB]"
                                     id="role"
                                     required
                                 >
-                                    <option v-for="role in roles" :key="role.id" :value="role.name">
-                                        {{ role.name }}
+                                    <option v-for="role in roles" :key="role" :value="role">
+                                        {{ role }}
                                     </option>
                                 </select>
                             </div>
 
-                            <div class="flex items-center justify-end">
-                                <VButton title="Register" class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full" @click="createUser" />
+                            <div class="flex items-center justify-end space-x-4">
+                                <VButton title="Delete" class="bg-[#EB5757] hover:bg-[#C64646] text-white px-4 py-2 rounded w-full" @click="deleteUser(userData.id)" />
+                                <VButton title="Update" class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full" @click="editUser" />
                             </div>
                             <div v-if="userStore.error" class="text-red-500 mt-4">{{ userStore.error }}</div>
                         </form>
@@ -71,76 +71,70 @@
     </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
+<script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useUserStore } from '@/stores/user';
+import { UpdateUserRequestInterface } from '@/interfaces/user.interfaces';
+import { useToast } from 'vue-toastification';
 import Sidebar from '@/components/Sidebar.vue';
 import HeaderComponent from '@/components/Header.vue';
 import FooterComponent from '@/components/Footer.vue';
 import VButton from '@/components/VButton.vue';
-import { useUserStore } from '@/stores/user';
-import { UserRequestInterface } from '@/interfaces/user.interfaces';
-import { useToast } from 'vue-toastification';
-import router from '@/router';
 
-export default defineComponent({
-    name: 'CreateUserView',
-    components: {
-        Sidebar,
-        HeaderComponent,
-        FooterComponent,
-        VButton,
-    },
-    setup() {
-        const userStore = useUserStore();
-        const username = ref('');
-        const password = ref('');
-        const selectedRole = ref('');
-        const roles = ref([
-            { id: 2, name: 'Manager' },
-            { id: 3, name: 'Supervisor' },
-            { id: 4, name: 'Operasional' },
-            { id: 5, name: 'Mekanik' },
-        ]);
+const userStore = useUserStore();
+const router = useRouter();
+const route = useRoute();
+const toast = useToast();
+const roles = ['Manager', 'Supervisor', 'Operasional', 'Mekanik'];
 
-        const createUser = async () => {
-            const newUser: UserRequestInterface = {
-                username: username.value,
-                password: password.value,
-                role: selectedRole.value,
-            };
-
-            console.log('Memulai createUser dengan data:', newUser);
-            try {
-                await userStore.addUser(newUser);
-                console.log('Selesai createUser, Status error:', userStore.error);
-                if (!userStore.error) {
-                    useToast().success('Pengguna berhasil ditambahkan!');
-                    username.value = '';
-                    password.value = '';
-                    selectedRole.value = '';
-                    await router.push('/users');
-                } else {
-                    useToast().error(userStore.error);
-                }
-            } catch (err) {
-                console.error('Error di createUser:', err);
-                useToast().error(`Gagal menambahkan akun: ${(err as Error).message}`);
-            }
-        };
-
-        const goBack = () => {
-            router.push('/users');
-        };
-
-        return {
-            username,
-            password,
-            selectedRole,
-            roles,
-            createUser,
-            userStore,
-            goBack,
-        };
-    },
+const userData = ref<UpdateUserRequestInterface>({
+    id: 0,
+    username: '',
+    password: '',
+    role: ''
 });
+
+onMounted(async () => {
+    const userId = Number(route.query.id);
+    if (userId) {
+        const user = await userStore.getUserById(userId);
+        if (user) {
+            userData.value.id = user.id;
+            userData.value.username = user.username;
+            userData.value.role = user.role;
+        } else {
+            toast.error('User tidak ditemukan!');
+            router.push('/users');
+        }
+    }
+});
+
+const goBack = () => {
+    router.push('/users');
+};
+
+const editUser = async () => {
+    const result = await userStore.updateUser(userData.value);
+    if (result.success) {
+        toast.success(result.message);
+        router.push('/users');
+    } else {
+        toast.error(result.message);
+    }
+};
+
+const deleteUser = async (id: number) => {
+    if (id) {
+        const result = await userStore.deleteUser(id);
+        if (result.success) {
+            toast.success(result.message);
+            router.push('/users');
+        } else {
+            toast.error(result.message);
+        }
+    } else {
+        toast.error("User ID tidak ditemukan!");
+    }
+};
 </script>

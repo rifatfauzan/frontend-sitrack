@@ -44,9 +44,10 @@
                         <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header"></Column>
                         
                         <Column style="width: 10%;">
-                            <template #body>
+                            <template #body="slotProps">
                                 <div class="flex justify-center">
-                                    <VButton title="Edit" class="bg-[#1C5D99] text-white px-4 py-2 rounded" />
+                                    <VButton title="Edit" class="bg-[#1C5D99] text-white px-4 py-2 rounded"
+                                         @click="() => $router.push({ name: 'edit users', query: { id: slotProps.data.id } })" />
                                 </div>
                             </template>
                         </Column>
@@ -69,6 +70,7 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
+import { useRouter } from 'vue-router';
 
 const userStore = useUserStore();
 const filters = ref({

@@ -12,5 +12,12 @@ export interface UserRequestInterface {
     role: string;
 }
 
+export interface UpdateUserRequestInterface {
+    id: number;
+    username: string;
+    password?: string;
+    role: string;
+}
+
 export type UserResponse = CommonResponseInterface<User>;
 export type UsersResponse = CommonResponseInterface<User[]>;
