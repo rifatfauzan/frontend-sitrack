@@ -2,19 +2,23 @@
   <button 
     :type="type"
     @click="$emit('click')"
-    class="bg-[#639FAB] hover:bg-[#1C5D99] text-white font-bold py-3 px-12 rounded-md text-xl"
+    class="bg-[#1C5D99] hover:bg-[#1C5D90] text-white font-bold py-3 px-12 rounded-md text-xl"
   >
-    <slot>Login</slot>
+    <slot>{{ title }}</slot>
   </button>
 </template>
 
 <script setup lang="ts">
-  defineProps({
-    type: {
-      type: String,
-      default: 'button'
-    }
-  });
+const props = defineProps({
+  type: {
+    type: String,
+    default: 'button'
+  },
+  title: {
+    type: String,
+    default: ''
+  }
+});
 
-  defineEmits(['click']);
+defineEmits(['click']);
 </script>
