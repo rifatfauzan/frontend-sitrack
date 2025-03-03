@@ -14,7 +14,7 @@
           <VInput id="username" label="Username" v-model="credentials.username" />
           <VInput id="password" type="password" label="Password" v-model="credentials.password" />
           <div class="flex justify-center mt-4">
-            <VButton @click="handleLogin">Login</VButton>
+            <LoginButton @click="handleLogin">Login</LoginButton>
           </div>
         </div>
       </div>
@@ -25,7 +25,7 @@
   import { ref } from 'vue';
   import { useAuthStore } from '@/stores/auth';
   import VInput from '@/components/VInput.vue';
-  import VButton from '@/components/VButton.vue';
+  import LoginButton from '@/components/LoginButton.vue';
   
   const auth = useAuthStore();
   

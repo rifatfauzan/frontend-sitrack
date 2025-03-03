@@ -9,20 +9,146 @@
     border-radius: 0.5rem;
 }
 
-
 .sidebar-item:hover {
     background-color: #FAFAFF;
     color: #222222;
 }
-
 
 .logout-button {
     transition: all 0.3s ease-in-out;
     border-radius: 0.5rem;
 }
 
-
 .logout-button:hover {
     background-color: #FAFAFF;
     color: #222222;
 }
+
+.body {
+    background-color: #BBCDE5;
+}
+
+.header {
+    background-color: #FAFAFF;
+}
+
+.footer {
+    background-color: #FAFAFF;
+}
+
+.main-content {
+    background-color: #BBCDE5;
+}
+
+.h1 {
+    color: #222222;
+}
+
+.custom-datatable {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+    background-color: #1C5D99 !important;
+    color: #FAFAFF !important;
+    font-weight: 600;
+    padding: 12px 16px;
+    text-align: left;
+    border: none !important;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+    padding: 12px 16px;
+    border: none !important;
+    color: #222222;
+    font-weight: 500;
+}
+
+.p-datatable .p-datatable-tbody > tr:nth-child(odd) {
+    background-color: #FAFAFF !important;
+}
+
+.p-datatable .p-datatable-tbody > tr:nth-child(even) {
+    background-color: #BBCDE5 !important;
+}
+
+
+.p-datatable .p-button.p-button-edit {
+    background-color: #1C5D99;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+}
+
+.button-create {
+    background-color: #1C5D99;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+}
+
+.p-paginator {
+    background-color: #FAFAFF !important;
+    border: none !important;
+    padding: 0.75rem !important;
+    border-radius: 0 0 8px 8px !important;
+  }
+  
+  .p-paginator .p-paginator-pages .p-paginator-page {
+    min-width: 2.5rem !important;
+    height: 2.5rem !important;
+    margin: 0 0.125rem !important;
+    border-radius: 50% !important;
+    color: #222222 !important;
+  }
+  
+  .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+    background-color: #1C5D99 !important;
+    color: #FAFAFF !important;
+  }
+  
+  .p-paginator .p-paginator-first,
+  .p-paginator .p-paginator-prev,
+  .p-paginator .p-paginator-next,
+  .p-paginator .p-paginator-last {
+    min-width: 2.5rem !important;
+    height: 2.5rem !important;
+    border-radius: 50% !important;
+    color: #222222 !important;
+  }
+  
+  .p-paginator .p-dropdown {
+    background-color: #FAFAFF !important;
+    border: 1px solid #ddd !important;
+    border-radius: 4px !important;
+  }
+
+.search-box {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px 12px;
+    width: 250px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.container {
+    max-width: 90%;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+

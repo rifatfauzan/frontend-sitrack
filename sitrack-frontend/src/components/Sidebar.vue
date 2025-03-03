@@ -1,7 +1,7 @@
 <template>
     <div class="w-64 h-screen bg-[#222222] flex flex-col justify-between font-sans">
-        <div class="flex items-center justify-center mb-8 bg-white rounded-bl-full rounded-tr-lg h-32 w-full">
-            <img src="@/assets/SiTrack.png" alt="Logo" class="h-20">
+        <div class="flex items-center justify-center mb-8 bg-white rounded-bl-3xl h-24 w-full">
+            <img src="@/assets/SiTrack.png" alt="Logo" class="h-24 w-auto">
         </div>
 
         <nav class="flex-1 mt-8 ml-4 mr-6">
@@ -35,7 +35,7 @@
                     <span>Reporting</span>
                 </li>
                 <li class="flex items-center space-x-3 cursor-pointer text-lg sidebar-item"> 
-                    <i class="fas fa-users"></i>
+                    <i class="pi pi-user" style="font-size: 0.9rem"></i>
                     <span>User Management</span>
                 </li>
             </ul>
