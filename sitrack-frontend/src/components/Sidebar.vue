@@ -45,7 +45,7 @@
             </ul>
         </nav>
 
-        <div class="bg-white p-4 rounded-t-2xl space-y-4 h-32 mt-10">
+        <div class="bg-white p-4 rounded-t-2xl space-y-4 h-34 mt-10">
             <div class="bg-[#BBCDE5] rounded-full p-4 flex items-center justify-center space-x-4 text-xl pr-6">
                 <i class="fas fa-user"></i>
                 <span>{{ authStore.username }}</span>

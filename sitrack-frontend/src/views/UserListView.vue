@@ -8,7 +8,6 @@
                 <div class="container mx-auto max-w-4xl">
                     <div class="flex justify-between items-center mb-4">
                         <span class="p-input-icon-left">
-                            <i class="pi pi-search" style="font-size: 0.8rem" />
                             <InputText v-model="filters['global'].value" placeholder="Search Pengguna" />
                         </span>
                         <VButton 
@@ -35,7 +34,7 @@
                         <template #empty>No users found.</template>
                         <template #loading>Loading users data. Please wait.</template>
                         
-                        <Column header="No." style="width: 5%; text-align: center">
+                        <Column header="No." style="width: 5%">
                             <template #body="{ index }">
                                 <div class="text-center">{{ index + 1 }}</div>
                             </template>
