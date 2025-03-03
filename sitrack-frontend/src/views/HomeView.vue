@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
+import SiTrack from '../components/SiTrack.vue'
 import Sidebar from '@/components/Sidebar.vue';
 </script>
 
@@ -8,7 +8,7 @@ import Sidebar from '@/components/Sidebar.vue';
     <Sidebar />
     
     <div class="flex-1">
-      <TheWelcome />
+      <SiTrack />
     </div>
   </div>
 </template>
