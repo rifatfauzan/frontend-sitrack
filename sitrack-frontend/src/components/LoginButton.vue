@@ -2,7 +2,7 @@
   <button 
     :type="type"
     @click="$emit('click')"
-    class="bg-[#639FAB] hover:bg-[#1C5D99] text-white font-bold py-3 px-12 rounded-md text-xl"
+    class="bg-[#639FAB] hover:bg-[#63AB93] text-white font-bold py-3 px-12 rounded-md text-xl"
   >
     <slot>Login</slot>
   </button>

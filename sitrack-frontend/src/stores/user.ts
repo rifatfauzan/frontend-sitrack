@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
 import type { User, UserRequestInterface, UserResponse, UsersResponse } from '@/interfaces/user.interfaces';
 
+const API_URL = import.meta.env.VITE_API_URL;
 export const useUserStore = defineStore('user', {
     state: () => ({
         users: [] as User[],
@@ -18,7 +19,7 @@ export const useUserStore = defineStore('user', {
             const authStore = useAuthStore();
 
             try {
-                const response = await fetch('http://localhost:8080/api/user/all', {
+                const response = await fetch(`${API_URL}/api/user/all`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${authStore.token}`,
@@ -40,7 +41,7 @@ export const useUserStore = defineStore('user', {
             const authStore = useAuthStore();
 
             try {
-                const response = await fetch('http://localhost:8080/api/user/add', {
+                const response = await fetch(`${API_URL}/api/user/add`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -72,7 +73,7 @@ export const useUserStore = defineStore('user', {
             const authStore = useAuthStore();
 
             try {
-                const response = await fetch(`http://localhost:8080/api/user/detail?id=${id}`, {
+                const response = await fetch(`${API_URL}/api/user/detail?id=${id}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${authStore.token}`,
@@ -100,7 +101,7 @@ export const useUserStore = defineStore('user', {
             const authStore = useAuthStore();
 
             try {
-                const response = await fetch(`http://localhost:8080/api/user/update?id=${user.id}`, {
+                const response = await fetch(`${API_URL}/api/user/update?id=${user.id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -140,7 +141,7 @@ export const useUserStore = defineStore('user', {
             const authStore = useAuthStore();
 
             try {
-                const response = await fetch(`http://localhost:8080/api/user/delete?id=${id}`, {
+                const response = await fetch(`${API_URL}/api/user/delete?id=${id}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${authStore.token}`,
