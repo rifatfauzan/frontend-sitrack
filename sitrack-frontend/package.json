@@ -14,9 +14,15 @@
     "start": "vite preview"
   },
   "dependencies": {
+    "@primevue/themes": "^4.3.1",
+    "datatables.net": "^2.2.2",
+    "datatables.net-dt": "^2.2.2",
     "date-fns": "^4.1.0",
     "flowbite": "^3.1.2",
+    "jquery": "^3.7.1",
     "pinia": "^2.2.6",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.3.1",
     "simple-datatables": "^10.0.0",
     "vue": "^3.5.12",
     "vue-router": "^4.4.5",
