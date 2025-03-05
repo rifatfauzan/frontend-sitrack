@@ -28,6 +28,11 @@
     color: #222222;
 }
 
+.sidebar-item i.rotate-180 {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease-in-out;
+}
+
 .logout-button {
     transition: all 0.3s ease-in-out;
     border-radius: 0.5rem;
