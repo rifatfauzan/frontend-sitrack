@@ -10,14 +10,6 @@
     transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
-.sidebar-item i {
-    min-width: 2.5rem;
-    text-align: center;
-    font-size: 1.5rem;
-    transition: all 0.3s ease-in-out;
-    color: inherit;
-}
-
 .sidebar-item span {
     font-size: 1.25rem;
     color: inherit;
@@ -26,11 +18,6 @@
 .sidebar-item:hover {
     background-color: #FAFAFF;
     color: #222222;
-}
-
-.sidebar-item i.rotate-180 {
-    transform: rotate(180deg);
-    transition: transform 0.3s ease-in-out;
 }
 
 .logout-button {
@@ -98,7 +85,6 @@
     background-color: #BBCDE5 !important;
 }
 
-
 .p-datatable .p-button.p-button-edit {
     background-color: #1C5D99;
     color: white;
@@ -115,60 +101,6 @@
     padding: 8px 16px;
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-weight: 600;
-}
-
-.p-paginator {
-    background-color: #FAFAFF !important;
-    border: none !important;
-    padding: 0.75rem !important;
-    border-radius: 0 0 8px 8px !important;
-  }
-  
-  .p-paginator .p-paginator-pages .p-paginator-page {
-    min-width: 2.5rem !important;
-    height: 2.5rem !important;
-    margin: 0 0.125rem !important;
-    border-radius: 50% !important;
-    color: #222222 !important;
-  }
-  
-  .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
-    background-color: #1C5D99 !important;
-    color: #FAFAFF !important;
-  }
-  
-  .p-paginator .p-paginator-first,
-  .p-paginator .p-paginator-prev,
-  .p-paginator .p-paginator-next,
-  .p-paginator .p-paginator-last {
-    min-width: 2.5rem !important;
-    height: 2.5rem !important;
-    border-radius: 50% !important;
-    color: #222222 !important;
-  }
-  
-  .p-paginator .p-dropdown {
-    background-color: #FAFAFF !important;
-    border: 1px solid #ddd !important;
-    border-radius: 4px !important;
-  }
-
-  .p-inputtext {
-    border: 1px solid #d1d5db;
-    border-radius: 0.375rem;
-    padding: 0.5rem;
-}
-
-.p-input-icon-left > i {
-    position: absolute;
-    left: 0.5rem;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-}
-
-.p-input-icon-left > .p-inputtext {
-    padding-left: 2rem;
 }
 
 .search-box {
@@ -195,9 +127,9 @@
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  }
+}
 
-  .header-back {
+.header-back {
     background-color: #1C5D99;
     padding: 1rem;
     display: flex;
@@ -220,14 +152,6 @@
     padding: 0.5rem;
 }
 
-.p-input-icon-left > i {
-    position: absolute;
-    left: 0.5rem;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
-}
-
 .p-input-icon-left > .p-inputtext {
     padding-left: 2rem;
 }
@@ -235,4 +159,3 @@
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
 }
-
