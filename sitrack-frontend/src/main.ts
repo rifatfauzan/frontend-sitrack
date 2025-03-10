@@ -5,7 +5,7 @@ import { createPinia } from 'pinia'
 
 
 import PrimeVue from 'primevue/config'
-import Lara from '@primevue/themes/lara'
+import Lara from '@primeuix/themes/lara'
 import 'primeicons/primeicons.css'
 
 import App from './App.vue'
