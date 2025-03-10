@@ -4,7 +4,7 @@
             <img src="@/assets/SiTrack.png" alt="Logo" class="h-24 w-auto">
         </div>
 
-        <nav class="flex-1 ml-4 mr-6 mt-16">
+        <nav class="flex-1 ml-4 mr-6 mt-16 overflow-y-auto no-scrollbar h-full">
             <ul class="space-y-4 text-[#FAFAFF]">
                 <li>
                     <router-link to="/home" class="flex items-center gap-4 cursor-pointer text-xl sidebar-item">
@@ -12,22 +12,51 @@
                         <span>Beranda</span>
                     </router-link>
                 </li>
+
                 <li class="flex items-center gap-4 cursor-pointer text-xl sidebar-item">
                     <i class="fas fa-truck"></i>
                     <span>Customer Booking</span>
                 </li>
+
                 <li class="flex items-center gap-4 cursor-pointer text-xl sidebar-item">
                     <i class="fas fa-arrow-right"></i>
                     <span>Vehicle Out</span>
                 </li>
+
                 <li class="flex items-center gap-4 cursor-pointer text-xl sidebar-item">
                     <i class="fas fa-arrow-left"></i>
                     <span>Vehicle In</span>
                 </li>
-                <li class="flex items-center gap-4 cursor-pointer text-xl sidebar-item">
-                    <i class="fas fa-th-list"></i>
-                    <span>Reference List</span>
+
+                <li class="relative">
+                    <div 
+                        class="flex items-center gap-4 cursor-pointer text-xl sidebar-item" 
+                        @click="toggleReferenceMenu">
+                        <i class="fas fa-th-list"></i>
+                        <span>Reference List</span>
+                        <i class="fas fa-chevron-down pr-8 transition-opacity duration-300 mb-6" :class="{ 'opacity-100': showReferenceMenu, 'opacity-0': !showReferenceMenu }"></i>
+                    </div>
+
+                    <ul v-if="showReferenceMenu" class="ml-6 mt-2 space-y-2">
+                        <li class="flex items-center gap-4 cursor-pointer text-lg sidebar-item">
+                            <i class="fas fa-truck"></i>
+                            <span>Truck</span>
+                        </li>
+                        <li class="flex items-center gap-4 cursor-pointer text-lg sidebar-item">
+                            <i class="fas fa-users"></i>
+                            <span>Customer</span>
+                        </li>
+                        <li class="flex items-center gap-4 cursor-pointer text-lg sidebar-item">
+                            <i class="fas fa-trailer"></i>
+                            <span>Chassis</span>
+                        </li>
+                        <li class="flex items-center gap-4 cursor-pointer text-lg sidebar-item">
+                            <i class="fas fa-id-badge"></i>
+                            <span>Driver</span>
+                        </li>
+                    </ul>
                 </li>
+
                 <li class="flex items-center gap-4 cursor-pointer text-xl sidebar-item">
                     <i class="fas fa-box"></i>
                     <span>Inventory</span>
@@ -60,10 +89,14 @@
 
 <script setup>
 import { useAuthStore } from '@/stores/auth.ts';
-import { onMounted } from 'vue';
-import { useRouter, RouterLink } from 'vue-router';
+import { onMounted, ref } from 'vue';
 
 const authStore = useAuthStore();
+const showReferenceMenu = ref(false);
+
+const toggleReferenceMenu = () => {
+    showReferenceMenu.value = !showReferenceMenu.value;
+};
 
 onMounted(() => {
     authStore.initUser();
@@ -76,6 +109,17 @@ export default {
 };
 </script>
 
-<style scoped>
-@import "@/assets/index.css";
+<style>
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    scrollbar-width: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    overflow-y: auto;
+}
 </style>
