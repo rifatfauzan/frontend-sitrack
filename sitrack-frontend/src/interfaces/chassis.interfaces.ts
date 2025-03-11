@@ -1,5 +1,3 @@
-import { CommonResponseInterface } from '@/interfaces/common.interfaces';
-
 export interface Chassis {
     chassisId: string; // ID chassis maksimal 8 karakter
     chassisSize?: '20' | '40'; // Ukuran chassis harus 20 atau 40 (opsional)
