@@ -7,6 +7,7 @@ import EditUserView from '../views/EditUserView.vue'
 import ChassisListView from '../views/chassis/ChassisListView.vue'
 import ChassisDetailView from '../views/chassis/ChassisDetailView.vue'
 import CreateChassisView from '../views/chassis/CreateChassisView.vue'
+import EditChassisView from '../views/chassis/EditChassisView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -64,6 +65,13 @@ const router = createRouter({
     name: 'create chassis',
     component: CreateChassisView,
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/chassis/edit',
+    name: 'edit chassis',
+    component: EditChassisView,
+    meta: { requiresAuth: true },
+    props: (route) => ({ id: route.query.id }),
   },
   ],
 })

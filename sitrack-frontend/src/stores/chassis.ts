@@ -29,7 +29,7 @@ export const useChassisStore = defineStore('chassis', {
 
                 const data = await response.json();
                 this.chassisList = data.data || [];
-                toast.success(`Berhasil mengambil ${this.chassisList.length} chassis!`);
+                // toast.success(`Berhasil mengambil ${this.chassisList.length} chassis!`);
             } catch (err) {
                 this.error = `Gagal mengambil data chassis: ${err}`;
                 toast.error(this.error);
@@ -62,7 +62,7 @@ export const useChassisStore = defineStore('chassis', {
                 const data: { data: CreateChassisResponse } = await response.json();
                 this.chassisList.push({ ...chassisData, chassisId: data.data.chassisId });
 
-                toast.success("Chassis berhasil ditambahkan!");
+                // toast.success("Chassis berhasil ditambahkan!");
                 return { success: true, message: "Chassis berhasil ditambahkan!" };
             } catch (err) {
                 this.error = `Gagal menambah chassis: ${(err as Error).message}`;
@@ -131,7 +131,7 @@ export const useChassisStore = defineStore('chassis', {
                     this.chassisList[index] = { ...chassisData, chassisId };
                 }
 
-                toast.success("Chassis berhasil diperbarui!");
+                // toast.success("Chassis berhasil diperbarui!");
                 return { success: true, message: "Chassis berhasil diperbarui!" };
             } catch (err) {
                 this.error = `Gagal memperbarui chassis: ${(err as Error).message}`;

@@ -31,9 +31,18 @@ const goBack = () => {
 };
 
 // Navigasi ke halaman edit
+// const goToEdit = () => {
+//   if (chassisId) {
+//     router.push({ name: 'edit chassis', params: { id: chassisId } });
+//   }
 const goToEdit = () => {
-  router.push({ name: 'edit chassis', query: { id: chassisId } });
+  if (chassisDetail.value?.chassisId) {
+    router.push({ name: 'edit chassis', query: { id: chassisDetail.value.chassisId } });
+  }
 };
+
+//};
+
 </script>
 
 <template>
@@ -105,7 +114,6 @@ const goToEdit = () => {
   
 <style scoped>
 
-    /* Styling detail item */
     .detail-item {
     display: flex;
     justify-content: space-between;
@@ -119,7 +127,6 @@ const goToEdit = () => {
     word-wrap: break-word;
     }
 
-    /* Alternatif warna untuk setiap baris */
     .detail-item.alt {
     background-color: #BBCDE5;
     }
@@ -137,7 +144,7 @@ const goToEdit = () => {
     }
 
     .detail-remarks .label {
-    display: block;  /* Supaya label ada di atas */
+    display: block;
     font-weight: bold;
     margin-bottom: 4px;
     }
@@ -146,23 +153,20 @@ const goToEdit = () => {
     display: block;
     font-size: 1rem;
     line-height: 1.5;
-    white-space: pre-wrap;  /* Supaya teks panjang tetap rapi */
+    white-space: pre-wrap; 
     }
 
-
-    /* Warna utama dari desain sistem */
     .bg-primary {
     background-color: #1C5D99;
     }
 
-    /* Pastikan semua container dapat menyesuaikan isi */
     .grid {
     width: 100%;
     }
 
     .detail-item span {
     flex: 1;
-    white-space: nowrap; /* Pastikan label tetap rapi */
+    white-space: nowrap;
     }
 
     .detail-item strong {
@@ -172,11 +176,10 @@ const goToEdit = () => {
     word-break: break-word;
     }
 
-    /* Kontainer utama agar bisa mencapai bawah */
     .w-full.max-w-5xl {
-    flex-grow: 1; /* Memastikan dia mengisi ruang yang tersedia */
-    max-height: calc(100vh - 100px); /* Sesuaikan dengan viewport */
-    overflow-y: auto; /* Scroll jika kontennya terlalu panjang */
+    flex-grow: 1; 
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     }

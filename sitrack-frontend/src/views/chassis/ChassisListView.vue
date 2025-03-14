@@ -4,7 +4,7 @@ import HeaderComponent from '@/components/Header.vue';
 import FooterComponent from '@/components/Footer.vue';
 import VButton from '@/components/VButton.vue';
 import { useRouter } from 'vue-router';
-import { useChassisStore } from '@/stores/chassis'; // Import store
+import { useChassisStore } from '@/stores/chassis';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
@@ -13,21 +13,18 @@ import { FilterMatchMode } from '@primevue/core/api';
 import { ref, onMounted } from 'vue';
 
 const router = useRouter();
-const chassisStore = useChassisStore(); // Gunakan store chassis
+const chassisStore = useChassisStore();
 
-// Ambil state dari store
 const { chassisList, loading } = storeToRefs(chassisStore);
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 
-// Fetch data chassis saat komponen dimuat
 onMounted(async () => {
-  await chassisStore.fetchChassis(); // Ambil data dari API
+  await chassisStore.fetchChassis();
 });
 
-// Navigasi ke halaman detail chassis saat row diklik
 const goToDetail = (event: { data: any }) => {
   router.push({ name: 'detail chassis', query: { id: event.data.chassisId } });
 };

@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useChassisStore } from '@/stores/chassis';
 import { useToast } from 'vue-toastification';
 import Sidebar from '@/components/Sidebar.vue';
 import HeaderComponent from '@/components/Header.vue';
 import FooterComponent from '@/components/Footer.vue';
 import VButton from '@/components/VButton.vue';
-import router from '@/router';
 
+// Inisialisasi
+const route = useRoute();
+const router = useRouter();
 const chassisStore = useChassisStore();
 const toast = useToast();
 const loading = ref(false);
 
+// State untuk form
 const form = reactive({
   chassisId: '',
   chassisSize: '20',
@@ -28,50 +32,64 @@ const form = reactive({
   siteId: 'JKT',
 });
 
+// Ambil data chassis berdasarkan ID
+onMounted(async () => {
+const chassisId = route.query.id as string;
+console.log("Chassis ID from route:", chassisId);
+  if (!chassisId) {
+    toast.error('Chassis ID tidak ditemukan');
+    router.push('/chassis');
+    return;
+  }
+
+  loading.value = true;
+  try {
+    const chassisData = await chassisStore.getChassisById(chassisId);
+
+    if (!chassisData) {
+      toast.error('Data chassis tidak ditemukan');
+      router.push('/chassis');
+      return;
+    }
+
+    Object.assign(form, {
+      ...chassisData,
+      chassisKIRDate: chassisData.chassisKIRDate 
+        ? new Date(chassisData.chassisKIRDate).toISOString().split('T')[0] 
+        : '',
+    });
+  } catch (error) {
+    toast.error('Terjadi kesalahan dalam mengambil data!');
+  } finally {
+    loading.value = false;
+  }
+});
+
+// Fungsi kembali ke halaman chassis
 const goBack = () => {
   router.push('/chassis');
 };
 
+// Fungsi submit form
 const submitForm = async () => {
   loading.value = true;
   try {
-    const response = await chassisStore.addChassis({
+    const response = await chassisStore.updateChassis(form.chassisId, {
       ...form,
       chassisKIRDate: new Date(form.chassisKIRDate),
     });
 
     if (response.success) {
-      toast.success(response.message);
-      resetForm();
+      toast.success('Chassis berhasil diperbarui!');
       router.push('/chassis');
     } else {
       toast.error(response.message);
     }
   } catch (error) {
-    toast.error('Terjadi kesalahan!');
+    toast.error('Terjadi kesalahan saat menyimpan!');
   } finally {
     loading.value = false;
   }
-};
-
-
-// Fungsi reset form
-const resetForm = () => {
-  Object.assign(form, {
-    chassisId: '',
-    chassisSize: '20',
-    chassisYear: '',
-    chassisNumber: '',
-    chassisAxle: '',
-    chassisKIRNo: '',
-    chassisKIRDate: '',
-    chassisType: 'F',
-    chassisRemarks: '',
-    division: '01',
-    dept: 'TR',
-    rowStatus: 'A',
-    siteId: 'JKT',
-  });
 };
 </script>
 
@@ -79,27 +97,28 @@ const resetForm = () => {
   <div class="flex h-screen">
     <Sidebar />
     <div class="flex-1 flex flex-col min-h-screen">
-        
-      <HeaderComponent title="Buat Chassis" />
+      <HeaderComponent title="Edit Chassis" />
       <div class="flex-1 p-4 main-content overflow-auto">
         <div class="container mx-auto max-w-4xl bg-white p-6 rounded shadow">
-
+          
+          <!-- Header -->
           <div class="header-container">
-                <div class="header-content">
-                    <VButton title="Kembali" class="back-button" @click="goBack">
-                        <i class="pi pi-arrow-left"></i>
-                    </VButton>
-                    <h1 class="header-title">Buat Chassis</h1>
-                </div>
+            <div class="header-content">
+              <VButton title="Kembali" class="back-button" @click="goBack">
+                <i class="pi pi-arrow-left"></i>
+              </VButton>
+              <h1 class="header-title">Edit Chassis</h1>
             </div>
+          </div>
 
-
+          <!-- Form -->
           <form @submit.prevent="submitForm">
             <div class="form-grid">
+              
               <!-- Chassis ID -->
               <div class="form-group">
                 <label for="chassisId">Chassis ID</label>
-                <input v-model="form.chassisId" type="text" id="chassisId" maxlength="8" required />
+                <input v-model="form.chassisId" type="text" id="chassisId" readonly />
               </div>
 
               <!-- Size -->
@@ -123,6 +142,12 @@ const resetForm = () => {
                 <input v-model="form.chassisNumber" type="text" id="chassisNumber" maxlength="6" />
               </div>
 
+              <!-- Axle -->
+              <div class="form-group">
+                <label for="chassisAxle">Axle</label>
+                <input v-model="form.chassisAxle" type="text" id="chassisAxle" />
+              </div>
+
               <!-- Nomor KIR -->
               <div class="form-group">
                 <label for="chassisKIRNo">KIR No.</label>
@@ -133,12 +158,6 @@ const resetForm = () => {
               <div class="form-group">
                 <label for="chassisKIRDate">KIR Expiration Date</label>
                 <input v-model="form.chassisKIRDate" type="date" id="chassisKIRDate" required />
-              </div>
-
-              <!-- Axle -->
-              <div class="form-group">
-                <label for="chassisAxle">Axle</label>
-                <input v-model="form.chassisAxle" type="text" id="chassisAxle" />
               </div>
 
               <!-- Tipe Chassis -->
@@ -157,7 +176,12 @@ const resetForm = () => {
               </div>
             </div>
 
-            <VButton type="submit" class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full mt-4" :disabled="loading">
+            <!-- Submit Button -->
+            <VButton 
+              type="submit" 
+              class="submit-button" 
+              :disabled="loading"
+            >
               {{ loading ? "Menyimpan..." : "Simpan Chassis" }}
             </VButton>
           </form>
@@ -169,7 +193,6 @@ const resetForm = () => {
 </template>
 
 <style scoped>
-
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -198,6 +221,11 @@ textarea {
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem;
+}
+
+input[readonly] {
+  background-color: #f3f3f3;
+  cursor: not-allowed;
 }
 
 textarea {
@@ -235,4 +263,25 @@ textarea {
   font-weight: bold;
 }
 
+.submit-button {
+  background-color: #1C5D99;
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+  width: 100%;
+  margin-top: 20px;
+  font-size: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.submit-button:hover:not(:disabled) {
+  background-color: #174f7a;
+}
 </style>
