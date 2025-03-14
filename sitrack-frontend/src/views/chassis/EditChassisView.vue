@@ -142,22 +142,28 @@ const submitForm = async () => {
                 <input v-model="form.chassisNumber" type="text" id="chassisNumber" maxlength="6" />
               </div>
 
-              <!-- Axle -->
-              <div class="form-group">
-                <label for="chassisAxle">Axle</label>
-                <input v-model="form.chassisAxle" type="text" id="chassisAxle" />
-              </div>
-
               <!-- Nomor KIR -->
               <div class="form-group">
                 <label for="chassisKIRNo">KIR No.</label>
-                <input v-model="form.chassisKIRNo" type="text" id="chassisKIRNo" maxlength="20" required />
+                <input v-model="form.chassisKIRNo" type="text" id="chassisKIRNo" maxlength="20" required/>
               </div>
 
               <!-- Tanggal KIR -->
               <div class="form-group">
                 <label for="chassisKIRDate">KIR Expiration Date</label>
                 <input v-model="form.chassisKIRDate" type="date" id="chassisKIRDate" required />
+              </div>
+
+              <!-- Division -->
+              <div class="form-group">
+                <label for="division">Division</label>
+                <input v-model="form.division" type="text" id="division" maxlength="2" required/>
+              </div>
+
+              <!-- Dept -->
+              <div class="form-group">
+                <label for="dept">Dept</label>
+                <input v-model="form.dept" type="text" id="dept" maxlength="2"/>
               </div>
 
               <!-- Tipe Chassis -->
@@ -167,6 +173,24 @@ const submitForm = async () => {
                   <option value="F">Flatbed</option>
                   <option value="T">Trailer</option>
                 </select>
+              </div>
+
+              <!-- Axle -->
+              <div class="form-group">
+                <label for="chassisAxle">Axle</label>
+                <input v-model="form.chassisAxle" type="text" id="chassisAxle" maxlength="2"/>
+              </div>
+
+              <!-- Row Status -->
+              <div class="form-group">
+                <label for="rowStatus">Row Status</label>
+                <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1"/>
+              </div>
+
+              <!-- Site ID -->
+              <div class="form-group">
+                <label for="siteId">Site ID</label>
+                <input v-model="form.siteId" type="text" id="siteId" maxlength="3"/>
               </div>
 
               <!-- Keterangan -->
