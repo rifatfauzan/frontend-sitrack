@@ -5,6 +5,12 @@ import UserListView from '../views/UserListView.vue'
 import CreateUserView from '../views/CreateUserView.vue'
 import EditUserView from '../views/EditUserView.vue'
 
+// truck management
+import TruckListView from '@/views/trucks/TruckListView.vue'
+import CreateTruckView from '@/views/trucks/CreateTruckView.vue'
+import TruckDetailView from '@/views/trucks/TruckDetailView.vue'
+import EditTruckView from '@/views/trucks/EditTruckView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -41,7 +47,35 @@ const router = createRouter({
     {
       path: '/',
       redirect: '/login'
-    }
+    },
+    // 🚚 Rute untuk Truck Management
+    {
+      path: '/trucks',
+      name: 'trucks',
+      component: TruckListView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/trucks/create',
+      name: 'create truck',
+      component: CreateTruckView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/trucks/edit',
+      name: 'edit truck',
+      component: EditTruckView,
+      meta: { requiresAuth: true },
+      props: (route) => ({ id: route.query.id }),
+    },
+    {
+      path: '/trucks/detail',
+      name: 'truck detail',
+      component: TruckDetailView,
+      meta: { requiresAuth: true },
+      props: (route) => ({ id: route.query.id }),
+    },
+
   ],
 })
 
