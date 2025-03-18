@@ -35,6 +35,7 @@ const form = reactive({
   vehicleType: '',
   division: '',
   dept: '',
+  recordStatus: '',
   rowStatus: '',
   vehicleNumber: '',
   insertedBy: '',
@@ -217,6 +218,24 @@ const saveChanges = async () => {
               <div class="form-group">
                 <label for="vehicleNumber">Vehicle Number</label>
                 <input v-model="form.vehicleNumber" type="text" id="vehicleNumber" maxlength="6" />
+              </div>
+
+              <!-- Dept -->
+              <div class="form-group">
+                <label for="dept">Dept</label>
+                <input v-model="form.dept" type="text" id="dept" maxlength="2" required />
+              </div>
+
+              <!-- Record Status -->
+              <div class="form-group">
+                <label for="recordStatus">Record Status</label>
+                <input v-model="form.recordStatus" type="text" id="recordStatus" maxlength="1" required />
+              </div>
+
+              <!-- Row Status -->
+              <div class="form-group">
+                <label for="rowStatus">Row Status</label>
+                <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1" required />
               </div>
 
               <!-- Keterangan -->

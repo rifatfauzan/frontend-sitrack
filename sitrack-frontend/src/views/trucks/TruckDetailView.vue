@@ -73,20 +73,23 @@ const goBack = () => {
               <div class="detail-item alt"><span>KIR No.</span><strong>{{ truckDetail.vehicleKIRNo || '-' }}</strong></div>
               <div class="detail-item"><span>KIR Expiration</span><strong>{{ truckDetail.vehicleKIRDate || '-' }}</strong></div>
               <div class="detail-item alt"><span>Chassis No.</span><strong>{{ truckDetail.vehicleChassisNo || '-' }}</strong></div>
-              <div class="detail-item"><span>Engine No.</span><strong>{{ truckDetail.vehicleEngineNo || '-' }}</strong></div>
-              <div class="detail-item alt"><span>Type</span><strong>{{ truckDetail.vehicleType || '-' }}</strong></div>
+              <div class="detail-item"><span>Engine No.</span><strong>{{ truckDetail.vehicleEngineNo || '-' }}</strong></div>              
+              <div class="detail-item alt"><span>Division</span><strong>{{ truckDetail.division || '-' }}</strong></div>
+              <div class="detail-item"><span>Business License Number</span><strong>{{ truckDetail.vehicleBizLicenseNo|| '-' }}</strong></div>
+              <div class="detail-item alt"><span>Business License Date</span><strong>{{ truckDetail.vehicleBizLicenseDate|| '-' }}</strong></div>
             </div>
 
             <div class="space-y-3">
               <div class="detail-item"><span>Vehicle Number</span><strong>{{ truckDetail.vehicleNumber || '-' }}</strong></div>
-              <div class="detail-item alt"><span>Division</span><strong>{{ truckDetail.division || '-' }}</strong></div>
+              <div class="detail-item alt"><span>Type</span><strong>{{ truckDetail.vehicleType || '-' }}</strong></div>
               <div class="detail-item"><span>Dept</span><strong>{{ truckDetail.dept || '-' }}</strong></div>
-              <div class="detail-item alt"><span>Row Status</span><strong>{{ truckDetail.rowStatus || '-' }}</strong></div>
-              <div class="detail-item"><span>Site</span><strong>{{ truckDetail.siteId || '-' }}</strong></div>
-              <div class="detail-item alt"><span>Inserted by</span><strong>{{ truckDetail.insertedBy || '-' }}</strong></div>
-              <div class="detail-item"><span>Inserted at</span><strong>{{ truckDetail.insertedDate || '-' }}</strong></div>
-              <div class="detail-item alt"><span>Updated by</span><strong>{{ truckDetail.updatedBy || '-' }}</strong></div>
-              <div class="detail-item"><span>Updated at</span><strong>{{ truckDetail.updatedDate || '-' }}</strong></div>
+              <div class="detail-item alt"><span>Record Status</span><strong>{{ truckDetail.recordStatus || '-' }}</strong></div>
+              <div class="detail-item"><span>Row Status</span><strong>{{ truckDetail.rowStatus || '-' }}</strong></div>
+              <div class="detail-item alt"><span>Site</span><strong>{{ truckDetail.siteId || '-' }}</strong></div>
+              <div class="detail-item"><span>Inserted by</span><strong>{{ truckDetail.insertedBy || '-' }}</strong></div>
+              <div class="detail-item alt"><span>Inserted at</span><strong>{{ truckDetail.insertedDate || '-' }}</strong></div>
+              <div class="detail-item"><span>Updated by</span><strong>{{ truckDetail.updatedBy || '-' }}</strong></div>
+              <div class="detail-item alt"><span>Updated at</span><strong>{{ truckDetail.updatedDate || '-' }}</strong></div>
             </div>
           </div>
 

@@ -19,6 +19,7 @@ export interface Truck {
     division: string; // Division, wajib ada
     dept: string; // Departemen, default "TR"
     rowStatus: string; // Status row, default "A"
+    recordStatus: string; 
     insertedBy?: string; // User yang memasukkan data (opsional)
     insertedDate?: Date; // Tanggal data dimasukkan (opsional)
     updatedBy?: string; // User yang mengupdate data (opsional)
@@ -45,6 +46,7 @@ export interface CreateTruckRequest {
     division: string; // Division, wajib ada
     dept: string; // Departemen, default "TR"
     rowStatus: string; // Status row, default "A"
+    recordStatus: string; 
     insertedBy?: string;
     insertedDate?: Date;
     updatedBy?: string;
@@ -79,6 +81,7 @@ export interface UpdateTruckRequest {
     division: string; // Division, wajib ada
     dept: string; // Departemen, default "TR"
     rowStatus: string; // Status row, default "A"
+    recordStatus: string; 
     insertedBy?: string;
     insertedDate?: Date;
     updatedBy?: string;

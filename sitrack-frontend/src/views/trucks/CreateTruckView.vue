@@ -32,6 +32,9 @@ const form = reactive({
   vehicleRemarks: '',
   siteId: 'JKT',
   vehicleType: '',
+  dept: 'TR',
+  recordStatus: 'A',
+  rowStatus: 'A',
   division: '01',
   vehicleNumber: ''
 });
@@ -92,8 +95,12 @@ const resetForm = () => {
     vehicleRemarks: '',
     siteId: 'JKT',
     vehicleType: '',
+    dept: 'TR',
+    rowStatus: 'A',
+    recordStatus: 'A', 
     division: '01',
-    vehicleNumber: ''
+    vehicleNumber: '',
+    vehicleFuelConsumption: 0.0,
   });
 };
 </script>
@@ -205,6 +212,24 @@ const resetForm = () => {
               <div class="form-group">
                 <label for="vehicleNumber">Vehicle Number</label>
                 <input v-model="form.vehicleNumber" type="text" id="vehicleNumber" maxlength="6" />
+              </div>
+
+              <!-- Dept -->
+              <div class="form-group">
+                <label for="dept">Dept</label>
+                <input v-model="form.dept" type="text" id="dept" maxlength="2" required />
+              </div>
+
+              <!-- Record Status -->
+              <div class="form-group">
+                <label for="recordStatus">Record Status</label>
+                <input v-model="form.recordStatus" type="text" id="recordStatus" maxlength="1" required />
+              </div>
+
+              <!-- Row Status -->
+              <div class="form-group">
+                <label for="rowStatus">Row Status</label>
+                <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1" required />
               </div>
 
               <!-- Keterangan -->
