@@ -135,7 +135,7 @@ export const useChassisStore = defineStore('chassis', {
                 return { success: true, message: "Chassis berhasil diperbarui!" };
             } catch (err) {
                 this.error = `Gagal memperbarui chassis: ${(err as Error).message}`;
-                toast.error(this.error);
+                // toast.error(this.error);
                 return { success: false, message: this.error };
             } finally {
                 this.loading = false;

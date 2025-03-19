@@ -7,13 +7,21 @@ import Sidebar from '@/components/Sidebar.vue';
 import HeaderComponent from '@/components/Header.vue';
 import FooterComponent from '@/components/Footer.vue';
 import VButton from '@/components/VButton.vue';
+import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
+import SuccessDialog from '@/components/SuccessDialog.vue';
+import ErrorDialog from '@/components/ErrorDialog.vue';
 
 // Inisialisasi
 const route = useRoute();
 const router = useRouter();
 const chassisStore = useChassisStore();
-const toast = useToast();
+// const toast = useToast();
 const loading = ref(false);
+const showConfirm = ref(false);
+const showSuccess = ref(false);
+const showError = ref(false);
+const errorMessage = ref("");
+
 
 // State untuk form
 const form = reactive({
@@ -32,12 +40,11 @@ const form = reactive({
   siteId: 'JKT',
 });
 
-// Ambil data chassis berdasarkan ID
 onMounted(async () => {
-const chassisId = route.query.id as string;
-console.log("Chassis ID from route:", chassisId);
+  const chassisId = route.query.id as string;
   if (!chassisId) {
-    toast.error('Chassis ID tidak ditemukan');
+    errorMessage.value = 'Chassis ID tidak ditemukan';
+    showError.value = true;
     router.push('/chassis');
     return;
   }
@@ -45,48 +52,57 @@ console.log("Chassis ID from route:", chassisId);
   loading.value = true;
   try {
     const chassisData = await chassisStore.getChassisById(chassisId);
-
     if (!chassisData) {
-      toast.error('Data chassis tidak ditemukan');
+      errorMessage.value = 'Data chassis tidak ditemukan';
+      showError.value = true;
       router.push('/chassis');
       return;
     }
 
     Object.assign(form, {
       ...chassisData,
-      chassisKIRDate: chassisData.chassisKIRDate 
-        ? new Date(chassisData.chassisKIRDate).toISOString().split('T')[0] 
-        : '',
+      chassisKIRDate: chassisData.chassisKIRDate
+        ? new Date(chassisData.chassisKIRDate).toISOString().split('T')[0]
+        : ''
     });
   } catch (error) {
-    toast.error('Terjadi kesalahan dalam mengambil data!');
+    errorMessage.value = 'Terjadi kesalahan saat mengambil data';
+    showError.value = true;
   } finally {
     loading.value = false;
   }
 });
 
-// Fungsi kembali ke halaman chassis
+const goToList = () => {
+  router.push('/chassis');
+};
+
 const goBack = () => {
   router.push('/chassis');
 };
 
-// Fungsi submit form
+const confirmSubmit = () => {
+  showConfirm.value = true;
+};
+
 const submitForm = async () => {
+  showConfirm.value = false;
   loading.value = true;
   try {
     const response = await chassisStore.updateChassis(form.chassisId, {
       ...form,
-      chassisKIRDate: new Date(form.chassisKIRDate),
+      chassisKIRDate: new Date(form.chassisKIRDate)
     });
 
     if (response.success) {
-      toast.success('Chassis berhasil diperbarui!');
-      router.push('/chassis');
+      showSuccess.value = true;
     } else {
-      toast.error(response.message);
+      errorMessage.value = response.message || 'Terjadi kesalahan!';
+      showError.value = true;
     }
   } catch (error) {
-    toast.error('Terjadi kesalahan saat menyimpan!');
+    errorMessage.value = 'Terjadi kesalahan saat menyimpan data.';
+    showError.value = true;
   } finally {
     loading.value = false;
   }
@@ -112,7 +128,7 @@ const submitForm = async () => {
           </div>
 
           <!-- Form -->
-          <form @submit.prevent="submitForm">
+          <form @submit.prevent="confirmSubmit">
             <div class="form-grid">
               
               <!-- Chassis ID -->
@@ -133,19 +149,19 @@ const submitForm = async () => {
               <!-- Tahun -->
               <div class="form-group">
                 <label for="chassisYear">Year</label>
-                <input v-model="form.chassisYear" type="text" id="chassisYear" maxlength="4" pattern="\d{4}" required />
+                <input v-model="form.chassisYear" type="text" id="chassisYear" minlength="4"  maxlength="4" required />
               </div>
 
               <!-- Nomor Chassis -->
               <div class="form-group">
                 <label for="chassisNumber">Chassis Number</label>
-                <input v-model="form.chassisNumber" type="text" id="chassisNumber" maxlength="6" />
+                <input v-model="form.chassisNumber" type="text" id="chassisNumber" minlength="6"  maxlength="6" />
               </div>
 
               <!-- Nomor KIR -->
               <div class="form-group">
                 <label for="chassisKIRNo">KIR No.</label>
-                <input v-model="form.chassisKIRNo" type="text" id="chassisKIRNo" maxlength="20" required/>
+                <input v-model="form.chassisKIRNo" type="text" id="chassisKIRNo" minlength="20" maxlength="20" required/>
               </div>
 
               <!-- Tanggal KIR -->
@@ -157,13 +173,13 @@ const submitForm = async () => {
               <!-- Division -->
               <div class="form-group">
                 <label for="division">Division</label>
-                <input v-model="form.division" type="text" id="division" maxlength="2" required/>
+                <input v-model="form.division" type="text" id="division" minlength="2"  maxlength="2" required/>
               </div>
 
               <!-- Dept -->
               <div class="form-group">
                 <label for="dept">Dept</label>
-                <input v-model="form.dept" type="text" id="dept" maxlength="2"/>
+                <input v-model="form.dept" type="text" id="dept" minlength="2"  maxlength="2"/>
               </div>
 
               <!-- Tipe Chassis -->
@@ -178,19 +194,19 @@ const submitForm = async () => {
               <!-- Axle -->
               <div class="form-group">
                 <label for="chassisAxle">Axle</label>
-                <input v-model="form.chassisAxle" type="text" id="chassisAxle" maxlength="2"/>
+                <input v-model="form.chassisAxle" type="text" id="chassisAxle" minlength="2"   maxlength="2"/>
               </div>
 
               <!-- Row Status -->
               <div class="form-group">
                 <label for="rowStatus">Row Status</label>
-                <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1"/>
+                <input v-model="form.rowStatus" type="text" id="rowStatus" minlength="1"  maxlength="1"/>
               </div>
 
               <!-- Site ID -->
               <div class="form-group">
                 <label for="siteId">Site ID</label>
-                <input v-model="form.siteId" type="text" id="siteId" maxlength="3"/>
+                <input v-model="form.siteId" type="text" id="siteId" minlength="3"   maxlength="3"/>
               </div>
 
               <!-- Keterangan -->
@@ -201,16 +217,33 @@ const submitForm = async () => {
             </div>
 
             <!-- Submit Button -->
-            <VButton 
-              type="submit" 
-              class="submit-button" 
-              :disabled="loading"
-            >
+            <VButton type="submit" class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full mt-4" :disabled="loading">
               {{ loading ? "Menyimpan..." : "Simpan Chassis" }}
             </VButton>
           </form>
         </div>
       </div>
+
+      <ConfirmationDialog
+        :visible="showConfirm"
+        @close="showConfirm = false"
+        @confirm="submitForm"
+        :message="'Apakah data chassis sudah sesuai?'"
+      />
+
+      <SuccessDialog
+        :visible="showSuccess"
+        @close="goToList"
+        :message="'Chassis baru berhasil terdaftar!'"
+        redirectTo="/chassis"
+        buttonText="Kembali ke List Chassis"
+      />
+
+      <ErrorDialog
+        :visible="showError"
+        @close="showError = false"
+        :message="errorMessage"
+      />
       <FooterComponent />
     </div>
   </div>

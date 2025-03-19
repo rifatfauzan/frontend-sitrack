@@ -8,6 +8,7 @@ import HeaderComponent from '@/components/Header.vue';
 import FooterComponent from '@/components/Footer.vue';
 import VButton from '@/components/VButton.vue';
 import Skeleton from 'primevue/skeleton';
+import { computed } from 'vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -15,17 +16,14 @@ const chassisStore = useChassisStore();
 const { loading } = storeToRefs(chassisStore);
 const chassisDetail = ref<any>(null);
 
-// Ambil ID dari query parameter
 const chassisId = route.query.id as string;
 
-// Fetch data chassis saat komponen dimuat
 onMounted(async () => {
   if (chassisId) {
     chassisDetail.value = await chassisStore.getChassisById(chassisId);
   }
 });
 
-// Navigasi kembali ke daftar chassis
 const goBack = () => {
   router.push('/chassis');
 };
@@ -40,6 +38,26 @@ const goToEdit = () => {
     router.push({ name: 'edit chassis', query: { id: chassisDetail.value.chassisId } });
   }
 };
+
+const chassisTypeLabel = computed(() => {
+  if (!chassisDetail.value?.chassisType) return '-';
+  switch (chassisDetail.value.chassisType) {
+    case 'F':
+      return 'Flatbed';
+    case 'T':
+      return 'Trailer';
+    default:
+      return chassisDetail.value.chassisType;
+  }
+});
+
+const formatDate = (date) => {
+  if (!date) return '-';
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate = new Date(date).toLocaleDateString('id-ID', options);
+  return formattedDate;
+};
+
 
 //};
 
@@ -76,9 +94,9 @@ const goToEdit = () => {
               <div class="space-y-3">
                 <div class="detail-item"><span>Year</span><strong>{{ chassisDetail.chassisYear || '-' }}</strong></div>
                 <div class="detail-item alt"><span>KIR No.</span><strong>{{ chassisDetail.chassisKIRNo || '-' }}</strong></div>
-                <div class="detail-item"><span>KIR Expiration</span><strong>{{ chassisDetail.chassisKIRDate || '-' }}</strong></div>
+                <div class="detail-item"><span>KIR Expiration</span><strong>{{ formatDate(chassisDetail.chassisKIRDate) || '-' }}</strong></div>
                 <div class="detail-item alt"><span>Chassis No.</span><strong>{{ chassisDetail.chassisNumber || '-' }}</strong></div>
-                <div class="detail-item"><span>Type</span><strong>{{ chassisDetail.chassisType || '-' }}</strong></div>
+                <div class="detail-item"><span>Type</span><strong>{{ chassisTypeLabel }}</strong></div>
                 <div class="detail-item alt"><span>Division</span><strong>{{ chassisDetail.division || '-' }}</strong></div>
                 <div class="detail-item"><span>Department</span><strong>{{ chassisDetail.dept || '-' }}</strong></div>
               </div>
@@ -89,9 +107,9 @@ const goToEdit = () => {
                 <div class="detail-item"><span>Size</span><strong>{{ chassisDetail.chassisSize || '-' }}</strong></div>
                 <div class="detail-item alt"><span>Site</span><strong>{{ chassisDetail.siteId || '-' }}</strong></div>
                 <div class="detail-item"><span>Created by</span><strong>{{ chassisDetail.insertedBy || '-' }}</strong></div>
-                <div class="detail-item alt"><span>Created at</span><strong>{{ chassisDetail.insertedDate || '-' }}</strong></div>
+                <div class="detail-item alt"><span>Created at</span><strong>{{ formatDate(chassisDetail.insertedDate) || '-' }}</strong></div>
                 <div class="detail-item"><span>Updated by</span><strong>{{ chassisDetail.updatedBy || '-' }}</strong></div>
-                <div class="detail-item alt"><span>Updated at</span><strong>{{ chassisDetail.updatedDate || '-' }}</strong></div>
+                <div class="detail-item alt"><span>Updated at</span><strong>{{ formatDate(chassisDetail.updatedDate) || '-' }}</strong></div>
               </div>
             </div>
   
