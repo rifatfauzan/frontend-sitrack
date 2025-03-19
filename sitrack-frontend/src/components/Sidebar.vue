@@ -4,7 +4,7 @@
             <img src="@/assets/SiTrack.png" alt="Logo" class="h-24 w-auto">
         </div>
 
-        <nav :class="['flex-1 ml-4 mr-6 overflow-y-auto no-scrollbar h-full', ['Operasional', 'Mekanik'].includes(authStore.role) ? 'mt-20' : 'mt-16']">
+        <nav :class="['flex-1 ml-4 mr-6 overflow-y-auto no-scrollbar h-full', ['Operasional', 'Mekanik'].includes(authStore.role) ? 'mt-20' : 'mt-12']">
             <ul class="space-y-4 text-[#FAFAFF]">
                 <li>
                     <router-link to="/home" class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item">
@@ -14,24 +14,24 @@
                 </li>
 
                 <li v-if="['Admin', 'Manager', 'Supervisor', 'Operasional'].includes(authStore.role)">
-                    <div class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item">
+                    <router-link to="/customer-booking" class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item">
                         <i class="fas fa-truck"></i>
                         <span>Customer Booking</span>
-                    </div>
+                    </router-link>
                 </li>
 
                 <li v-if="['Admin', 'Manager', 'Supervisor', 'Operasional'].includes(authStore.role)">
-                    <div class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item">
+                    <router-link to="/vehicle-out" class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item">
                         <i class="fas fa-arrow-right"></i>
                         <span>Vehicle Out</span>
-                    </div>
+                    </router-link>
                 </li>
 
                 <li v-if="['Admin', 'Manager', 'Supervisor', 'Operasional'].includes(authStore.role)">
-                    <div class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item">
+                    <router-link to="/vehicle-in" class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item">
                         <i class="fas fa-arrow-left"></i>
                         <span>Vehicle In</span>
-                    </div>
+                    </router-link>
                 </li>
 
                 <li v-if="['Admin', 'Manager', 'Supervisor'].includes(authStore.role)" class="relative">
