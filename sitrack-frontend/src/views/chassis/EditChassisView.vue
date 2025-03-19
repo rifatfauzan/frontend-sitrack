@@ -206,7 +206,7 @@ const submitForm = async () => {
               <!-- Site ID -->
               <div class="form-group">
                 <label for="siteId">Site ID</label>
-                <input v-model="form.siteId" type="text" id="siteId" minlength="3"   maxlength="3"/>
+                <input v-model="form.siteId" type="text" id="siteId" minlength="3"   maxlength="3" readonly/>
               </div>
 
               <!-- Keterangan -->

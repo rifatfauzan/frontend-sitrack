@@ -89,7 +89,7 @@ const formatDate = (date) => {
               </div>
               <VButton title="Edit" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" @click="goToEdit" />
             </div>
-  
+            
             <div class="grid grid-cols-2 gap-4">
               <div class="space-y-3">
                 <div class="detail-item"><span>Year</span><strong>{{ chassisDetail.chassisYear || '-' }}</strong></div>
