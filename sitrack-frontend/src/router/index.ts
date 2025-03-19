@@ -5,6 +5,10 @@ import UserListView from '../views/UserListView.vue'
 import CreateUserView from '../views/CreateUserView.vue'
 import EditUserView from '../views/EditUserView.vue'
 import UnauthorizedView from "../views/UnauthorizedView.vue";
+import CustomerListView from '../views/CustomerListView.vue'
+import CreateCustomerView from '../views/CreateCustomerView.vue'
+import EditCustomerView from '../views/EditCustomerView.vue'
+import CustomerDetailView from '../views/CustomerDetailView.vue'
 
 const decodeTokenPayload = (token: string) => {
   try {
@@ -71,6 +75,33 @@ const router = createRouter({
       name: 'unauthorized',
       component: UnauthorizedView,
       meta: { public: true }
+    },
+
+    {
+      path: '/customers',
+      name: 'customers',
+      component: CustomerListView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/customers/create',
+      name: 'create customers',
+      component: CreateCustomerView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/customers/edit',
+      name: 'edit customers',
+      component: EditCustomerView,
+      meta: { requiresAuth: true },
+      props: (route) => ({ siteId: route.query.siteId }),
+    },
+    {
+      path: '/customers/detail',
+      name: 'detail customers',
+      component: CustomerDetailView,
+      meta: { requiresAuth: true },
+      props: (route) => ({ siteId: route.query.siteId }),
     },
     {
       path: '/',
