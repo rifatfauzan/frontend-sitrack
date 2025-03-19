@@ -17,7 +17,7 @@ export const useUserStore = defineStore('user', {
             this.loading = true;
             this.error = null;
             const authStore = useAuthStore();
-
+        
             try {
                 const response = await fetch(`${API_URL}/api/user/all`, {
                     method: 'GET',
@@ -25,9 +25,9 @@ export const useUserStore = defineStore('user', {
                         'Authorization': `Bearer ${authStore.token}`,
                     },
                 });
-
+        
                 const data: UsersResponse = await response.json();
-                this.users = data.data || [];
+                this.users = (data.data || []).sort((a, b) => a.id - b.id);
             } catch (err) {
                 this.error = `Gagal mengambil data pengguna ${err}`;
             } finally {
@@ -60,7 +60,7 @@ export const useUserStore = defineStore('user', {
 
                 return { success: true, message: "Berhasil menambahkan akun pengguna baru" };
             } catch (err) {
-                this.error = `Gagal menambah akun: ${(err as Error).message}`;
+                this.error = `${(err as Error).message}`;
                 return { success: false, message: this.error };
             } finally {
                 this.loading = false;
@@ -123,12 +123,12 @@ export const useUserStore = defineStore('user', {
 
                 const index = this.users.findIndex((u) => u.id === updatedUser.data.id);
                 if (index !== -1) {
-                    this.users[index] = updatedUser.data;
+                    this.users[index] = { ...this.users[index], ...updatedUser.data };
                 }
 
                 return { success: true, message: 'Berhasil memperbarui user' };
             } catch (err) {
-                this.error = `Gagal memperbarui user: ${(err as Error).message}`;
+                this.error = `${(err as Error).message}`;
                 return { success: false, message: this.error };
             } finally {
                 this.loading = false;
@@ -156,7 +156,7 @@ export const useUserStore = defineStore('user', {
                 this.users = this.users.filter((user) => user.id !== id);
                 return { success: true, message: 'Berhasil menghapus user' };
             } catch (err) {
-                this.error = `Gagal menghapus user: ${(err as Error).message}`;
+                this.error = `${(err as Error).message}`;
                 return { success: false, message: this.error };
             } finally {
                 this.loading = false;

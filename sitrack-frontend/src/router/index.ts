@@ -8,6 +8,28 @@ import CreateSopirView from '@/views/CreateSopirView.vue'
 import ViewallSopirView from '@/views/ViewallSopirView.vue'
 import ViewDetailSopirView from '@/views/ViewDetailSopirView.vue'
 import EditSopirView from '@/views/EditSopirView.vue'
+import UnauthorizedView from "../views/UnauthorizedView.vue";
+import CustomerListView from '../views/CustomerListView.vue'
+import CreateCustomerView from '../views/CreateCustomerView.vue'
+import EditCustomerView from '../views/EditCustomerView.vue'
+import CustomerDetailView from '../views/CustomerDetailView.vue'
+
+const decodeTokenPayload = (token: string) => {
+  try {
+    const payload = token.split('.')[1]
+    return JSON.parse(atob(payload))
+  } catch (e) {
+    console.error('Gagal mendekode token:', e)
+    return null
+  }
+}
+
+const getCurrentUserRole = (): string | null => {
+  const token = localStorage.getItem('token')
+  if (!token) return null
+  const decoded = decodeTokenPayload(token)
+  return decoded?.role || null
+}
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,6 +38,7 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView,
+      meta: { public: true }
     },
     {
       path: '/home',
@@ -27,20 +50,62 @@ const router = createRouter({
       path: '/users',
       name: 'users',
       component: UserListView,
-      meta: { requiresAuth: true }
+      meta: { 
+        requiresAuth: true,
+        authorize: ['Admin']
+      }
     },
     {
       path: '/users/create',
       name: 'create users',
       component: CreateUserView,
-      meta: { requiresAuth: true }
+      meta: { 
+        requiresAuth: true,
+        authorize: ['Admin']
+      }
     },
     {
       path: '/users/edit',
       name: 'edit users',
       component: EditUserView,
-      meta: { requiresAuth: true },
+      meta: { 
+        requiresAuth: true,
+        authorize: ['Admin']
+      },
       props: (route) => ({ id: route.query.id }),
+    },
+    {
+      path: '/unauthorized',
+      name: 'unauthorized',
+      component: UnauthorizedView,
+      meta: { public: true }
+    },
+
+    {
+      path: '/customers',
+      name: 'customers',
+      component: CustomerListView,
+      meta: { requiresAuth: true , authorize: ['Admin', 'Supervisor', 'Manager'] },
+    },
+    {
+      path: '/customers/create',
+      name: 'create customers',
+      component: CreateCustomerView,
+      meta: { requiresAuth: true , authorize: ['Admin', 'Supervisor', 'Manager'] },
+    },
+    {
+      path: '/customers/edit',
+      name: 'edit customers',
+      component: EditCustomerView,
+      meta: { requiresAuth: true , authorize: ['Admin', 'Supervisor', 'Manager'] },
+      props: (route) => ({ siteId: route.query.siteId }),
+    },
+    {
+      path: '/customers/detail',
+      name: 'detail customers',
+      component: CustomerDetailView,
+      meta: { requiresAuth: true , authorize: ['Admin', 'Supervisor', 'Manager'] },
+      props: (route) => ({ siteId: route.query.siteId }),
     },
     {
       path: '/',
@@ -70,24 +135,37 @@ const router = createRouter({
       component: EditSopirView,
       meta: { requiresAuth: true },
       props: true,
-    }
+    },
   ],
 })
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
-  
-  // Jika rute memerlukan autentikasi dan tidak ada token
+  const userRole = getCurrentUserRole()
+
+  // Redirect ke login untuk rute yang memerlukan auth
   if (to.meta.requiresAuth && !token) {
     next({ name: 'login' })
-  } 
-  // Jika sudah login dan mencoba akses halaman login
-  else if (to.name === 'login' && token) {
+    return
+  }
+
+  // Redirect dari login ke home jika sudah login
+  if (to.name === 'login' && token) {
     next({ name: 'home' })
+    return
   }
-  else {
-    next()
+
+  // Cek otorisasi role
+  if (to.meta.authorize) {
+    const requiredRoles = to.meta.authorize as string[]
+    
+    if (!userRole || !requiredRoles.includes(userRole)) {
+      next({ name: 'unauthorized' })
+      return
+    }
   }
+
+  next()
 })
 
 export default router
