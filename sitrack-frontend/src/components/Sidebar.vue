@@ -62,14 +62,14 @@
                     </ul>
                 </li>
 
-                <li v-if="['Admin', 'Manager', 'Supervisor', 'Operasional'].includes(authStore.role)">
+                <li v-if="['Admin', 'Manager', 'Supervisor', 'Operasional', 'Mekanik'].includes(authStore.role)">
                     <div class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item">
                         <i class="fas fa-box"></i>
                         <span>Inventory</span>
                     </div>
                 </li>
 
-                <li v-if="['Admin', 'Manager', 'Supervisor', 'Operasional'].includes(authStore.role)">
+                <li v-if="['Admin', 'Manager', 'Supervisor', 'Operasional', 'Mekanik'].includes(authStore.role)">
                     <div class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item">
                         <i class="fas fa-file-alt"></i>
                         <span>Reporting</span>
