@@ -22,7 +22,6 @@ const vehicleId = route.query.id as string;
 onMounted(async () => {
   if (vehicleId) {
     const response = await truckStore.getTruckById(vehicleId);
-    console.log("📌 API Response:", response);
     truckDetail.value = response;
   }
 });
