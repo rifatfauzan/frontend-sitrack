@@ -12,7 +12,7 @@
             <Skeleton width="100%" height="2rem" class="mb-4" />
           </div>
   
-          <div v-else-if="customer" class="w-full max-w-6xl bg-white p-6 rounded-lg shadow-md">
+          <div v-else-if="customer" class="w-full max-w-6xl bg-white p-6 rounded-lg shadow-md overflow-y-auto">
             <div class="flex items-center justify-between bg-primary text-white px-6 py-4 rounded-lg mb-6">
               <div class="flex items-center space-x-4">
                 <VButton title="Back" class="bg-[#1C5D99] text-white px-4 py-2 rounded" @click="goBack">
