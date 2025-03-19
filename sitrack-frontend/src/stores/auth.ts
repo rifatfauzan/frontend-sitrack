@@ -40,7 +40,9 @@ export const useAuthStore = defineStore('auth', {
                     const payload = data.data.token.split('.')[1]
                     const decodedPayload = JSON.parse(atob(payload))
                     this.username = decodedPayload.username || 'Pengguna'
+                    this.role = decodedPayload.role
                     localStorage.setItem('username', this.username)
+                    localStorage.setItem('role', this.role)
                 } catch (e) {
                     console.error('Failed to extract username from token', e)
                 }
@@ -70,6 +72,7 @@ export const useAuthStore = defineStore('auth', {
                     this.username = 'Pengguna'
                     localStorage.removeItem('token')
                     localStorage.removeItem('username')
+                    localStorage.removeItem('role')
 
                     useToast().success('Logout berhasil')
                     router.push('/')
@@ -80,6 +83,7 @@ export const useAuthStore = defineStore('auth', {
                     this.username = 'Pengguna'
                     localStorage.removeItem('token')
                     localStorage.removeItem('username')
+                    localStorage.removeItem('role')
                     router.push('/')
                 })
         },
@@ -90,7 +94,9 @@ export const useAuthStore = defineStore('auth', {
                     const payload = this.token.split('.')[1]
                     const decodedPayload = JSON.parse(atob(payload))
                     this.username = decodedPayload.username || 'Pengguna'
+                    this.role = decodedPayload.role
                     localStorage.setItem('username', this.username)
+                    localStorage.setItem('role', this.role)
                 } catch (e) {
                     console.error('Failed to decode token', e)
                     this.logout()
