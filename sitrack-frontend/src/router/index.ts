@@ -48,7 +48,7 @@ const router = createRouter({
       path: '/',
       redirect: '/login'
     },
-    // 🚚 Rute untuk Truck Management
+    // Route untuk Truck Management
     {
       path: '/trucks',
       name: 'trucks',

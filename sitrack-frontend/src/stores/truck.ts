@@ -30,10 +30,8 @@ export const useTruckStore = defineStore('truck', {
 
                 const data = await response.json();
                 this.truckList = data.data || [];
-                toast.success(`Berhasil mengambil ${this.truckList.length} truck!`);
             } catch (err) {
                 this.error = `Gagal mengambil data truck: ${err}`;
-                toast.error(this.error);
             } finally {
                 this.loading = false;
             }
@@ -44,7 +42,6 @@ export const useTruckStore = defineStore('truck', {
             this.loading = true;
             this.error = null;
             const authStore = useAuthStore();
-            const toast = useToast();
 
             try {
                 const response = await fetch(`${API_URL}/api/truck/add`, {
@@ -64,11 +61,9 @@ export const useTruckStore = defineStore('truck', {
                 const data: { data: CreateTruckResponse } = await response.json();
                 this.truckList.push({ ...truckData, vehicleId: data.data.vehicleId });
 
-                toast.success("Truck berhasil ditambahkan!");
                 return { success: true, message: "Truck berhasil ditambahkan!" };
             } catch (err) {
                 this.error = `Gagal menambah truck: ${(err as Error).message}`;
-                toast.error(this.error);
                 return { success: false, message: this.error };
             } finally {
                 this.loading = false;
@@ -80,7 +75,6 @@ export const useTruckStore = defineStore('truck', {
             this.loading = true;
             this.error = null;
             const authStore = useAuthStore();
-            const toast = useToast();
 
             try {
                 const response = await fetch(`${API_URL}/api/truck/detail?id=${vehicleId}`, {
@@ -99,7 +93,6 @@ export const useTruckStore = defineStore('truck', {
                 return data.data;
             } catch (err) {
                 this.error = `Gagal mendapatkan data truck: ${(err as Error).message}`;
-                toast.error(this.error);
                 return null;
             } finally {
                 this.loading = false;
@@ -111,10 +104,6 @@ export const useTruckStore = defineStore('truck', {
             this.loading = true;
             this.error = null;
             const authStore = useAuthStore();
-            const toast = useToast();
-        
-            console.log("🚀 Updating truck with ID:", vehicleId);
-            console.log("📦 Data sent to API:", JSON.stringify(truckData, null, 2));
         
             try {
                 const response = await fetch(`${API_URL}/api/truck/update?id=${vehicleId}`, {
@@ -128,7 +117,6 @@ export const useTruckStore = defineStore('truck', {
         
                 if (!response.ok) {
                     const errorData = await response.json();
-                    console.error("❌ Update truck failed:", errorData);
                     throw new Error(errorData.message || 'Gagal memperbarui truck');
                 }
         
@@ -139,12 +127,9 @@ export const useTruckStore = defineStore('truck', {
                     this.truckList[index] = { ...truckData, vehicleId };
                 }
         
-                toast.success("✅ Truck berhasil diperbarui!");
                 return { success: true, message: "Truck berhasil diperbarui!" };
             } catch (err) {
                 this.error = `Gagal memperbarui truck: ${(err as Error).message}`;
-                toast.error(this.error);
-                console.error("🚨 Error updating truck:", err);
                 return { success: false, message: this.error };
             } finally {
                 this.loading = false;

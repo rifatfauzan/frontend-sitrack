@@ -35,6 +35,24 @@ const goToEdit = () => {
 const goBack = () => {
     router.push('/trucks');
 };
+
+const vehicleGroupDescriptions: Record<string, string> = {
+  H: 'H - Heavy Truck',
+  M: 'M - Medium Truck',
+  L: 'L - Light Truck',
+  B: 'B - Box Truck',
+  R: 'R - Refrigerated Truck',
+  T: 'T - Trailer',
+  S: 'S - Special Purpose Truck',
+};
+
+const formatDate = (date) => {
+  if (!date) return '-';
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate = new Date(date).toLocaleDateString('id-ID', options);
+  return formattedDate;
+};
+
 </script>
 
 <template>
@@ -77,6 +95,8 @@ const goBack = () => {
               <div class="detail-item alt"><span>Division</span><strong>{{ truckDetail.division || '-' }}</strong></div>
               <div class="detail-item"><span>Business License Number</span><strong>{{ truckDetail.vehicleBizLicenseNo|| '-' }}</strong></div>
               <div class="detail-item alt"><span>Business License Date</span><strong>{{ truckDetail.vehicleBizLicenseDate|| '-' }}</strong></div>
+              <div class="detail-item"><span>Dispensation Number</span><strong>{{ truckDetail.vehicleDispensationNo|| '-' }}</strong></div>
+              <div class="detail-item alt"><span>Dispensation Date</span><strong>{{ truckDetail.vehicleDispensationDate|| '-' }}</strong></div>
             </div>
 
             <div class="space-y-3">
@@ -86,10 +106,14 @@ const goBack = () => {
               <div class="detail-item alt"><span>Record Status</span><strong>{{ truckDetail.recordStatus || '-' }}</strong></div>
               <div class="detail-item"><span>Row Status</span><strong>{{ truckDetail.rowStatus || '-' }}</strong></div>
               <div class="detail-item alt"><span>Site</span><strong>{{ truckDetail.siteId || '-' }}</strong></div>
+              <div class="detail-item"><span>Fuel Consumption</span><strong>{{ truckDetail.vehicleFuelConsumption|| '-' }}</strong></div>
+              <div class="detail-item alt"><span>Vehicle Group</span><strong>{{truckDetail.vehicleGroup ? 
+                                                                                vehicleGroupDescriptions[truckDetail.vehicleGroup] 
+                                                                                || truckDetail.vehicleGroup: '-'}}</strong></div>              
               <div class="detail-item"><span>Inserted by</span><strong>{{ truckDetail.insertedBy || '-' }}</strong></div>
-              <div class="detail-item alt"><span>Inserted at</span><strong>{{ truckDetail.insertedDate || '-' }}</strong></div>
+              <div class="detail-item alt"><span>Inserted Date</span><strong>{{ formatDate(truckDetail.insertedDate) || '-' }}</strong></div>
               <div class="detail-item"><span>Updated by</span><strong>{{ truckDetail.updatedBy || '-' }}</strong></div>
-              <div class="detail-item alt"><span>Updated at</span><strong>{{ truckDetail.updatedDate || '-' }}</strong></div>
+              <div class="detail-item alt"><span>Updated Date</span><strong>{{ formatDate(truckDetail.updatedDate) || '-' }}</strong></div>
             </div>
           </div>
 
@@ -111,7 +135,6 @@ const goBack = () => {
 </template>
 
 <style scoped>
-/* Styling detail item */
 .detail-item {
   display: flex;
   justify-content: space-between;
@@ -125,7 +148,6 @@ const goBack = () => {
   word-wrap: break-word;
 }
 
-/* Alternatif warna untuk setiap baris */
 .detail-item.alt {
   background-color: #BBCDE5;
 }
@@ -143,7 +165,7 @@ const goBack = () => {
 }
 
 .detail-remarks .label {
-  display: block;  /* Supaya label ada di atas */
+  display: block; 
   font-weight: bold;
   margin-bottom: 4px;
 }
@@ -152,23 +174,21 @@ const goBack = () => {
   display: block;
   font-size: 1rem;
   line-height: 1.5;
-  white-space: pre-wrap;  /* Supaya teks panjang tetap rapi */
+  white-space: pre-wrap;  
 }
 
-/* Warna utama dari desain sistem */
 .bg-primary {
   background-color: #1C5D99;
   
 }
 
-/* Pastikan semua container dapat menyesuaikan isi */
 .grid {
   width: 100%;
 }
 
 .detail-item span {
   flex: 1;
-  white-space: nowrap; /* Pastikan label tetap rapi */
+  white-space: nowrap; 
 }
 
 .detail-item strong {
@@ -178,11 +198,10 @@ const goBack = () => {
   word-break: break-word;
 }
 
-/* Kontainer utama agar bisa mencapai bawah */
 .w-full.max-w-6xl {
-  flex-grow: 1; /* Memastikan dia mengisi ruang yang tersedia */
-  max-height: calc(100vh - 100px); /* Sesuaikan dengan viewport */
-  overflow-y: auto; /* Scroll jika kontennya terlalu panjang */
+  flex-grow: 1; 
+  max-height: calc(100vh - 100px); 
+  overflow-y: auto; 
   display: flex;
   flex-direction: column;
 }

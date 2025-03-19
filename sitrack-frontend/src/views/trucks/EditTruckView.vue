@@ -7,6 +7,9 @@ import Sidebar from '@/components/Sidebar.vue';
 import HeaderComponent from '@/components/Header.vue';
 import FooterComponent from '@/components/Footer.vue';
 import VButton from '@/components/VButton.vue';
+import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
+import SuccessDialog from '@/components/SuccessDialog.vue';
+import ErrorDialog from '@/components/ErrorDialog.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -42,6 +45,8 @@ const form = reactive({
   insertedDate: '',
   updatedBy: '',
   updatedDate: '',
+  vehicleFuelConsumption:'',
+  vehicleGroup: '',
 });
 
 // Ambil data truck berdasarkan ID
@@ -90,6 +95,7 @@ onMounted(async () => {
 
 // Fungsi simpan perubahan
 const saveChanges = async () => {
+  showConfirm.value = false;
   loading.value = true;
   try {
     const response = await truckStore.updateTruck(form.vehicleId, {
@@ -101,17 +107,32 @@ const saveChanges = async () => {
     });
 
     if (response.success) {
-      toast.success("Truck berhasil diperbarui!");
+      showSuccess.value = true;
       router.push('/trucks'); // Redirect ke daftar truck
     } else {
-      toast.error(response.message);
+      errorMessage.value = response.message || "Gagal menyimpan!";
+      showError.value = true;
     }
   } catch (error) {
-    toast.error("Terjadi kesalahan saat memperbarui truck.");
+    errorMessage.value = "Terjadi kesalahan saat menyimpan data!";
+    showError.value = true;
   } finally {
     loading.value = false;
   }
 };
+
+const goToList = () => {
+    showSuccess.value = false;
+    router.push('/trucks');
+  };
+
+const confirmSubmit = () => {
+  showConfirm.value = true;
+};
+const showConfirm = ref(false);
+const showSuccess = ref(false);
+const showError = ref(false);
+const errorMessage = ref("");
 </script>
 
 <template>
@@ -130,7 +151,7 @@ const saveChanges = async () => {
             </div>
           </div>
 
-          <form @submit.prevent="saveChanges">
+          <form @submit.prevent="confirmSubmit">
             <div class="form-grid">
               
               <!-- Vehicle ID (Hidden) -->
@@ -139,25 +160,25 @@ const saveChanges = async () => {
               <!-- Brand -->
               <div class="form-group">
                 <label for="vehicleBrand">Brand</label>
-                <input v-model="form.vehicleBrand" type="text" id="vehicleBrand" required />
+                <input v-model="form.vehicleBrand" type="text" id="vehicleBrand" maxlength="20" required />
               </div>
 
               <!-- Division -->
               <div class="form-group">
                 <label for="division">Division</label>
-                <input v-model="form.division" type="text" id="division" maxlength="2" required />
+                <input v-model="form.division" type="text" id="division" maxlength="2" pattern="\d{2}" title="Division harus 2 digit angka" />
               </div>
 
               <!-- Tahun -->
               <div class="form-group">
                 <label for="vehicleYear">Year</label>
-                <input v-model="form.vehicleYear" type="text" id="vehicleYear" maxlength="4" pattern="\d{4}" required />
+                <input v-model="form.vehicleYear" type="text" id="vehicleYear" maxlength="4" pattern="\d{4}" title="Year harus 4 digit angka" required />
               </div>
 
               <!-- Nomor Plat -->
               <div class="form-group">
                 <label for="vehiclePlateNo">Plate Number</label>
-                <input v-model="form.vehiclePlateNo" type="text" id="vehiclePlateNo" required />
+                <input v-model="form.vehiclePlateNo" type="text" id="vehiclePlateNo" maxlength="10" required />
               </div>
 
               <!-- Nomor STNK -->
@@ -169,7 +190,7 @@ const saveChanges = async () => {
               <!-- Nomor KIR -->
               <div class="form-group">
                 <label for="vehicleKIRNo">KIR No.</label>
-                <input v-model="form.vehicleKIRNo" type="text" id="vehicleKIRNo" required />
+                <input v-model="form.vehicleKIRNo" type="text" id="vehicleKIRNo" maxlength="20" required />
               </div>
 
               <!-- Tanggal KIR -->
@@ -178,34 +199,40 @@ const saveChanges = async () => {
                 <input v-model="form.vehicleKIRDate" type="date" id="vehicleKIRDate" required />
               </div>
 
+              <!-- Site id -->
+              <div class="form-group">
+                <label for="siteId">Vehicle Type</label>
+                <input v-model="form.siteId" type="text" id="siteId" maxlength="3" pattern="^[A-Z]{3}$" title="Site ID max 3 huruf kapital"/>
+              </div>
+
               <!-- Vehicle Type -->
               <div class="form-group">
                 <label for="vehicleType">Vehicle Type</label>
-                <input v-model="form.vehicleType" type="text" id="vehicleType"  />
+                <input v-model="form.vehicleType" type="text" id="vehicleType" maxlength="20"/>
               </div>
 
               <!-- Cylinder -->
               <div class="form-group">
                 <label for="vehicleCylinder">Cylinder</label>
-                <input v-model="form.vehicleCylinder" type="text" id="vehicleCylinder" />
+                <input v-model="form.vehicleCylinder" type="text" id="vehicleCylinder" maxlength="5"/>
               </div>
 
               <!-- Chassis No -->
               <div class="form-group">
                 <label for="vehicleChassisNo">Chassis No.</label>
-                <input v-model="form.vehicleChassisNo" type="text" id="vehicleChassisNo" />
+                <input v-model="form.vehicleChassisNo" type="text" id="vehicleChassisNo" maxlength="20" />
               </div>
 
               <!-- Engine No -->
               <div class="form-group">
                 <label for="vehicleEngineNo">Engine No.</label>
-                <input v-model="form.vehicleEngineNo" type="text" id="vehicleEngineNo" />
+                <input v-model="form.vehicleEngineNo" type="text" id="vehicleEngineNo" maxlength="20"/>
               </div>
 
               <!-- Business License No -->
               <div class="form-group">
                 <label for="vehicleBizLicenseNo">Business License No.</label>
-                <input v-model="form.vehicleBizLicenseNo" type="text" id="vehicleBizLicenseNo" />
+                <input v-model="form.vehicleBizLicenseNo" type="text" id="vehicleBizLicenseNo" maxlength="20"/>
               </div>
 
               <!-- Business License Date -->
@@ -214,30 +241,71 @@ const saveChanges = async () => {
                 <input v-model="form.vehicleBizLicenseDate" type="date" id="vehicleBizLicenseDate" />
               </div>
 
+              <!-- Dispensation No -->
+              <div class="form-group">
+                <label for="vehicleDispensationNo">Vehicle Dispensation No.</label>
+                <input v-model="form.vehicleDispensationNo" type="text" id="vehicleDispensationNo" maxlength="20"/>
+              </div>
+
+              <!-- Dispensation Date -->
+              <div class="form-group">
+                <label for="vehicleDispensationDate">Vehicle Dispensation Date</label>
+                <input v-model="form.vehicleDispensationDate" type="date" id="vehicleDispensationDate" />
+              </div>
+
               <!-- Vehicle Number -->
               <div class="form-group">
                 <label for="vehicleNumber">Vehicle Number</label>
-                <input v-model="form.vehicleNumber" type="text" id="vehicleNumber" maxlength="6" />
+                <input v-model="form.vehicleNumber" type="text" id="vehicleNumber" maxlength="6"  pattern="^\d{1,6}$" title="Vehicle Number max 6 characters"/>
               </div>
 
               <!-- Dept -->
               <div class="form-group">
                 <label for="dept">Dept</label>
-                <input v-model="form.dept" type="text" id="dept" maxlength="2" required />
+                <input v-model="form.dept" type="text" id="dept" maxlength="2" pattern="^[A-Z]{2}$" title="Dept harus 2 huruf kapital" />
               </div>
 
               <!-- Record Status -->
               <div class="form-group">
                 <label for="recordStatus">Record Status</label>
-                <input v-model="form.recordStatus" type="text" id="recordStatus" maxlength="1" required />
+                <input v-model="form.recordStatus" type="text" id="recordStatus" maxlength="1" pattern="[A-C]{1}" title="record status harus huruf kapital A-C" />
               </div>
 
               <!-- Row Status -->
               <div class="form-group">
                 <label for="rowStatus">Row Status</label>
-                <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1" required />
+                <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1" pattern="[A-C]{1}" title="record status harus huruf kapital A-C" />
               </div>
 
+              <!-- Vehicle Fuel Consumption -->
+              <div class="form-group">
+                <label for="vehicleFuelConsumption">Fuel Consumption</label>
+                <input 
+                  v-model="form.vehicleFuelConsumption" 
+                  type="number" 
+                  id="vehicleFuelConsumption"
+                  step="0.1" 
+                  min="0" 
+                  max="999.9"
+                  required
+                />
+              </div>
+
+              <!-- Vehicle Group -->
+              <div class="form-group">
+                <label for="vehicleGroup">Vehicle Group</label>
+                <select v-model="form.vehicleGroup" id="vehicleGroup">
+                  <option value="">Tidak Ada</option>
+                  <option value="H">Heavy Truck</option>
+                  <option value="M">Medium Truck</option>
+                  <option value="L">Light Truck</option>
+                  <option value="B">Box Truck</option>
+                  <option value="R">Refrigerated Truck</option>
+                  <option value="T">Trailer</option>
+                  <option value="S">Special Purpose Truck</option>
+                </select>
+              </div>
+              
               <!-- Keterangan -->
               <div class="form-group full-width">
                 <label for="vehicleRemarks">Remarks</label>
@@ -253,6 +321,26 @@ const saveChanges = async () => {
       </div>
       <FooterComponent />
     </div>
+    <ConfirmationDialog
+      :visible="showConfirm"
+      @close="showConfirm = false"
+      @confirm="saveChanges"
+      :message="'Apakah data truck sudah sesuai?'"
+    />
+
+    <SuccessDialog 
+      :visible="showSuccess" 
+      @close="goToList" 
+      :message="'Truck baru berhasil terdaftar!'" 
+      redirectTo="/trucks"
+      buttonText="Kembali ke List Truck" 
+    />
+
+    <ErrorDialog
+      :visible="showError"
+      @close="showError = false"
+      :message="errorMessage"
+    />
   </div>
 </template>
 

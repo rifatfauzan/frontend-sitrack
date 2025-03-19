@@ -16,14 +16,16 @@ export interface Truck {
     vehicleRemarks?: string;
     siteId?: string;
     vehicleType?: string;
-    division: string; // Division, wajib ada
-    dept: string; // Departemen, default "TR"
-    rowStatus: string; // Status row, default "A"
+    division: string; 
+    dept: string; 
+    rowStatus: string; 
     recordStatus: string; 
-    insertedBy?: string; // User yang memasukkan data (opsional)
-    insertedDate?: Date; // Tanggal data dimasukkan (opsional)
-    updatedBy?: string; // User yang mengupdate data (opsional)
-    updatedDate?: Date; // Tanggal data diupdate (opsional)
+    vehicleNumber?: string;
+    vehicleFuelConsumption: number;
+    insertedBy?: string; 
+    insertedDate?: Date; 
+    updatedBy?: string; 
+    updatedDate?: Date; 
 }
 
 export interface CreateTruckRequest {
@@ -43,10 +45,12 @@ export interface CreateTruckRequest {
     vehicleRemarks?: string;
     siteId?: string;
     vehicleType?: string;
-    division: string; // Division, wajib ada
-    dept: string; // Departemen, default "TR"
-    rowStatus: string; // Status row, default "A"
-    recordStatus: string; 
+    division: string; 
+    dept: string; 
+    rowStatus: string; 
+    recordStatus: string;   
+    vehicleNumber?: string;
+    vehicleFuelConsumption: number;
     insertedBy?: string;
     insertedDate?: Date;
     updatedBy?: string;
@@ -78,10 +82,12 @@ export interface UpdateTruckRequest {
     vehicleRemarks?: string;
     siteId?: string;
     vehicleType?: string;
-    division: string; // Division, wajib ada
-    dept: string; // Departemen, default "TR"
-    rowStatus: string; // Status row, default "A"
-    recordStatus: string; 
+    division: string; 
+    dept: string; 
+    rowStatus: string; 
+    recordStatus: string;   
+    vehicleNumber?: string;
+    vehicleFuelConsumption: number;
     insertedBy?: string;
     insertedDate?: Date;
     updatedBy?: string;
