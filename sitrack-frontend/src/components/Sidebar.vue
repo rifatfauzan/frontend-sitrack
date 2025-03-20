@@ -53,9 +53,11 @@
                                 <span>Customer</span>
                             </router-link>
                         </li>
-                        <li class="flex items-center gap-4 cursor-pointer text-lg sidebar-item">
-                            <i class="fas fa-trailer"></i>
-                            <span>Chassis</span>
+                        <li>
+                            <router-link to="/chassis" class="flex items-center gap-4 cursor-pointer text-lg sidebar-item">
+                                <i class="fas fa-trailer"></i>
+                                <span>Chassis</span>
+                            </router-link>
                         </li>
                         <li>
                             <router-link to="/sopir/viewall" class="flex items-center gap-4 cursor-pointer text-lg sidebar-item">

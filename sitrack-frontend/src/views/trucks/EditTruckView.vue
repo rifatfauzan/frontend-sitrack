@@ -122,7 +122,7 @@ const saveChanges = async () => {
 
 const goToList = () => {
     showSuccess.value = false;
-    router.push({ name: 'truck detail', query: { id: form.vehicleId } });
+    router.push('/trucks');
   };
 
 const confirmSubmit = () => {

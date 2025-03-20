@@ -1,18 +1,22 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
-import UserListView from '../views/UserListView.vue'
-import CreateUserView from '../views/CreateUserView.vue'
-import EditUserView from '../views/EditUserView.vue'
-import CreateSopirView from '@/views/CreateSopirView.vue'
-import ViewallSopirView from '@/views/ViewallSopirView.vue'
-import ViewDetailSopirView from '@/views/ViewDetailSopirView.vue'
-import EditSopirView from '@/views/EditSopirView.vue'
-import UnauthorizedView from "../views/UnauthorizedView.vue";
-import CustomerListView from '../views/CustomerListView.vue'
-import CreateCustomerView from '../views/CreateCustomerView.vue'
-import EditCustomerView from '../views/EditCustomerView.vue'
-import CustomerDetailView from '../views/CustomerDetailView.vue'
+import UserListView from '../views/users/UserListView.vue'
+import CreateUserView from '../views/users/CreateUserView.vue'
+import EditUserView from '../views/users/EditUserView.vue'
+import UnauthorizedView from '../views/UnauthorizedView.vue'
+import ChassisListView from '../views/chassis/ChassisListView.vue'
+import ChassisDetailView from '../views/chassis/ChassisDetailView.vue'
+import CreateChassisView from '../views/chassis/CreateChassisView.vue'
+import EditChassisView from '../views/chassis/EditChassisView.vue'
+import CreateSopirView from '@/views/driver/CreateSopirView.vue'
+import ViewallSopirView from '@/views/driver/ViewallSopirView.vue'
+import ViewDetailSopirView from '@/views/driver/ViewDetailSopirView.vue'
+import EditSopirView from '@/views/driver/EditSopirView.vue'
+import CustomerListView from '../views/customer/CustomerListView.vue'
+import CreateCustomerView from '../views/customer/CreateCustomerView.vue'
+import EditCustomerView from '../views/customer/EditCustomerView.vue'
+import CustomerDetailView from '../views/customer/CustomerDetailView.vue'
 import TruckListView from '@/views/trucks/TruckListView.vue'
 import CreateTruckView from '@/views/trucks/CreateTruckView.vue'
 import TruckDetailView from '@/views/trucks/TruckDetailView.vue'
@@ -84,6 +88,37 @@ const router = createRouter({
       name: 'unauthorized',
       component: UnauthorizedView,
       meta: { public: true }
+    },
+    
+    {
+      path: '/chassis',
+      name: 'view all chassis',
+      component: ChassisListView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/chassis/detail',
+      name: 'detail chassis',
+      component: ChassisDetailView,
+      meta: { requiresAuth: true , authorize: ['Supervisor', 'Manager', 'Admin']},
+      props: (route) => ({ id: route.query.id })
+    },
+    {  
+      path: '/chassis/create',
+      name: 'create chassis',
+      component: CreateChassisView,
+      meta: { requiresAuth: true , authorize: ['Supervisor', 'Manager', 'Admin']},
+    },
+    {
+      path: '/chassis/edit',
+      name: 'edit chassis',
+      component: EditChassisView,
+      meta: { requiresAuth: true , authorize: ['Supervisor', 'Manager', 'Admin']},
+      props: (route) => ({ id: route.query.id }),
+    },
+    {
+      path: '/',
+      redirect: '/login'
     },
 
     {
