@@ -35,7 +35,6 @@ const getCurrentUserRole = (): string | null => {
   return decoded?.role || null
 }
 
-// truck management
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
