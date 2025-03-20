@@ -104,7 +104,7 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { useAuthStore } from '@/stores/auth.ts';
 import { onMounted, ref } from 'vue';
 
@@ -120,7 +120,7 @@ onMounted(() => {
 });
 </script>
 
-<script setup lang="ts">
+<script>
 export default {
     name: 'Sidebar',
 };

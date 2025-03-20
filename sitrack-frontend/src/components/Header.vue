@@ -7,7 +7,7 @@
     </header>
 </template>
 
-<script setup lang="ts">
+<script>
 export default {
     props: {
         title: {
