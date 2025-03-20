@@ -13,7 +13,7 @@
                             </VButton>
                         </div>
 
-                        <form @submit.prevent="editUser" class="bg-white p-6 rounded-lg shadow-md">
+                        <form @submit.prevent="confirmEdit" class="bg-white p-6 rounded-lg shadow-md">
                             <div class="mb-4">
                                 <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
                                     Username
@@ -58,16 +58,43 @@
                             </div>
 
                             <div class="flex items-center justify-end space-x-4">
-                                <VButton title="Delete" class="bg-[#EB5757] hover:bg-[#C64646] text-white px-4 py-2 rounded w-full" @click="deleteUser(userData.id)" />
-                                <VButton title="Update" class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full" @click="editUser" />
+                                <VButton title="Delete" class="bg-[#EB5757] hover:bg-[#C64646] text-white px-4 py-2 rounded w-full" @click="confirmDelete" :disabled="loading">
+                                    {{ loading ? "Menghapus..." : "Delete" }}
+                                </VButton>
+                                <VButton title="Update" class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full" type="submit" :disabled="loading">
+                                    {{ loading ? "Menyimpan..." : "Update" }}
+                                </VButton>
                             </div>
-                            <div v-if="userStore.error" class="text-red-500 mt-4">{{ userStore.error }}</div>
                         </form>
                     </div>
                 </div>
             </div>
             <FooterComponent />
         </div>
+
+        <ConfirmationDialog
+            :visible="showEditConfirm"
+            @close="showEditConfirm = false"
+            @confirm="editUser"
+            :message="'Apakah Anda yakin ingin mengubah data pengguna ini?'"/>
+
+        <ConfirmationDialog
+            :visible="showDeleteConfirm"
+            @close="showDeleteConfirm = false"
+            @confirm="deleteUser"
+            :message="'Apakah Anda yakin ingin menghapus pengguna ini?'"/>
+
+        <SuccessDialog 
+            :visible="showSuccess" 
+            @close="goToList" 
+            :message="successMessage" 
+            redirectTo="/users"
+            buttonText="Kembali ke List Pengguna" />
+
+        <ErrorDialog
+            :visible="showError"
+            @close="showError = false"
+            :message="errorMessage"/>
     </div>
 </template>
 
@@ -76,16 +103,17 @@ import { onMounted, ref } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 import { UpdateUserRequestInterface } from '@/interfaces/user.interfaces';
-import { useToast } from 'vue-toastification';
 import Sidebar from '@/components/Sidebar.vue';
 import HeaderComponent from '@/components/Header.vue';
 import FooterComponent from '@/components/Footer.vue';
 import VButton from '@/components/VButton.vue';
+import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
+import SuccessDialog from '@/components/SuccessDialog.vue';
+import ErrorDialog from '@/components/ErrorDialog.vue';
 
 const userStore = useUserStore();
 const router = useRouter();
 const route = useRoute();
-const toast = useToast();
 const roles = ['Manager', 'Supervisor', 'Operasional', 'Mekanik'];
 
 const userData = ref<UpdateUserRequestInterface>({
@@ -95,17 +123,23 @@ const userData = ref<UpdateUserRequestInterface>({
     role: ''
 });
 
+const loading = ref(false);
+const showEditConfirm = ref(false);
+const showDeleteConfirm = ref(false);
+const showSuccess = ref(false);
+const showError = ref(false);
+const successMessage = ref('');
+const errorMessage = ref('');
+
 onMounted(async () => {
     const userId = Number(route.query.id);
     if (userId) {
         const user = await userStore.getUserById(userId);
         if (user) {
-            userData.value.id = user.id;
-            userData.value.username = user.username;
-            userData.value.role = user.role;
+            userData.value = { ...user, password: '' };
         } else {
-            toast.error('User tidak ditemukan!');
-            router.push('/users');
+            errorMessage.value = 'User tidak ditemukan!';
+            showError.value = true;
         }
     }
 });
@@ -114,27 +148,56 @@ const goBack = () => {
     router.push('/users');
 };
 
+const confirmEdit = () => {
+    showEditConfirm.value = true;
+};
+
+const confirmDelete = () => {
+    showDeleteConfirm.value = true;
+};
+
 const editUser = async () => {
-    const result = await userStore.updateUser(userData.value);
-    if (result.success) {
-        toast.success(result.message);
-        router.push('/users');
-    } else {
-        toast.error(result.message);
+    showEditConfirm.value = false;
+    loading.value = true;
+    try {
+        const result = await userStore.updateUser(userData.value);
+        if (result.success) {
+            successMessage.value = result.message;
+            showSuccess.value = true;
+        } else {
+            errorMessage.value = result.message;
+            showError.value = true;
+        }
+    } catch (err) {
+        errorMessage.value = (err as Error).message;
+        showError.value = true;
+    } finally {
+        loading.value = false;
     }
 };
 
-const deleteUser = async (id: number) => {
-    if (id) {
-        const result = await userStore.deleteUser(id);
+const deleteUser = async () => {
+    showDeleteConfirm.value = false;
+    loading.value = true;
+    try {
+        const result = await userStore.deleteUser(userData.value.id);
         if (result.success) {
-            toast.success(result.message);
-            router.push('/users');
+            successMessage.value = result.message;
+            showSuccess.value = true;
         } else {
-            toast.error(result.message);
+            errorMessage.value = result.message;
+            showError.value = true;
         }
-    } else {
-        toast.error("User ID tidak ditemukan!");
+    } catch (err) {
+        errorMessage.value = (err as Error).message;
+        showError.value = true;
+    } finally {
+        loading.value = false;
     }
+};
+
+const goToList = () => {
+    showSuccess.value = false;
+    router.push('/users');
 };
 </script>
