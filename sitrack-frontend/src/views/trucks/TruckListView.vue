@@ -18,6 +18,8 @@ const truckStore = useTruckStore(); // Gunakan store truck
 // Ambil state dari store
 const { truckList, loading } = storeToRefs(truckStore);
 
+const selectedRow = ref(null);
+
 // Filters
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -87,6 +89,7 @@ const goToDetail = (event: { data: any }) => {
             <div class="table-container">
               <DataTable
                 v-model:filters="filters"
+                v-model:selection="selectedRow"
                 :value="truckList"
                 paginator
                 :rows="10"
@@ -99,6 +102,7 @@ const goToDetail = (event: { data: any }) => {
                 paginatorTemplate="PrevPageLink CurrentPageReport NextPageLink"
                 currentPageReportTemplate="{first} to {last} of {totalRecords} vehicles"
                 class="custom-datatable"
+                selectionMode="single"
                 @rowSelect="goToDetail"
                 :rowClass="() => 'clickable-row'"
               >
