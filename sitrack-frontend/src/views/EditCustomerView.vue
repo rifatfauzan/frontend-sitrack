@@ -27,7 +27,7 @@
                   class="form-input"
                   :placeholder="label"
                   :required="requiredFields.includes(key)"
-                  :readonly="key === 'id'"
+                  :readonly="key === 'id' || key === 'siteId'"
                     :style="{ color: customerData[key] ? '#000' : '#ccc' }"
                 />
                 <span v-if="validationErrors[key]" class="error-text">{{ validationErrors[key] }}</span>
@@ -117,8 +117,8 @@ const showError = ref(false);
 const errorMessage = ref("");
 const customerData = ref({
   id: '',
-  name: '',
   siteId: '',
+  name: '',
   address: '',
   cityDestination: '',
   contractNo: '',
@@ -128,12 +128,12 @@ const customerData = ref({
   tariffs: []
 });
 
-const requiredFields = ['name', 'siteId', 'cityDestination'];
+const requiredFields = ['name', 'cityDestination'];
 
 const fields = {
   id: "Customer ID",
-  name: "Nama Customer",
   siteId: "Site ID",
+  name: "Nama Customer",
   address: "Alamat",
   cityDestination: "Kota Tujuan",
   contractNo: "Nomor Kontrak",
@@ -181,7 +181,6 @@ const goBack = () => {
 
 const validationErrors = ref({
     name: '',
-    siteId: '',
     address: '',
     cityDestination: '',
     contractNo: '',
@@ -199,11 +198,6 @@ const validateForm = () => {
 
   if (customerData.value.name.length > 100) {
     validationErrors.value.name = "Nama Customer maksimal berisi 100 karakter.";
-    isValid = false;
-  }
-
-  if (customerData.value.siteId.length > 10) {
-    validationErrors.value.siteId = "Site ID maksimal berisi 10 karakter.";
     isValid = false;
   }
 
