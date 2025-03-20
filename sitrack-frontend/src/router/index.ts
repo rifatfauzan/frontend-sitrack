@@ -4,6 +4,10 @@ import LoginView from '../views/LoginView.vue'
 import UserListView from '../views/UserListView.vue'
 import CreateUserView from '../views/CreateUserView.vue'
 import EditUserView from '../views/EditUserView.vue'
+import CreateSopirView from '@/views/CreateSopirView.vue'
+import ViewallSopirView from '@/views/ViewallSopirView.vue'
+import ViewDetailSopirView from '@/views/ViewDetailSopirView.vue'
+import EditSopirView from '@/views/EditSopirView.vue'
 import UnauthorizedView from "../views/UnauthorizedView.vue";
 import CustomerListView from '../views/CustomerListView.vue'
 import CreateCustomerView from '../views/CreateCustomerView.vue'
@@ -87,26 +91,26 @@ const router = createRouter({
       path: '/customers',
       name: 'customers',
       component: CustomerListView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true , authorize: ['Admin', 'Supervisor', 'Manager'] },
     },
     {
       path: '/customers/create',
       name: 'create customers',
       component: CreateCustomerView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true , authorize: ['Admin', 'Supervisor', 'Manager'] },
     },
     {
       path: '/customers/edit',
       name: 'edit customers',
       component: EditCustomerView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true , authorize: ['Admin', 'Supervisor', 'Manager'] },
       props: (route) => ({ siteId: route.query.siteId }),
     },
     {
       path: '/customers/detail',
       name: 'detail customers',
       component: CustomerDetailView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true , authorize: ['Admin', 'Supervisor', 'Manager'] },
       props: (route) => ({ siteId: route.query.siteId }),
     },
     // Route untuk Truck Management
@@ -148,6 +152,31 @@ const router = createRouter({
     {
       path: '/',
       redirect: '/login'
+    },{
+      path: '/sopir/add',
+      name: 'add sopir',
+      component: CreateSopirView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']}
+    },
+    {
+      path: '/sopir/viewall',
+      name: 'viewall sopir',
+      component : ViewallSopirView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']}
+    },
+    {
+      path: '/sopir/:driverId',
+      name: 'detail sopir',
+      component: ViewDetailSopirView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']},
+      props: true,
+    },
+    {
+      path: '/sopir/update/:driverId',
+      name: 'update sopir',
+      component: EditSopirView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']},
+      props: true,
     },
   ],
 })
