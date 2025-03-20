@@ -13,6 +13,10 @@ import CustomerListView from '../views/CustomerListView.vue'
 import CreateCustomerView from '../views/CreateCustomerView.vue'
 import EditCustomerView from '../views/EditCustomerView.vue'
 import CustomerDetailView from '../views/CustomerDetailView.vue'
+import TruckListView from '@/views/trucks/TruckListView.vue'
+import CreateTruckView from '@/views/trucks/CreateTruckView.vue'
+import TruckDetailView from '@/views/trucks/TruckDetailView.vue'
+import EditTruckView from '@/views/trucks/EditTruckView.vue'
 
 const decodeTokenPayload = (token: string) => {
   try {
@@ -30,6 +34,8 @@ const getCurrentUserRole = (): string | null => {
   const decoded = decodeTokenPayload(token)
   return decoded?.role || null
 }
+
+// truck management
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -107,6 +113,42 @@ const router = createRouter({
       meta: { requiresAuth: true , authorize: ['Admin', 'Supervisor', 'Manager'] },
       props: (route) => ({ siteId: route.query.siteId }),
     },
+    // Route untuk Truck Management
+    {
+      path: '/trucks',
+      name: 'trucks',
+      component: TruckListView,
+      meta: { requiresAuth: true,
+        authorize: ['Admin','Supervisor','Manager']
+       }
+    },
+    {
+      path: '/trucks/create',
+      name: 'create truck',
+      component: CreateTruckView,
+      meta: { requiresAuth: true,
+        authorize: ['Admin','Supervisor','Manager']
+       }
+    },
+    {
+      path: '/trucks/edit',
+      name: 'edit truck',
+      component: EditTruckView,
+      meta: { requiresAuth: true,
+        authorize: ['Admin','Supervisor','Manager']
+      },
+      props: (route) => ({ id: route.query.id }),
+    },
+    {
+      path: '/trucks/detail',
+      name: 'truck detail',
+      component: TruckDetailView,
+      meta: { requiresAuth: true,
+        authorize: ['Admin','Supervisor','Manager']
+       },
+      props: (route) => ({ id: route.query.id }),
+    },
+
     {
       path: '/',
       redirect: '/login'
