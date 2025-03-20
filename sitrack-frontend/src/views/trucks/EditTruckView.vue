@@ -166,7 +166,7 @@ const errorMessage = ref("");
               <!-- Division -->
               <div class="form-group">
                 <label for="division">Division</label>
-                <input v-model="form.division" type="text" id="division" maxlength="2" pattern="\d{2}" title="Division harus 2 digit angka" />
+                <input v-model="form.division" type="text" id="division" maxlength="2" pattern="\d{2}" title="Division harus 2 digit angka" required/>
               </div>
 
               <!-- Tahun -->
@@ -199,11 +199,9 @@ const errorMessage = ref("");
                 <input v-model="form.vehicleKIRDate" type="date" id="vehicleKIRDate" required />
               </div>
 
-              <!-- Site id -->
-              <div class="form-group">
-                <label for="siteId">Vehicle Type</label>
-                <input v-model="form.siteId" type="text" id="siteId" maxlength="3" pattern="^[A-Z]{3}$" title="Site ID max 3 huruf kapital"/>
-              </div>
+              <!-- Site id hidden-->
+              
+              <input v-model="form.siteId" type="hidden" id="siteId" />
 
               <!-- Vehicle Type -->
               <div class="form-group">
@@ -274,7 +272,7 @@ const errorMessage = ref("");
               <!-- Row Status -->
               <div class="form-group">
                 <label for="rowStatus">Row Status</label>
-                <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1" pattern="[A-C]{1}" title="record status harus huruf kapital A-C" />
+                <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1" pattern="[A-C]{1}" title="row status harus huruf kapital A-C" />
               </div>
 
               <!-- Vehicle Fuel Consumption -->
@@ -287,6 +285,7 @@ const errorMessage = ref("");
                   step="0.1" 
                   min="0" 
                   max="999.9"
+                  title="fuel consumption min 0.0 max 999.9 dengan 1 angka di belakang koma"
                   required
                 />
               </div>

@@ -18,8 +18,14 @@ const truckStore = useTruckStore(); // Gunakan store truck
 // Ambil state dari store
 const { truckList, loading } = storeToRefs(truckStore);
 
+// Filters
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  vehicleId: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+  vehicleBrand: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+  vehicleYear: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+  vehiclePlateNo: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+  vehicleKIRNo: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
 });
 
 // Fetch data truck saat komponen dimuat
@@ -53,7 +59,7 @@ const goToDetail = (event: { data: any }) => {
 /* Tambahkan overflow-x agar tabel tidak terpotong */
 .table-container {
   overflow-x: auto;
-  white-space: nowrap;
+  white-space: auto;
 }
 
 </style>
@@ -85,12 +91,11 @@ const goToDetail = (event: { data: any }) => {
                 paginator
                 :rows="10"
                 dataKey="vehicleId"
-                filterDisplay="menu"
+                filterDisplay="row"
                 :loading="loading"
-                selectionMode="single"
-                :globalFilterFields="['vehicleId', 'vehicleBrand', 'vehicleYear', 'vehiclePlateNo', 'vehicleKIRNo']"
+                :globalFilterFields="['vehicleId', 'vehicleBrand', 'vehiclePlateNo']"
                 stripedRows
-                tableStyle="width: 100%" 
+                tableStyle="width: 100%"
                 paginatorTemplate="PrevPageLink CurrentPageReport NextPageLink"
                 currentPageReportTemplate="{first} to {last} of {totalRecords} vehicles"
                 class="custom-datatable"
@@ -106,11 +111,24 @@ const goToDetail = (event: { data: any }) => {
                   </template>
                 </Column>
 
-                <Column field="vehicleId" header="ID" style="width: 20%" sortable></Column>
-                <Column field="vehicleBrand" header="Brand" style="width: 15%" sortable></Column>
-                <Column field="vehicleYear" header="Year" style="width: 10%" sortable></Column>
-                <Column field="vehiclePlateNo" header="Plat No" style="width: 15%" sortable></Column>
-                <Column field="vehicleKIRNo" header="No. KIR" style="width: 15%" sortable></Column>
+                <Column field="vehicleId" header="ID" style="width: 3rem" sortable >
+                  <template #filter="{ filterModel, filterCallback }">
+                    <InputText v-model="filterModel.value" @input="filterCallback()" placeholder="Search ID..." />
+                  </template>
+                </Column>
+
+                <Column field="vehicleBrand" header="Brand" style="width: 3rem" sortable>
+                  <template #filter="{ filterModel, filterCallback }">
+                    <InputText v-model="filterModel.value" @input="filterCallback()" placeholder="Search Brand..." />
+                  </template>
+                </Column> 
+
+                <Column field="vehiclePlateNo" header="Plat No" style="width: 3rem" sortable>
+                  <template #filter="{ filterModel, filterCallback }">
+                    <InputText v-model="filterModel.value" @input="filterCallback()" placeholder="Search Plat No..." />
+                  </template>
+                </Column>
+
               </DataTable>
             </div>
 
