@@ -6,11 +6,18 @@ import Sidebar from '@/components/Sidebar.vue';
 import HeaderComponent from '@/components/Header.vue';
 import FooterComponent from '@/components/Footer.vue';
 import VButton from '@/components/VButton.vue';
+import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
+import SuccessDialog from '@/components/SuccessDialog.vue';
+import ErrorDialog from '@/components/ErrorDialog.vue';
 import router from '@/router';
 
 const sopirStore = useSopirStore();
 const toast = useToast();
 const loading = ref(false);
+const showConfirm = ref(false);
+const showSuccess = ref(false);
+const showError = ref(false);
+const errorMessage = ref("");
 
 // State Form
 const form = reactive({
@@ -36,9 +43,12 @@ const goBack = () => {
   router.push('/sopir/viewall');
 };
 
+const submitForm = () => {
+  showConfirm.value = true;
+};
 // Fungsi submit form
-const submitForm = async () => {
-  loading.value = true;
+const onSubmitForm = async () => {
+  loading.value = true, showConfirm.value = true;
   try {
 
     const response = await sopirStore.addSopir({
@@ -59,11 +69,13 @@ const submitForm = async () => {
     });
 
     if (response.success) {
+      showSuccess.value = true;
       toast.success(response.message);
       resetForm();
       router.push('/sopir/viewall'); 
     } else {
       toast.error(response.message);
+      showError.value = true;
     }
   } catch (error) {
     toast.error('Terjadi kesalahan!');
@@ -205,6 +217,23 @@ const resetForm = () => {
       </div>
       <FooterComponent />
     </div>
+    <ConfirmationDialog
+        :visible="showConfirm"
+        @close="showConfirm = false"
+        @confirm="onSubmitForm"
+        :message="'Apakah data Sopir sudah sesuai?'"/>
+
+      <SuccessDialog 
+        :visible="showSuccess" 
+        @close="goBack" 
+        :message="'Sopir baru berhasil terdaftar!'" 
+        redirectTo="/sopir/viewall"
+        buttonText="Kembali ke List Sopir" />
+
+      <ErrorDialog
+        :visible="showError"
+        @close="showError = false"
+        :message="errorMessage"/>
   </div>
 </template>
 

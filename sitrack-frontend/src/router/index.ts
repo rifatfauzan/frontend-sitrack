@@ -114,26 +114,26 @@ const router = createRouter({
       path: '/sopir/add',
       name: 'add sopir',
       component: CreateSopirView,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']}
     },
     {
       path: '/sopir/viewall',
       name: 'viewall sopir',
       component : ViewallSopirView,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']}
     },
     {
       path: '/sopir/:driverId',
       name: 'detail sopir',
       component: ViewDetailSopirView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']},
       props: true,
     },
     {
       path: '/sopir/update/:driverId',
       name: 'update sopir',
       component: EditSopirView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']},
       props: true,
     },
   ],

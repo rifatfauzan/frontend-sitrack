@@ -6,6 +6,9 @@ import Sidebar from '@/components/Sidebar.vue';
 import HeaderComponent from '@/components/Header.vue';
 import FooterComponent from '@/components/Footer.vue';
 import VButton from '@/components/VButton.vue';
+import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
+import SuccessDialog from '@/components/SuccessDialog.vue';
+import ErrorDialog from '@/components/ErrorDialog.vue';
 import router from '@/router';
 import { useRoute } from 'vue-router';
 
@@ -13,6 +16,10 @@ const sopirStore = useSopirStore();
 const toast = useToast();
 const loading = ref(false);
 const route = useRoute();
+const showConfirm = ref(false);
+const showSuccess = ref(false);
+const showError = ref(false);
+const errorMessage = ref("");
 
 // State Form
 const form = reactive({
@@ -76,9 +83,12 @@ const goBack = () => {
   router.push('/sopir/viewall');
 };
 
+const submitForm = () => {
+  showConfirm.value = true;
+};
 // Fungsi submit form
-const submitForm = async () => {
-  loading.value = true;
+const onSubmitForm = async () => {
+  loading.value = true, showConfirm.value = true;
   try {
     const response = await sopirStore.updateSopir(form.driverId,{
         driverName: form.driverName,
@@ -226,6 +236,23 @@ const submitForm = async () => {
       </div>
       <FooterComponent />
     </div>
+    <ConfirmationDialog
+        :visible="showConfirm"
+        @close="showConfirm = false"
+        @confirm="onSubmitForm"
+        :message="'Apakah data Sopir sudah sesuai?'"/>
+
+      <SuccessDialog 
+        :visible="showSuccess" 
+        @close="goBack" 
+        :message="'Berhasil Memperbarui Data Sopir!'" 
+        redirectTo="/sopir/viewall"
+        buttonText="Kembali ke List Sopir" />
+
+      <ErrorDialog
+        :visible="showError"
+        @close="showError = false"
+        :message="errorMessage"/>
   </div>
 </template>
 

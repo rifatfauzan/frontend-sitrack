@@ -114,13 +114,13 @@ onMounted(async () => {
                         
                         <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header">
                             <template #body="{ data, field }">
-                                <div v-if="field === 'driverId'">
+                                <div v-if="field === 'driverId'" sortable>
                                     {{ formatDriverId(data.driverId) }}
                                 </div>
-                                <div v-else-if="field === 'driverJoinDate'">
+                                <div v-else-if="field === 'driverJoinDate'" sortable>
                                     {{ formatJoinDate(data.driverJoinDate) }}
                                 </div>
-                                <div v-else>
+                                <div v-else sortable>
                                     {{ data[field] }}
                                 </div>
                             </template>
