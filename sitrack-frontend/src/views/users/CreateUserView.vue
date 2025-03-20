@@ -93,7 +93,7 @@
     </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { defineComponent, ref } from 'vue';
 import Sidebar from '@/components/Sidebar.vue';
 import HeaderComponent from '@/components/Header.vue';
