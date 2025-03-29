@@ -41,9 +41,11 @@
                         <i class="fas fa-chevron-down pr-8 transition-opacity duration-300 mb-6" :class="{ 'opacity-100': showReferenceMenu, 'opacity-0': !showReferenceMenu }"></i>
                     </div>
                     <ul v-if="showReferenceMenu" class="ml-6 mt-2 space-y-2">
-                        <li class="flex items-center gap-4 cursor-pointer text-lg sidebar-item">
-                            <i class="fas fa-truck"></i>
-                            <span>Truck</span>
+                        <li>
+                            <router-link to="/trucks"class="flex items-center gap-4 cursor-pointer text-lg sidebar-item">
+                                <i class="fas fa-truck"></i>
+                                <span>Truck</span>
+                            </router-link>
                         </li>
                         <li>
                             <router-link to="/customers" class="flex items-center gap-4 cursor-pointer text-lg sidebar-item">
@@ -51,9 +53,11 @@
                                 <span>Customer</span>
                             </router-link>
                         </li>
-                        <li class="flex items-center gap-4 cursor-pointer text-lg sidebar-item">
-                            <i class="fas fa-trailer"></i>
-                            <span>Chassis</span>
+                        <li>
+                            <router-link to="/chassis" class="flex items-center gap-4 cursor-pointer text-lg sidebar-item">
+                                <i class="fas fa-trailer"></i>
+                                <span>Chassis</span>
+                            </router-link>
                         </li>
                         <li>
                             <router-link to="/sopir/viewall" class="flex items-center gap-4 cursor-pointer text-lg sidebar-item">
