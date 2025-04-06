@@ -39,7 +39,7 @@ const form = reactive({
   rowStatus: 'A',
   division: '01',
   vehicleNumber: '',
-  vehicleFuelConsumption: 0.0,
+  vehicleFuelConsumption: "0.0",
   vehicleGroup: '',
 });
 
@@ -75,7 +75,6 @@ const submitForm = async () => {
 const goBack = () => {
   router.push('/trucks');
 };
-
 
 // Fungsi reset form
 const resetForm = () => {
@@ -274,7 +273,7 @@ const errorMessage = ref("");
                   step="0.1" 
                   min="0" 
                   max="999.9"
-                  title="fuel consumption min 0.0 max 999.9 dengan 1 angka di belakang koma"
+                  title="fuel consumption min 0.0 max 99.9 dengan 1 angka di belakang koma"
                   required
                 />
               </div>

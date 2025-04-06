@@ -284,7 +284,7 @@ const errorMessage = ref("");
                   step="0.1" 
                   min="0" 
                   max="999.9"
-                  title="fuel consumption min 0.0 max 999.9 dengan 1 angka di belakang koma"
+                  title="fuel consumption min 0.0 max 99.9 dengan 1 angka di belakang koma"
                   required
                 />
               </div>
@@ -329,7 +329,7 @@ const errorMessage = ref("");
     <SuccessDialog 
       :visible="showSuccess" 
       @close="goToList" 
-      :message="'Truck baru berhasil terdaftar!'" 
+      :message="'Truck berhasil diupdate'" 
       buttonText="Kembali ke List Truck" 
     />
 
