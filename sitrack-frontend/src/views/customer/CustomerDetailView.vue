@@ -12,7 +12,7 @@
             <Skeleton width="100%" height="2rem" class="mb-4" />
           </div>
   
-          <div v-else-if="customer" class="w-full max-w-6xl bg-white p-6 rounded-lg shadow-md">
+          <div v-else-if="customer" class="w-full max-w-6xl bg-white p-6 rounded-lg shadow-md overflow-y-auto">
             <div class="flex items-center justify-between bg-primary text-white px-6 py-4 rounded-lg mb-6">
               <div class="flex items-center space-x-4">
                 <VButton title="Back" class="bg-[#1C5D99] text-white px-4 py-2 rounded" @click="goBack">
@@ -148,14 +148,14 @@ const formatDate = (date) => {
 
 const formatRupiah = (angka) => {
   if (!angka) return "Rp0,00";
-  let rupiah = angka.toString().replace(/[^,\d]/g, "");
-  let split = rupiah.split(",");
-  let sisa = split[0].length % 3;
+  const rupiah = angka.toString().replace(/[^,\d]/g, "");
+  const split = rupiah.split(",");
+  const sisa = split[0].length % 3;
   let rupiahFormatted = split[0].substr(0, sisa);
-  let ribuan = split[0].substr(sisa).match(/\d{3}/g);
+  const ribuan = split[0].substr(sisa).match(/\d{3}/g);
 
   if (ribuan) {
-    let separator = sisa ? "." : "";
+    const separator = sisa ? "." : "";
     rupiahFormatted += separator + ribuan.join(".");
   }
 
