@@ -22,12 +22,7 @@ const selectedRow = ref(null);
 
 // Filters
 const filters = ref({
-  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  vehicleId: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-  vehicleBrand: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-  vehicleYear: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-  vehiclePlateNo: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-  vehicleKIRNo: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS }
 });
 
 // Fetch data truck saat komponen dimuat
@@ -91,15 +86,16 @@ const goToDetail = (event: { data: any }) => {
                 v-model:filters="filters"
                 v-model:selection="selectedRow"
                 :value="truckList"
-                paginator
+                :paginator="true"
                 :rows="10"
+                :rowsPerPageOptions="[5, 10, 20, 50]"
                 dataKey="vehicleId"
                 filterDisplay="row"
                 :loading="loading"
                 :globalFilterFields="['vehicleId', 'vehicleBrand', 'vehiclePlateNo']"
                 stripedRows
                 tableStyle="width: 100%"
-                paginatorTemplate="PrevPageLink CurrentPageReport NextPageLink"
+                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
                 currentPageReportTemplate="{first} to {last} of {totalRecords} vehicles"
                 class="custom-datatable"
                 selectionMode="single"
@@ -116,21 +112,15 @@ const goToDetail = (event: { data: any }) => {
                 </Column>
 
                 <Column field="vehicleId" header="ID" style="width: 3rem" sortable >
-                  <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" @input="filterCallback()" placeholder="Search ID..." />
-                  </template>
+
                 </Column>
 
                 <Column field="vehicleBrand" header="Brand" style="width: 3rem" sortable>
-                  <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" @input="filterCallback()" placeholder="Search Brand..." />
-                  </template>
+
                 </Column> 
 
                 <Column field="vehiclePlateNo" header="Plat No" style="width: 3rem" sortable>
-                  <template #filter="{ filterModel, filterCallback }">
-                    <InputText v-model="filterModel.value" @input="filterCallback()" placeholder="Search Plat No..." />
-                  </template>
+
                 </Column>
 
               </DataTable>
