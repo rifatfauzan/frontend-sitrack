@@ -23,12 +23,13 @@
               paginator
               :rows="10"
               dataKey="id"
-              filterDisplay="row"
+              :rowsPerPageOptions="[5, 10, 20]"
+              filterDisplay="menu"
               :loading="loading"
               :globalFilterFields="['name', 'id', 'address', 'siteId']"
               stripedRows
               tableStyle="min-width: 60rem"
-              paginatorTemplate="PrevPageLink CurrentPageReport NextPageLink"
+              paginatorTemplate="RowsPerPageDropdown PrevPageLink CurrentPageReport NextPageLink"
               currentPageReportTemplate="{first} to {last} of {totalRecords} customers"
               class="custom-datatable"
               selectionMode="single"
@@ -87,7 +88,7 @@
 
   const sortedCustomers = computed(() => {
     return customerStore.customers.sort((a, b) => {
-      return a.name.localeCompare(b.name);
+      return a.id.localeCompare(b.id);
     });
   });
 
