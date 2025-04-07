@@ -109,8 +109,8 @@ const formatDate = (date) => {
               <div class="detail-item alt"><span>Vehicle Group</span><strong>{{truckDetail.vehicleGroup ? 
                                                                                 vehicleGroupDescriptions[truckDetail.vehicleGroup] 
                                                                                 || truckDetail.vehicleGroup: '-'}}</strong></div>              
-              <div class="detail-item"><span>Inserted by</span><strong>{{ truckDetail.insertedBy || '-' }}</strong></div>
-              <div class="detail-item alt"><span>Inserted Date</span><strong>{{ formatDate(truckDetail.insertedDate) || '-' }}</strong></div>
+              <div class="detail-item"><span>Created by</span><strong>{{ truckDetail.insertedBy || '-' }}</strong></div>
+              <div class="detail-item alt"><span>Created Date</span><strong>{{ formatDate(truckDetail.insertedDate) || '-' }}</strong></div>
               <div class="detail-item"><span>Updated by</span><strong>{{ truckDetail.updatedBy || '-' }}</strong></div>
               <div class="detail-item alt"><span>Updated Date</span><strong>{{ formatDate(truckDetail.updatedDate) || '-' }}</strong></div>
             </div>
