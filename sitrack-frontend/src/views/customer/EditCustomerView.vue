@@ -18,42 +18,46 @@
           <form @submit.prevent="confirmUpdate">
             <div class="form-grid">
               <div class="form-group">
-                  <label for="name">Nama Customer<span class="required">*</span></label>
-                  <input class="placeholder-gray-400" v-model="form.name" type="text" id="name" maxlength="100" placeholder="Nama Customer" required />
-                </div>
-                <div class="form-group">
-                  <label for="siteId">Site ID<span class="required">*</span></label>
-                  <input class="placeholder-gray-400" v-model="form.siteId" type="text" id="siteId" minlength="3" maxlength="3" placeholder="Site ID" readonly />
-                </div>
-                <div class="form-group">
-                  <label for="address">Alamat</label>
-                  <input class="placeholder-gray-400" v-model="form.address" id="address" maxlength="100" placeholder="Alamat">
-                </div>
-                <div class="form-group">
-                  <label for="cityDestination">Kota Tujuan<span class="required">*</span></label>
-                  <input class="placeholder-gray-400" v-model="form.cityDestination" type="text" id="cityDestination" maxlength="100" placeholder="Kota Tujuan" required />
-                </div>
-                <div class="form-group">
-                  <label for="contractNo">Nomor Kontrak</label>
-                  <input class="placeholder-gray-400" v-model="form.contractNo" type="text" id="contractNo" maxlength="20" placeholder="Nomor Kontrak"/>
-                </div>
-                <div class="form-group">
-                  <label for="cityOrigin">Kota Asal</label>
-                  <input class="placeholder-gray-400" v-model="form.cityOrigin" type="text" id="cityOrigin" maxlength="100" placeholder="Kota Asal"/>
-                </div>
-                <div class="form-group">
-                  <label for="commodity">Komoditas</label>
-                  <input class="placeholder-gray-400" v-model="form.commodity" type="text" id="commodity" maxlength="50" placeholder="Komoditas"/>
-                </div>
-                <div class="form-group">
-                  <label for="moveType">Tipe Perpindahan</label>
-                  <select v-model="form.moveType" id="moveType">
-                    <option value="NORMAL">NORMAL</option>
-                    <option value="REPO">REPO</option>
-                    <option value="OFFHERE">OFFHERE</option>
-                    <option value="KADE">KADE</option>
-                  </select> 
-                </div>
+                <label for="name">ID Customer</label>
+                <input class="placeholder-gray-400" v-model="form.id" type="text" id="id" maxlength="100" placeholder="ID Customer" readonly />
+              </div>
+              <div class="form-group">
+                <label for="siteId">Site ID<span class="required">*</span></label>
+                <input class="placeholder-gray-400" v-model="form.siteId" type="text" id="siteId" minlength="3" maxlength="3" placeholder="Site ID" readonly />
+              </div>
+              <div class="form-group">
+                <label for="name">Nama Customer<span class="required">*</span></label>
+                <input class="placeholder-gray-400" v-model="form.name" type="text" id="name" maxlength="100" placeholder="Nama Customer" required />
+              </div>
+              <div class="form-group">
+                <label for="cityDestination">Kota Tujuan<span class="required">*</span></label>
+                <input class="placeholder-gray-400" v-model="form.cityDestination" type="text" id="cityDestination" maxlength="100" placeholder="Kota Tujuan" required />
+              </div>
+              <div class="form-group">
+                <label for="address">Alamat</label>
+                <input class="placeholder-gray-400" v-model="form.address" id="address" maxlength="100" placeholder="Alamat">
+              </div>
+              <div class="form-group">
+                <label for="contractNo">Nomor Kontrak</label>
+                <input class="placeholder-gray-400" v-model="form.contractNo" type="text" id="contractNo" maxlength="20" placeholder="Nomor Kontrak"/>
+              </div>
+              <div class="form-group">
+                <label for="cityOrigin">Kota Asal</label>
+                <input class="placeholder-gray-400" v-model="form.cityOrigin" type="text" id="cityOrigin" maxlength="100" placeholder="Kota Asal"/>
+              </div>
+              <div class="form-group">
+                <label for="commodity">Komoditas</label>
+                <input class="placeholder-gray-400" v-model="form.commodity" type="text" id="commodity" maxlength="50" placeholder="Komoditas"/>
+              </div>
+              <div class="form-group">
+                <label for="moveType">Tipe Perpindahan</label>
+                <select v-model="form.moveType" id="moveType">
+                  <option value="NORMAL">NORMAL</option>
+                  <option value="REPO">REPO</option>
+                  <option value="OFFHERE">OFFHERE</option>
+                  <option value="KADE">KADE</option>
+                </select> 
+              </div>
             </div>
 
             <h2 class="text-xl font-bold text-[#1C5D99] mt-6 mb-4">Tariff</h2>
