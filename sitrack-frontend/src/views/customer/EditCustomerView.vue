@@ -259,14 +259,14 @@ const updateCustomer = async () => {
 const formatRupiah = (angka) => {
   if (!angka) return "Rp0,00";
 
-  let rupiah = angka.toString().replace(/[^,\d]/g, "");
-  let split = rupiah.split(",");
-  let sisa = split[0].length % 3;
+  const rupiah = angka.toString().replace(/[^,\d]/g, "");
+  const split = rupiah.split(",");
+  const sisa = split[0].length % 3;
   let rupiahFormatted = split[0].substr(0, sisa);
-  let ribuan = split[0].substr(sisa).match(/\d{3}/g);
+  const ribuan = split[0].substr(sisa).match(/\d{3}/g);
 
   if (ribuan) {
-    let separator = sisa ? "." : "";
+    const separator = sisa ? "." : "";
     rupiahFormatted += separator + ribuan.join(".");
   }
 

@@ -108,7 +108,6 @@ const saveChanges = async () => {
 
     if (response.success) {
       showSuccess.value = true;
-      router.push('/trucks'); // Redirect ke daftar truck
     } else {
       errorMessage.value = response.message || "Gagal menyimpan!";
       showError.value = true;
@@ -331,7 +330,6 @@ const errorMessage = ref("");
       :visible="showSuccess" 
       @close="goToList" 
       :message="'Truck baru berhasil terdaftar!'" 
-      redirectTo="/trucks"
       buttonText="Kembali ke List Truck" 
     />
 
