@@ -50,13 +50,8 @@
                 <input class="placeholder-gray-400" v-model="form.commodity" type="text" id="commodity" maxlength="50" placeholder="Komoditas"/>
               </div>
               <div class="form-group">
-                <label for="moveType">Tipe Perpindahan</label>
-                <select v-model="form.moveType" id="moveType">
-                  <option value="NORMAL">NORMAL</option>
-                  <option value="REPO">REPO</option>
-                  <option value="OFFHERE">OFFHERE</option>
-                  <option value="KADE">KADE</option>
-                </select> 
+                <label for="commission">Komisi<span class="required">*</span></label>
+                <input class="placeholder-gray-400" v-model.number="form.commission" type="number" id="commission" min="0" step="0.01" placeholder="Rp0,00" required/>
               </div>
             </div>
 
@@ -64,7 +59,8 @@
             <table v-if="form.tariffs.length" class="tariff-table">
               <thead>
                 <tr>
-                  <th>Type</th>
+                  <th>Chassis Type</th>
+                  <th>Move Type</th>
                   <th>Std Tariff</th>
                   <th>Insurance</th>
                   <th>Tips</th>
@@ -75,9 +71,17 @@
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody>
+                <tbody>
                 <tr v-for="(tariff, index) in form.tariffs" :key="index">
-                  <td><input v-model="tariff.type" class="tariff-input" :style="{ color: tariff.type ? '#000' : '#ccc' }" placeholder="Type" /></td>
+                  <td style="width: 7%;"><input v-model="tariff.chassisType" class="tariff-input" :style="{ color: tariff.chassisType ? '#000' : '#ccc' }" placeholder="Type" /></td>
+                  <td style="width: 15%;">
+                    <select v-model="tariff.moveType" class="tariff-input" :style="{ color: tariff.moveType ? '#000' : '#ccc' }">
+                      <option value="NORMAL">NORMAL</option>
+                      <option value="REPO">REPO</option>
+                      <option value="OFFHERE">OFFHERE</option>
+                      <option value="KADE">KADE</option>
+                    </select>
+                  </td>
                   <td><input v-model.number="tariff.stdTariff" type="number" class="tariff-input" :style="{ color: tariff.stdTariff ? '#000' : '#ccc' }" placeholder="Std Tariff" /></td>
                   <td><input v-model.number="tariff.insurance" type="number" class="tariff-input" :style="{ color: tariff.insurance ? '#000' : '#ccc' }" placeholder="Insurance" /></td>
                   <td><input v-model.number="tariff.tips" type="number" class="tariff-input" :style="{ color: tariff.tips ? '#000' : '#ccc' }" placeholder="Tips" /></td>
@@ -87,7 +91,7 @@
                   <td class="tariff-total">{{ formatRupiah(calculateTotal(tariff)) }}</td>
                   <td><VButton @click="removeTariff(index)" class="delete-tariff">Hapus</VButton></td>
                 </tr>
-              </tbody>
+                </tbody>
             </table>
             <VButton @click="addTariff" class="add-tariff">+ Tambah Tarif</VButton>
             <VButton type="submit" class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full mt-4" :disabled="loading">
@@ -149,10 +153,11 @@ const form = reactive({
   contractNo: '',
   cityOrigin: '',
   commodity: '',
-  moveType: '',
+  commission: 0,
   tariffs: [
     {
-      type: '',
+      chassisType: '',
+      moveType: '',
       stdTariff: 0,
       insurance: 0,
       tips: 0,
@@ -175,7 +180,8 @@ onMounted(async () => {
 
 const addTariff = () => {
   form.tariffs.push({
-    type: '',
+    chassisType: '',
+    moveType: '',
     stdTariff: 0,
     insurance: 0,
     tips: 0,
@@ -313,12 +319,6 @@ const formatRupiah = (angka: number | string) => {
 
   .back-button i {
     font-size: 1.2rem;
-  }
-
-  .error-text {
-    color: #EB5757;
-    font-size: 0.8rem;
-    margin-top: 5px;
   }
 
   .tariff-table {
