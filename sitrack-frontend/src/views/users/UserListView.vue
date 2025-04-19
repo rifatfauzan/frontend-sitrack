@@ -22,13 +22,14 @@
               paginator
               :rows="10"
               dataKey="id"
-              filterDisplay="row"
+              :rowsPerPageOptions="[5, 10, 20]" 
+              filterDisplay="menu"
               :loading="loading"
               :globalFilterFields="['username', 'role']"
               stripedRows
               tableStyle="min-width: 50rem"
-              paginatorTemplate="PrevPageLink CurrentPageReport NextPageLink"
-              currentPageReportTemplate="{first} to {last} of {totalRecords} users"
+              paginatorTemplate="RowsPerPageDropdown PrevPageLink CurrentPageReport NextPageLink"
+              currentPageReportTemplate="{first} to {last}"
               class="custom-datatable"
             >
               <template #empty> No users found. </template>
@@ -44,27 +45,11 @@
                 <template #body="{ data }">
                   {{ data.username }}
                 </template>
-                <template #filter="{ filterModel, filterCallback }">
-                  <InputText
-                    v-model="filterModel.value"
-                    type="text"
-                    @input="filterCallback()"
-                    placeholder="Search by username..."
-                  />
-                </template>
               </Column>
 
               <Column field="role" header="Role" style="min-width: 12rem" sortable>
                 <template #body="{ data }">
                   {{ data.role }}
-                </template>
-                <template #filter="{ filterModel, filterCallback }">
-                  <InputText
-                    v-model="filterModel.value"
-                    type="text"
-                    @input="filterCallback()"
-                    placeholder="Search by role..."
-                  />
                 </template>
               </Column>
 

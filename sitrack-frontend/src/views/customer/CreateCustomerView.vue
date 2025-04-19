@@ -3,8 +3,8 @@
       <Sidebar />
       <div class="flex-1 flex flex-col min-h-screen">
         <HeaderComponent title="Buat Customer" />
-        <div class="flex-1 p-6 main-content flex justify-center">
-          <div class="container mx-auto max-w-4xl bg-white p-6 rounded-lg shadow-md">
+        <div class="flex-1 p-4 main-content overflow-auto">
+          <div class="container mx-auto max-w-4xl bg-white p-6 rounded shadow">
             
             <div class="header-container">
               <div class="header-content">
@@ -17,19 +17,37 @@
   
             <form @submit.prevent="confirmSubmit">
               <div class="form-grid">
-                <div class="form-group" v-for="(label, key) in fields" :key="key">
-                  <label :for="key">{{ label }}</label>
-                  <input
-                    v-model="customerData[key]"
-                    :id="key"
-                    type="text"
-                    class="form-input"
-                    :placeholder="label"
-                    :required="requiredFields.includes(key)"
-                    :readonly="key === 'id'"
-                    :style="{ color: customerData[key] ? '#000' : '#ccc' }"
-                  />
-                  <span v-if="validationErrors[key]" class="error-text">{{ validationErrors[key] }}</span>
+                <div class="form-group">
+                  <label for="name">Nama Customer<span class="required">*</span></label>
+                  <input class="placeholder-gray-400" v-model="form.name" type="text" id="name" maxlength="100" placeholder="Nama Customer" required />
+                </div>
+                <div class="form-group">
+                  <label for="siteId">Site ID<span class="required">*</span></label>
+                  <input class="placeholder-gray-400" v-model="form.siteId" type="text" id="siteId" minlength="3" maxlength="3" placeholder="Site ID" required />
+                </div>
+                <div class="form-group">
+                  <label for="address">Alamat</label>
+                  <input class="placeholder-gray-400" v-model="form.address" id="address" maxlength="100" placeholder="Alamat">
+                </div>
+                <div class="form-group">
+                  <label for="cityDestination">Kota Tujuan<span class="required">*</span></label>
+                  <input class="placeholder-gray-400" v-model="form.cityDestination" type="text" id="cityDestination" maxlength="100" placeholder="Kota Tujuan" required />
+                </div>
+                <div class="form-group">
+                  <label for="contractNo">Nomor Kontrak</label>
+                  <input class="placeholder-gray-400" v-model="form.contractNo" type="text" id="contractNo" maxlength="20" placeholder="Nomor Kontrak"/>
+                </div>
+                <div class="form-group">
+                  <label for="cityOrigin">Kota Asal</label>
+                  <input class="placeholder-gray-400" v-model="form.cityOrigin" type="text" id="cityOrigin" maxlength="100" placeholder="Kota Asal"/>
+                </div>
+                <div class="form-group">
+                  <label for="commodity">Komoditas</label>
+                  <input class="placeholder-gray-400" v-model="form.commodity" type="text" id="commodity" maxlength="50" placeholder="Komoditas"/>
+                </div>
+                <div class="form-group">
+                  <label for="commission">Komisi<span class="required">*</span></label>
+                  <input class="placeholder-gray-400" v-model="form.commission" type="number" id="commission" min="0" step="0.01" placeholder="Rp0,00" required/>
                 </div>
               </div>
               <VButton type="submit" class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full mt-4" :disabled="loading">
@@ -64,7 +82,7 @@
   </template>
   
   <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, reactive } from 'vue';
   import { useCustomerStore } from '@/stores/customer';
   import Sidebar from '@/components/Sidebar.vue';
   import HeaderComponent from '@/components/Header.vue';
@@ -81,28 +99,18 @@
   const showSuccess = ref(false);
   const showError = ref(false);
   const errorMessage = ref("");
-  const customerData = ref({
+  const form = reactive({
+    id: '',
     name: '',
-    siteId: '',
+    siteId: 'JKT',
     address: '',
     cityDestination: '',
     contractNo: '',
     cityOrigin: '',
     commodity: '',
-    moveType: ''
+    // moveType: ''
+    commission: 0,
   });
-  
-  const requiredFields = ['name', 'siteId', 'cityDestination'];
-  const fields = {
-    name: "Nama Customer",
-    siteId: "Site ID",
-    address: "Alamat",
-    cityDestination: "Kota Tujuan",
-    contractNo: "Nomor Kontrak",
-    cityOrigin: "Kota Asal",
-    commodity: "Komoditas",
-    moveType: "Tipe Perpindahan"
-  };
   
   const goToList = () => {
     showSuccess.value = false;
@@ -113,81 +121,18 @@
     router.push('/customers');
   };
 
-  const validationErrors = ref({
-    name: '',
-    siteId: '',
-    address: '',
-    cityDestination: '',
-    contractNo: '',
-    cityOrigin: '',
-    commodity: '',
-    moveType: ''
-  });
-  
-  const validateForm = () => {
-    let isValid = true;
-
-    Object.keys(validationErrors.value).forEach((key) => {
-      validationErrors.value[key] = '';
-    });
-
-    if (customerData.value.name.length > 100) {
-      validationErrors.value.name = "Nama Customer maksimal berisi 100 karakter.";
-      isValid = false;
-    }
-
-    if (customerData.value.siteId.length > 10) {
-      validationErrors.value.siteId = "Site ID maksimal berisi 10 karakter.";
-      isValid = false;
-    }
-
-    if (customerData.value.address && customerData.value.address.length > 100) {
-      validationErrors.value.address = "Alamat maksimal berisi 100 karakter.";
-      isValid = false;
-    }
-
-    if (customerData.value.cityDestination.length > 100) {
-      validationErrors.value.cityDestination = "Kota Tujuan maksimal berisi 100 karakter.";
-      isValid = false;
-    }
-
-    if (customerData.value.contractNo && customerData.value.contractNo.length > 20) {
-      validationErrors.value.contractNo = "Nomor kontrak maksimal berisi 20 karakter.";
-      isValid = false;
-    }
-
-    if (customerData.value.cityOrigin && customerData.value.cityOrigin.length > 100) {
-      validationErrors.value.cityOrigin = "Kota Asal maksimal berisi 100 karakter.";
-      isValid = false;
-    }
-
-    if (customerData.value.commodity && customerData.value.commodity.length > 50) {
-      validationErrors.value.commodity = "Komoditas maksimal berisi 50 karakter.";
-      isValid = false;
-    }
-
-    if (customerData.value.moveType && customerData.value.moveType.length > 10) {
-      validationErrors.value.moveType = "Tipe Perpindahan maksimal berisi 10 karakter.";
-      isValid = false;
-    }
-
-    return isValid;
-  };
-
   const confirmSubmit = () => {
-    if (validateForm()) {
-      showConfirm.value = true;
-    }
+    showConfirm.value = true;
   };
   
   const submitCustomer = async () => {
     showConfirm.value = false;
     try {
-      const result = await customerStore.addCustomer(customerData.value);
-      if (result.success) {
+      const response = await customerStore.addCustomer(form);
+      if (response.success) {
         showSuccess.value = true;
       } else {
-        errorMessage.value = result.message || "Terjadi kesalahan!";
+        errorMessage.value = response.message || "Terjadi kesalahan!";
         showError.value = true;
       }
     } catch (error) {
@@ -246,9 +191,13 @@
     border-radius: 4px;
     font-size: 1rem;
   }
-
+  
   textarea {
     min-height: 80px;
+  }
+
+  .required {
+    color: #EB5757;
   }
 
   .back-button {
@@ -261,12 +210,6 @@
 
   .back-button i {
     font-size: 1.2rem;
-  }
-
-  .error-text {
-    color: #EB5757;
-    font-size: 0.8rem;
-    margin-top: 5px;
   }
   </style>
   
