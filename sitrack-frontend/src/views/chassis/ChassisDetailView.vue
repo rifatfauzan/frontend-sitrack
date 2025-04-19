@@ -58,8 +58,27 @@ const formatDate = (date) => {
   return formattedDate;
 };
 
+const getExpirationClass = (expirationDate: string | null): string => {
+  if (!expirationDate) return '';
 
-//};
+  const expDate = new Date(expirationDate);
+  const currentDate = new Date();
+
+  currentDate.setHours(0, 0, 0, 0);
+  expDate.setHours(0, 0, 0, 0);
+
+  const timeDifference = expDate.getTime() - currentDate.getTime();
+  const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+  if (daysRemaining < 0 || daysRemaining === 0) {
+    return 'bg-red-100';
+  } else if (daysRemaining <= 30) {
+    return 'bg-yellow-100';
+  } else {
+    return '';
+  }
+};
+
 
 </script>
 
@@ -94,7 +113,12 @@ const formatDate = (date) => {
               <div class="space-y-3">
                 <div class="detail-item"><span>Year</span><strong>{{ chassisDetail.chassisYear || '-' }}</strong></div>
                 <div class="detail-item alt"><span>KIR No.</span><strong>{{ chassisDetail.chassisKIRNo || '-' }}</strong></div>
-                <div class="detail-item"><span>KIR Expiration</span><strong>{{ formatDate(chassisDetail.chassisKIRDate) || '-' }}</strong></div>
+                
+                <div :class="['detail-item', getExpirationClass(chassisDetail.chassisKIRDate)]">
+                  <span>KIR Expiration</span>
+                  <strong>{{ formatDate(chassisDetail.chassisKIRDate) || '-' }}</strong>
+                </div>
+                
                 <div class="detail-item alt"><span>Chassis No.</span><strong>{{ chassisDetail.chassisNumber || '-' }}</strong></div>
                 <div class="detail-item"><span>Type</span><strong>{{ chassisTypeLabel }}</strong></div>
                 <div class="detail-item alt"><span>Division</span><strong>{{ chassisDetail.division || '-' }}</strong></div>
@@ -200,6 +224,16 @@ const formatDate = (date) => {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    }
+
+    .bg-red-100 {
+      background-color: #EB5757;
+      color: #222222;
+    }
+
+    .bg-yellow-100 {
+      background-color: #F7B500;
+      color: #222222;
     }
 
   </style>
