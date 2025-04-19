@@ -26,7 +26,7 @@ const columns = ref([
 ]);
 
 const formatDriverId = (driverId: string) => {
-  return (driverId.slice(0, 8)+"...");
+  return (driverId);
 };
 
 const formatJoinDate = (joinDate: string) => {
@@ -72,12 +72,12 @@ onMounted(async () => {
         <Sidebar />
 
         <div class="flex-1 flex flex-col min-h-screen">
-            <HeaderComponent title="List Sopir" />
+            <HeaderComponent title="List Driver" />
             <div class="flex-1 p-4 main-content overflow-auto">
                 <div class="container mx-auto max-w-4xl">
                     <div class="flex justify-between items-center mb-4">
                         <span class="p-input-icon-left">
-                            <InputText v-model="filters['global'].value" placeholder="Search Sopir" />
+                            <InputText v-model="filters.global.value" placeholder="Search Driver" />
                         </span>
                         <VButton 
                             title="+ Buat" 
@@ -92,8 +92,9 @@ onMounted(async () => {
                         paginator 
                         :rows="10" 
                         datakey="driverId"
+                        filterDisplay="row"
+                        :loading="sopirStore.loading"
                         :rowsPerPageOptions="[5, 10, 20]" 
-                        dataKey="driverId"
                         :globalFilterFields="['driverName', 'driverId', 'driverJoinDate', 'driver_SIM_No', 'driver_KTP_No']"
 
                         stripedRows
@@ -112,16 +113,16 @@ onMounted(async () => {
                             </template>
                         </Column>
                         
-                        <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header">
-                            <template #body="{ data, field }">
-                                <div v-if="field === 'driverId'" sortable>
+                        <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header" sortable>
+                            <template #body="{ data }">
+                                <div v-if="col.field === 'driverId'" sortable>
                                     {{ formatDriverId(data.driverId) }}
                                 </div>
-                                <div v-else-if="field === 'driverJoinDate'" sortable>
+                                <div v-else-if="col.field === 'driverJoinDate'" sortable>
                                     {{ formatJoinDate(data.driverJoinDate) }}
                                 </div>
                                 <div v-else sortable>
-                                    {{ data[field] }}
+                                    {{ data[col.field] }}
                                 </div>
                             </template>
                         </Column>
