@@ -138,7 +138,7 @@ const errorMessage = ref("");
   <div class="flex h-screen">
     <Sidebar />
     <div class="flex-1 flex flex-col min-h-screen">
-      <HeaderComponent title="Edit Truck" />
+      <HeaderComponent title="Edit Vehicle" />
       <div class="flex-1 p-4 main-content overflow-auto">
         <div class="container mx-auto max-w-4xl bg-white p-6 rounded shadow">
           <div class="header-container">
@@ -153,54 +153,59 @@ const errorMessage = ref("");
           <form @submit.prevent="confirmSubmit">
             <div class="form-grid">
               
-              <!-- Vehicle ID (Hidden) -->
-              <input v-model="form.vehicleId" type="hidden" id="vehicleId" />
+              <!-- Vehicle ID -->
+              <div class="form-group">
+                <label for="vehicleId">Vehicle ID</label>
+                <input v-model="form.vehicleId" type="text" id="vehicleId"  class="readonly-field" readonly />
+              </div>
 
               <!-- Brand -->
               <div class="form-group">
-                <label for="vehicleBrand">Brand</label>
+                <label for="vehicleBrand">Brand <span class="required">*</span></label>
                 <input v-model="form.vehicleBrand" type="text" id="vehicleBrand" maxlength="20" required />
               </div>
 
               <!-- Division -->
               <div class="form-group">
-                <label for="division">Division</label>
-                <input v-model="form.division" type="text" id="division" maxlength="2" pattern="\d{2}" title="Division harus 2 digit angka" required/>
+                <label for="division">Division <span class="required">*</span></label>
+                <input v-model="form.division" type="text" id="division" maxlength="2" pattern="\d{2}" title="Division harus 2 digit angka" required />
               </div>
 
               <!-- Tahun -->
               <div class="form-group">
-                <label for="vehicleYear">Year</label>
+                <label for="vehicleYear">Year <span class="required">*</span></label>
                 <input v-model="form.vehicleYear" type="text" id="vehicleYear" maxlength="4" pattern="\d{4}" title="Year harus 4 digit angka" required />
               </div>
 
               <!-- Nomor Plat -->
               <div class="form-group">
-                <label for="vehiclePlateNo">Plate Number</label>
+                <label for="vehiclePlateNo">Plate Number <span class="required">*</span></label>
                 <input v-model="form.vehiclePlateNo" type="text" id="vehiclePlateNo" maxlength="10" required />
               </div>
 
               <!-- Nomor STNK -->
               <div class="form-group">
-                <label for="vehicleSTNKDate">STNK Expiration Date</label>
+                <label for="vehicleSTNKDate">STNK Expiration Date <span class="required">*</span></label>
                 <input v-model="form.vehicleSTNKDate" type="date" id="vehicleSTNKDate" required />
               </div>
 
               <!-- Nomor KIR -->
               <div class="form-group">
-                <label for="vehicleKIRNo">KIR No.</label>
+                <label for="vehicleKIRNo">KIR No. <span class="required">*</span></label>
                 <input v-model="form.vehicleKIRNo" type="text" id="vehicleKIRNo" maxlength="20" required />
               </div>
 
               <!-- Tanggal KIR -->
               <div class="form-group">
-                <label for="vehicleKIRDate">KIR Expiration Date</label>
+                <label for="vehicleKIRDate">KIR Expiration Date <span class="required">*</span></label>
                 <input v-model="form.vehicleKIRDate" type="date" id="vehicleKIRDate" required />
               </div>
 
-              <!-- Site id hidden-->
-              
-              <input v-model="form.siteId" type="hidden" id="siteId" />
+              <!-- Site ID -->
+              <div class="form-group">
+                <label for="siteId">Site ID </label>
+                <input v-model="form.siteId" type="text" id="siteId" class="readonly-field" readonly />
+              </div>
 
               <!-- Vehicle Type -->
               <div class="form-group">
@@ -284,7 +289,7 @@ const errorMessage = ref("");
                   step="0.1" 
                   min="0" 
                   max="999.9"
-                  title="fuel consumption min 0.0 max 999.9 dengan 1 angka di belakang koma"
+                  title="fuel consumption min 0.0 max 99.9 dengan 1 angka di belakang koma"
                   required
                 />
               </div>
@@ -329,7 +334,7 @@ const errorMessage = ref("");
     <SuccessDialog 
       :visible="showSuccess" 
       @close="goToList" 
-      :message="'Truck baru berhasil terdaftar!'" 
+      :message="'Truck berhasil diupdate'" 
       buttonText="Kembali ke List Truck" 
     />
 
@@ -414,5 +419,16 @@ textarea {
 .header-title {
   font-size: 1.5rem;
   font-weight: bold;
+}
+
+.readonly-field {
+  background-color: #f0f0f0; /* abu-abu terang */
+  cursor: not-allowed;
+  color: #555;
+}
+
+.required {
+  color: red;
+  margin-left: 4px;
 }
 </style>
