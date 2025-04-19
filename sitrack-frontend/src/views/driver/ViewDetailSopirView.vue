@@ -17,7 +17,7 @@ const driverDetail = ref<any>(null);
 
 // Ambil ID dari parameter
 const driverId = route.params.driverId as string;
-
+const isSIMExpired = ref(false);
 // Fetch data sopir saat komponen dimuat
 onMounted(async () => {
   if (driverId) {
@@ -25,11 +25,38 @@ onMounted(async () => {
   }
 });
 
+// const formatDate = (date: string | Date): string => {
+//   if (!date) return '-';
+//   const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+//   const formattedDate = new Date(date).toLocaleDateString('id-ID', options);
+//   return formattedDate;
+// };
+
 // Navigasi kembali ke daftar chassis
 const goBack = () => {
   router.push('/sopir/viewall');
 };
 
+const getExpirationClass = (expirationDate: string | null): string => {
+  if (!expirationDate) return '';
+
+  const expDate = new Date(expirationDate);
+  const currentDate = new Date();
+
+  currentDate.setHours(0, 0, 0, 0);
+  expDate.setHours(0, 0, 0, 0);
+
+  const timeDifference = expDate.getTime() - currentDate.getTime();
+  const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+  if (daysRemaining < 0 || daysRemaining === 0) {
+    return 'bg-red-100';
+  } else if (daysRemaining <= 30) {
+    return 'bg-yellow-100';
+  } else {
+    return '';
+  }
+};
 // Navigasi ke halaman edit
 const goToEdit = () => {
   router.push({ name: 'update sopir', params: { driverId } });
@@ -67,21 +94,25 @@ const goToEdit = () => {
               <div class="space-y-3">
                 <div class="detail-item"><span>Driver Name</span><strong>{{ driverDetail.driverName || '-' }}</strong></div>
                 <div class="detail-item alt"><span>Driver KTP Number</span><strong>{{ driverDetail.driver_KTP_No || '-' }}</strong></div>
-                <div class="detail-item"><span>Driver KTP Date</span><strong>{{ driverDetail.driver_KTP_Date || '-' }}</strong></div>
                 <div class="detail-item alt"><span>Driver SIM Number</span><strong>{{ driverDetail.driver_SIM_No || '-' }}</strong></div>
-                <div class="detail-item"><span>Driver SIM Date</span><strong>{{ driverDetail.driver_SIM_Date || '-' }}</strong></div>
-                <div class="detail-item alt"><span>Driver Company</span><strong>{{ driverDetail.driverCo || '-' }}</strong></div>
-                <div class="detail-item"><span>Driver Company Contact</span><strong>{{ driverDetail.driverCoContact || '-' }}</strong></div>
+                <!-- <div class="detail-item"><span>Driver SIM Date</span><strong>{{ driverDetail.driver_SIM_Date || '-' }}</strong></div> -->
+
+                <div :class="['detail-item', getExpirationClass(driverDetail.driver_SIM_Date)]">
+                  <span>SIM Date</span>
+                  <strong>{{(driverDetail.driver_SIM_Date) || '-' }}</strong>
+                </div>
+                <div class="detail-item alt"><span>Co Driver Name</span><strong>{{ driverDetail.driverCo || '-' }}</strong></div>
+                <div class="detail-item"><span>Co Driver Contact</span><strong>{{ driverDetail.driverCoContact || '-' }}</strong></div>
                 <div class="detail-item"><span>Driver Contact</span><strong>{{ driverDetail.driverContact || '-' }}</strong></div>
                 <div class="detail-item"><span>Driver Type</span><strong>{{ driverDetail.driverType || '-' }}</strong></div>
               </div>
   
               <div class="space-y-3">
-                <div class="detail-item"><span>Driver Number</span><strong>{{ driverDetail.driverNumber || '-' }}</strong></div>
+                <!-- <div class="detail-item"><span>Driver Number</span><strong>{{ driverDetail.driverNumber || '-' }}</strong></div> -->
                 <div class="detail-item alt"><span>Record Status</span><strong>{{ driverDetail.recordStatus || '-' }}</strong></div>
                 <div class="detail-item"><span>Row Status</span><strong>{{ driverDetail.rowStatus || '-' }}</strong></div>
                 <div class="detail-item alt"><span>Site</span><strong>{{ driverDetail.siteId || '-' }}</strong></div>
-                <div class="detail-item"><span>Created by</span><strong>{{ driverDetail.insertedBy || '-' }}</strong></div>
+                <div class="detail-item"><span>Created by</span><strong>{{ driverDetail.createdBy || '-' }}</strong></div>
                 <div class="detail-item alt"><span>Created Date</span><strong>{{ driverDetail.createdDate || '-' }}</strong></div>
                 <div class="detail-item"><span>Updated by</span><strong>{{ driverDetail.updatedBy || '-' }}</strong></div>
                 <div class="detail-item alt"><span>Updated Date</span><strong>{{ driverDetail.updatedDate || '-' }}</strong></div>
@@ -182,6 +213,16 @@ const goToEdit = () => {
     overflow-y: auto; /* Scroll jika kontennya terlalu panjang */
     display: flex;
     flex-direction: column;
+    }
+
+    .bg-red-100 {
+      background-color: #EB5757;
+      color: #222222;
+    }
+
+    .bg-yellow-100 {
+      background-color: #F7B500;
+      color: #222222;
     }
 
   </style>
