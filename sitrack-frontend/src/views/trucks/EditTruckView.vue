@@ -156,9 +156,8 @@ const errorMessage = ref("");
               <!-- Vehicle ID -->
               <div class="form-group">
                 <label for="vehicleId">Vehicle ID</label>
-                <input v-model="form.vehicleId" type="text" id="vehicleId" readonly />
+                <input v-model="form.vehicleId" type="text" id="vehicleId"  class="readonly-field" readonly />
               </div>
-
 
               <!-- Brand -->
               <div class="form-group">
@@ -426,5 +425,10 @@ textarea {
   background-color: #f0f0f0; /* abu-abu terang */
   cursor: not-allowed;
   color: #555;
+}
+
+.required {
+  color: red;
+  margin-left: 4px;
 }
 </style>

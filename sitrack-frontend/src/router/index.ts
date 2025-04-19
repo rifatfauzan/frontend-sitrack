@@ -22,6 +22,9 @@ import CreateTruckView from '@/views/trucks/CreateTruckView.vue'
 import TruckDetailView from '@/views/trucks/TruckDetailView.vue'
 import EditTruckView from '@/views/trucks/EditTruckView.vue'
 
+import AssetListView from '@/views/asset/AssetListView.vue'
+import CreateAssetView from '@/views/asset/CreateAssetView.vue'
+
 const decodeTokenPayload = (token: string) => {
   try {
     const payload = token.split('.')[1]
@@ -211,6 +214,16 @@ const router = createRouter({
       component: EditSopirView,
       meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']},
       props: true,
+    },
+    { path: '/assets', 
+      name: 'assets', 
+      component: AssetListView, 
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] }
+    },
+    { path: '/assets/create', 
+      name: 'create asset', 
+      component: CreateAssetView, 
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] }
     },
   ],
 })
