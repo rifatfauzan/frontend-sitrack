@@ -73,9 +73,10 @@ onMounted(async () => {
   }
 });
 
-const goToList = () => {
-  router.push('/chassis');
+const goToChassis = () => {
+  router.push({ name: 'detail chassis', query: { id: form.chassisId } });
 };
+
 
 const goBack = () => {
   router.push('/chassis');
@@ -146,27 +147,23 @@ const submitForm = async () => {
                 </select>
               </div>
 
-              <!-- Tahun -->
               <div class="form-group">
-                <label for="chassisYear">Year</label>
-                <input v-model="form.chassisYear" type="text" id="chassisYear" minlength="4"  maxlength="4" required />
+                <label for="chassisYear">Year <span class="text-red-500">*</span></label>
+                <input v-model="form.chassisYear" type="text" id="chassisYear" minlength="4" maxlength="4" required pattern="\d{4}"/>
               </div>
 
-              <!-- Nomor Chassis -->
               <div class="form-group">
                 <label for="chassisNumber">Chassis Number</label>
-                <input v-model="form.chassisNumber" type="text" id="chassisNumber" minlength="6"  maxlength="6" />
+                <input v-model="form.chassisNumber" type="text" id="chassisNumber" minlength="6" maxlength="6" pattern="\d{6}" />
               </div>
 
-              <!-- Nomor KIR -->
               <div class="form-group">
-                <label for="chassisKIRNo">KIR No.</label>
-                <input v-model="form.chassisKIRNo" type="text" id="chassisKIRNo" minlength="20" maxlength="20" required/>
+                <label for="chassisKIRNo">KIR No. <span class="text-red-500">*</span></label>
+                <input v-model="form.chassisKIRNo" type="text" id="chassisKIRNo" minlength="20" maxlength="20" required pattern="\d{20}" />
               </div>
 
-              <!-- Tanggal KIR -->
               <div class="form-group">
-                <label for="chassisKIRDate">KIR Expiration Date</label>
+                <label for="chassisKIRDate">KIR Expiration Date <span class="text-red-500">*</span></label>
                 <input v-model="form.chassisKIRDate" type="date" id="chassisKIRDate" required />
               </div>
 
@@ -233,10 +230,10 @@ const submitForm = async () => {
 
       <SuccessDialog
         :visible="showSuccess"
-        @close="goToList"
+        @close="goToChassis"
         :message="'Chassis baru berhasil terdaftar!'"
         redirectTo="/chassis"
-        buttonText="Kembali ke List Chassis"
+        buttonText="Kembali ke Chassis Detail"
       />
 
       <ErrorDialog
