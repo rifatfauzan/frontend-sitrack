@@ -48,9 +48,9 @@
 
             <h2 class="text-xl font-bold text-[#1C5D99] mt-6 mb-4">Tariffs</h2>
             <div class="overflow-x-auto max-h-[50vh] overflow-y-auto">
-              <table v-if="customer.tariffs.length > 0" class="min-w-full bg-white border border-gray-300 rounded-lg">
+                <table v-if="customer.tariffs.length > 0" class="min-w-full">
                 <thead>
-                  <tr class="bg-gray-200 text-left">
+                  <tr class="tariff-table text-left">
                     <th class="p-3 border">Type</th>
                     <th class="p-3 border">Std Tariff</th>
                     <th class="p-3 border">Insurance</th>
@@ -62,8 +62,8 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="tariff in customer.tariffs" :key="tariff.tariffId" class="text-center">
-                    <td class="p-3 border text-left">{{ tariff.type }}</td>
+                  <tr v-for="tariff in customer.tariffs" :key="tariff.tariffId" class="tariff-table">
+                    <td class="p-3 border text-left font-bold">{{ tariff.type }}</td>
                     <td class="p-3 border text-left">{{ formatRupiah(tariff.stdTariff) }}</td>
                     <td class="p-3 border text-left">{{ formatRupiah(tariff.insurance) }}</td>
                     <td class="p-3 border text-left">{{ formatRupiah(tariff.tips) }}</td>
@@ -139,14 +139,14 @@ const goToEdit = () => {
   }
 };
 
-const formatDate = (date) => {
+const formatDate = (date: string | Date | null | undefined) => {
   if (!date) return '-';
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const options = { year: "numeric", month: "long", day: "numeric" };
   const formattedDate = new Date(date).toLocaleDateString('id-ID', options);
   return formattedDate;
 };
 
-const formatRupiah = (angka) => {
+const formatRupiah = (angka: number | string) => {
   if (!angka) return "Rp0,00";
   const rupiah = angka.toString().replace(/[^,\d]/g, "");
   const split = rupiah.split(",");
@@ -189,6 +189,11 @@ const formatRupiah = (angka) => {
   .tariff-table th, .tariff-table td {
     padding: 12px;
     border: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  .tariff-table th {
+    background-color: #BBCDE5;
   }
 
   .overflow-x-auto {

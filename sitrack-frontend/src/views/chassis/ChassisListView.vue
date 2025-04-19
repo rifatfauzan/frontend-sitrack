@@ -72,14 +72,17 @@ const goToDetail = (event: { data: any }) => {
               :value="chassisList"
               paginator
               :rows="10"
-              dataKey="chassisId"
+              datakey="chassisId"
+              :rowsPerPageOptions="[5, 10, 20]"
+              dataKey="chassisId" 
               filterDisplay="menu"
               :loading="loading"
               selectionMode="single"
               :globalFilterFields="['chassisId', 'chassisSize', 'chassisYear', 'chassisAxle', 'chassisKIRNo']"
+              
               stripedRows
               tableStyle="min-width: 60rem"
-              paginatorTemplate="PrevPageLink CurrentPageReport NextPageLink"
+              paginatorTemplate="RowsPerPageDropdown PrevPageLink CurrentPageReport NextPageLink"
               currentPageReportTemplate="{first} to {last} of {totalRecords} chassis"
               class="custom-datatable"
               @rowSelect="goToDetail"

@@ -3,8 +3,7 @@
     <Sidebar />
     <div class="flex-1 flex flex-col min-h-screen">
       <HeaderComponent title="Edit Customer" />
-      
-      <div class="flex-1 p-6 main-content overflow-y-auto flex justify-center">
+      <div class="flex-1 p-6 main-content overflow-y-auto">
         <div class="container mx-auto max-w-4xl bg-white p-6 rounded-lg shadow-md overflow-y-auto">
 
           <div class="header-container">
@@ -18,24 +17,47 @@
 
           <form @submit.prevent="confirmUpdate">
             <div class="form-grid">
-              <div class="form-group" v-for="(label, key) in fields" :key="key">
-                <label :for="key">{{ label }}</label>
-                <input
-                  v-model="customerData[key]"
-                  :id="key"
-                  type="text"
-                  class="form-input"
-                  :placeholder="label"
-                  :required="requiredFields.includes(key)"
-                  :readonly="key === 'id' || key === 'siteId'"
-                    :style="{ color: customerData[key] ? '#000' : '#ccc' }"
-                />
-                <span v-if="validationErrors[key]" class="error-text">{{ validationErrors[key] }}</span>
-              </div>
+              <div class="form-group">
+                  <label for="name">Nama Customer<span class="required">*</span></label>
+                  <input class="placeholder-gray-400" v-model="form.name" type="text" id="name" maxlength="100" placeholder="Nama Customer" required />
+                </div>
+                <div class="form-group">
+                  <label for="siteId">Site ID<span class="required">*</span></label>
+                  <input class="placeholder-gray-400" v-model="form.siteId" type="text" id="siteId" minlength="3" maxlength="3" placeholder="Site ID" readonly />
+                </div>
+                <div class="form-group">
+                  <label for="address">Alamat</label>
+                  <input class="placeholder-gray-400" v-model="form.address" id="address" maxlength="100" placeholder="Alamat">
+                </div>
+                <div class="form-group">
+                  <label for="cityDestination">Kota Tujuan<span class="required">*</span></label>
+                  <input class="placeholder-gray-400" v-model="form.cityDestination" type="text" id="cityDestination" maxlength="100" placeholder="Kota Tujuan" required />
+                </div>
+                <div class="form-group">
+                  <label for="contractNo">Nomor Kontrak</label>
+                  <input class="placeholder-gray-400" v-model="form.contractNo" type="text" id="contractNo" maxlength="20" placeholder="Nomor Kontrak"/>
+                </div>
+                <div class="form-group">
+                  <label for="cityOrigin">Kota Asal</label>
+                  <input class="placeholder-gray-400" v-model="form.cityOrigin" type="text" id="cityOrigin" maxlength="100" placeholder="Kota Asal"/>
+                </div>
+                <div class="form-group">
+                  <label for="commodity">Komoditas</label>
+                  <input class="placeholder-gray-400" v-model="form.commodity" type="text" id="commodity" maxlength="50" placeholder="Komoditas"/>
+                </div>
+                <div class="form-group">
+                  <label for="moveType">Tipe Perpindahan</label>
+                  <select v-model="form.moveType" id="moveType">
+                    <option value="NORMAL">NORMAL</option>
+                    <option value="REPO">REPO</option>
+                    <option value="OFFHERE">OFFHERE</option>
+                    <option value="KADE">KADE</option>
+                  </select> 
+                </div>
             </div>
 
             <h2 class="text-xl font-bold text-[#1C5D99] mt-6 mb-4">Tariff</h2>
-            <table class="tariff-table">
+            <table v-if="form.tariffs.length" class="tariff-table">
               <thead>
                 <tr>
                   <th>Type</th>
@@ -50,15 +72,15 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(tariff, index) in customerData.tariffs" :key="index">
-                  <td><input v-model="tariff.type" class="tariff-input" :style="{ color: tariff.type ? '#000' : '#ccc' }" placeholder="Type" required /></td>
-                  <td><input v-model.number="tariff.stdTariff" type="number" class="tariff-input" :style="{ color: tariff.stdTariff ? '#000' : '#ccc' }" placeholder="Std Tariff" required /></td>
+                <tr v-for="(tariff, index) in form.tariffs" :key="index">
+                  <td><input v-model="tariff.type" class="tariff-input" :style="{ color: tariff.type ? '#000' : '#ccc' }" placeholder="Type" /></td>
+                  <td><input v-model.number="tariff.stdTariff" type="number" class="tariff-input" :style="{ color: tariff.stdTariff ? '#000' : '#ccc' }" placeholder="Std Tariff" /></td>
                   <td><input v-model.number="tariff.insurance" type="number" class="tariff-input" :style="{ color: tariff.insurance ? '#000' : '#ccc' }" placeholder="Insurance" /></td>
                   <td><input v-model.number="tariff.tips" type="number" class="tariff-input" :style="{ color: tariff.tips ? '#000' : '#ccc' }" placeholder="Tips" /></td>
                   <td><input v-model.number="tariff.police" type="number" class="tariff-input" :style="{ color: tariff.police ? '#000' : '#ccc' }" placeholder="Police" /></td>
                   <td><input v-model.number="tariff.lolo" type="number" class="tariff-input" :style="{ color: tariff.lolo ? '#000' : '#ccc' }" placeholder="LOLO" /></td>
                   <td><input v-model.number="tariff.others" type="number" class="tariff-input" :style="{ color: tariff.others ? '#000' : '#ccc' }" placeholder="Others" /></td>
-                  <td class="tariff-total">{{ formatRupiah(calculateTotal(tariff)) }}</td>  <!-- Format Rupiah -->
+                  <td class="tariff-total">{{ formatRupiah(calculateTotal(tariff)) }}</td>
                   <td><VButton @click="removeTariff(index)" class="delete-tariff">Hapus</VButton></td>
                 </tr>
               </tbody>
@@ -82,10 +104,9 @@
 
     <SuccessDialog 
       :visible="showSuccess" 
-      @close="goToList" 
+      @close="goBack" 
       :message="'Customer berhasil diperbarui!'" 
-      redirectTo="/customers"
-      buttonText="Kembali ke List Customer" />
+      buttonText="Kembali ke Detail Customer" />
 
     <ErrorDialog
       :visible="showError"
@@ -96,7 +117,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useCustomerStore } from '@/stores/customer';
 import Sidebar from '@/components/Sidebar.vue';
@@ -115,43 +136,41 @@ const showConfirm = ref(false);
 const showSuccess = ref(false);
 const showError = ref(false);
 const errorMessage = ref("");
-const customerData = ref({
+const form = reactive({
   id: '',
-  siteId: '',
   name: '',
+  siteId: 'JKT',
   address: '',
   cityDestination: '',
   contractNo: '',
   cityOrigin: '',
   commodity: '',
   moveType: '',
-  tariffs: []
+  tariffs: [
+    {
+      type: '',
+      stdTariff: 0,
+      insurance: 0,
+      tips: 0,
+      police: 0,
+      lolo: 0,
+      others: 0,
+    },
+  ],
 });
-
-const requiredFields = ['name', 'cityDestination'];
-
-const fields = {
-  id: "Customer ID",
-  siteId: "Site ID",
-  name: "Nama Customer",
-  address: "Alamat",
-  cityDestination: "Kota Tujuan",
-  contractNo: "Nomor Kontrak",
-  cityOrigin: "Kota Asal",
-  commodity: "Komoditas",
-  moveType: "Tipe Perpindahan"
-};
 
 onMounted(async () => {
   const customerId = route.query.id as string;
   if (customerId) {
     const data = await customerStore.getCustomerById(customerId);
-    if (data) customerData.value = data;
+    if (data) {
+      Object.assign(form, data);
+    }
   }
 });
 
 const addTariff = () => {
-  customerData.value.tariffs.push({
+  form.tariffs.push({
     type: '',
     stdTariff: 0,
     insurance: 0,
@@ -162,88 +181,29 @@ const addTariff = () => {
   });
 };
 
-const removeTariff = (index) => {
-  customerData.value.tariffs.splice(index, 1);
+const removeTariff = (index: number) => {
+  form.tariffs.splice(index, 1);
 };
 
-const calculateTotal = (tariff) => {
+const calculateTotal = (tariff: { stdTariff: number; insurance: number; tips: number; police: number; lolo: number; others: number }) => {
   return tariff.stdTariff + tariff.insurance + tariff.tips + tariff.police + tariff.lolo + tariff.others;
 };
 
-const goToList = () => {
-  showSuccess.value = false;
-  router.push('/customers');
-};
-
 const goBack = () => {
-  router.push('/customers/detail?id=' + customerData.value.id);
-};
-
-const validationErrors = ref({
-    name: '',
-    address: '',
-    cityDestination: '',
-    contractNo: '',
-    cityOrigin: '',
-    commodity: '',
-    moveType: ''
-  });
-  
-const validateForm = () => {
-  let isValid = true;
-
-  Object.keys(validationErrors.value).forEach((key) => {
-    validationErrors.value[key] = '';
-  });
-
-  if (customerData.value.name.length > 100) {
-    validationErrors.value.name = "Nama Customer maksimal berisi 100 karakter.";
-    isValid = false;
-  }
-
-  if (customerData.value.address && customerData.value.address.length > 100) {
-    validationErrors.value.address = "Alamat maksimal berisi 100 karakter.";
-    isValid = false;
-  }
-
-  if (customerData.value.cityDestination.length > 100) {
-    validationErrors.value.cityDestination = "Kota Tujuan maksimal berisi 100 karakter.";
-    isValid = false;
-  }
-
-  if (customerData.value.contractNo && customerData.value.contractNo.length > 20) {
-    validationErrors.value.contractNo = "Nomor kontrak maksimal berisi 20 karakter.";
-    isValid = false;
-  }
-
-  if (customerData.value.cityOrigin && customerData.value.cityOrigin.length > 100) {
-    validationErrors.value.cityOrigin = "Kota Asal maksimal berisi 100 karakter.";
-    isValid = false;
-  }
-
-  if (customerData.value.commodity && customerData.value.commodity.length > 50) {
-    validationErrors.value.commodity = "Komoditas maksimal berisi 50 karakter.";
-    isValid = false;
-  }
-
-  if (customerData.value.moveType && customerData.value.moveType.length > 10) {
-    validationErrors.value.moveType = "Tipe Perpindahan maksimal berisi 10 karakter.";
-    isValid = false;
-  }
-
-  return isValid;
+  router.push('/customers/detail?id=' + form.id);
 };
 
 const confirmUpdate = () => {
-  if (validateForm()) {
-    showConfirm.value = true;
-  }
+  showConfirm.value = true;
 };
 
 const updateCustomer = async () => {
   showConfirm.value = false;
   try {
-    const result = await customerStore.updateCustomer(customerData.value);
+    const result = await customerStore.updateCustomer({
+      ...form,
+      tariffs: form.tariffs,
+    });
     if (result.success) {
       showSuccess.value = true;
     } else {
@@ -256,7 +216,7 @@ const updateCustomer = async () => {
   }
 };
 
-const formatRupiah = (angka) => {
+const formatRupiah = (angka: number | string) => {
   if (!angka) return "Rp0,00";
 
   const rupiah = angka.toString().replace(/[^,\d]/g, "");
@@ -333,6 +293,10 @@ const formatRupiah = (angka) => {
 
   textarea {
     min-height: 80px;
+  }
+
+  .required {
+    color: #EB5757;
   }
   
   .back-button {
