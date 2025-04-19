@@ -68,11 +68,26 @@
                     </ul>
                 </li>
 
-                <li v-if="['Admin', 'Manager', 'Supervisor', 'Operasional', 'Mekanik'].includes(authStore.role)">
-                    <div class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item">
+                <li v-if="['Admin', 'Manager', 'Supervisor', 'Operasional', 'Mekanik'].includes(authStore.role)" class="relative">
+                    <div class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item" @click="toggleInventoryMenu">
                         <i class="fas fa-box"></i>
                         <span>Inventory</span>
+                        <i class="fas fa-chevron-down pr-8 transition-opacity duration-300 mb-6" :class="{ 'opacity-100': showInventoryMenu, 'opacity-0': !showInventoryMenu }"></i>
                     </div>
+                    <ul v-if="showInventoryMenu" class="ml-6 mt-2 space-y-2">
+                        <li>
+                            <router-link to="/assets" class="flex items-center gap-4 cursor-pointer text-lg sidebar-item">
+                                <i class="fas fa-cube"></i>
+                                <span>Asset</span>
+                            </router-link>
+                        </li>
+                        <li>
+                            <router-link to="/asset-request" class="flex items-center gap-4 cursor-pointer text-lg sidebar-item">
+                                <i class="fas fa-file-signature"></i>
+                                <span>Request Asset</span>
+                            </router-link>
+                        </li>
+                    </ul>
                 </li>
 
                 <li v-if="['Admin', 'Manager', 'Supervisor', 'Operasional', 'Mekanik'].includes(authStore.role)">
@@ -110,9 +125,14 @@ import { onMounted, ref } from 'vue';
 
 const authStore = useAuthStore();
 const showReferenceMenu = ref(false);
+const showInventoryMenu = ref(false);
 
 const toggleReferenceMenu = () => {
     showReferenceMenu.value = !showReferenceMenu.value;
+};
+
+const toggleInventoryMenu = () => {
+    showInventoryMenu.value = !showInventoryMenu.value;
 };
 
 onMounted(() => {

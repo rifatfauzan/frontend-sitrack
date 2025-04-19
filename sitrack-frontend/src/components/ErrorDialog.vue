@@ -62,9 +62,7 @@
     .error-button:hover {
         background-color: #e2e1e1;
 }
+
 </style>
   
-<<<<<<< HEAD
-=======
-  
->>>>>>> e5ffae67cfe7348b7467f1d072047f6c154d1e2a
+
