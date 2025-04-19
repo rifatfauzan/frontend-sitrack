@@ -18,49 +18,49 @@
           <form @submit.prevent="confirmUpdate">
             <div class="form-grid">
               <div class="form-group">
-                  <label for="name">Nama Customer<span class="required">*</span></label>
-                  <input class="placeholder-gray-400" v-model="form.name" type="text" id="name" maxlength="100" placeholder="Nama Customer" required />
-                </div>
-                <div class="form-group">
-                  <label for="siteId">Site ID<span class="required">*</span></label>
-                  <input class="placeholder-gray-400" v-model="form.siteId" type="text" id="siteId" minlength="3" maxlength="3" placeholder="Site ID" readonly />
-                </div>
-                <div class="form-group">
-                  <label for="address">Alamat</label>
-                  <input class="placeholder-gray-400" v-model="form.address" id="address" maxlength="100" placeholder="Alamat">
-                </div>
-                <div class="form-group">
-                  <label for="cityDestination">Kota Tujuan<span class="required">*</span></label>
-                  <input class="placeholder-gray-400" v-model="form.cityDestination" type="text" id="cityDestination" maxlength="100" placeholder="Kota Tujuan" required />
-                </div>
-                <div class="form-group">
-                  <label for="contractNo">Nomor Kontrak</label>
-                  <input class="placeholder-gray-400" v-model="form.contractNo" type="text" id="contractNo" maxlength="20" placeholder="Nomor Kontrak"/>
-                </div>
-                <div class="form-group">
-                  <label for="cityOrigin">Kota Asal</label>
-                  <input class="placeholder-gray-400" v-model="form.cityOrigin" type="text" id="cityOrigin" maxlength="100" placeholder="Kota Asal"/>
-                </div>
-                <div class="form-group">
-                  <label for="commodity">Komoditas</label>
-                  <input class="placeholder-gray-400" v-model="form.commodity" type="text" id="commodity" maxlength="50" placeholder="Komoditas"/>
-                </div>
-                <div class="form-group">
-                  <label for="moveType">Tipe Perpindahan</label>
-                  <select v-model="form.moveType" id="moveType">
-                    <option value="NORMAL">NORMAL</option>
-                    <option value="REPO">REPO</option>
-                    <option value="OFFHERE">OFFHERE</option>
-                    <option value="KADE">KADE</option>
-                  </select> 
-                </div>
+                <label for="name">ID Customer</label>
+                <input class="placeholder-gray-400" v-model="form.id" type="text" id="id" maxlength="100" placeholder="ID Customer" readonly />
+              </div>
+              <div class="form-group">
+                <label for="siteId">Site ID<span class="required">*</span></label>
+                <input class="placeholder-gray-400" v-model="form.siteId" type="text" id="siteId" minlength="3" maxlength="3" placeholder="Site ID" readonly />
+              </div>
+              <div class="form-group">
+                <label for="name">Nama Customer<span class="required">*</span></label>
+                <input class="placeholder-gray-400" v-model="form.name" type="text" id="name" maxlength="100" placeholder="Nama Customer" required />
+              </div>
+              <div class="form-group">
+                <label for="cityDestination">Kota Tujuan<span class="required">*</span></label>
+                <input class="placeholder-gray-400" v-model="form.cityDestination" type="text" id="cityDestination" maxlength="100" placeholder="Kota Tujuan" required />
+              </div>
+              <div class="form-group">
+                <label for="address">Alamat</label>
+                <input class="placeholder-gray-400" v-model="form.address" id="address" maxlength="100" placeholder="Alamat">
+              </div>
+              <div class="form-group">
+                <label for="contractNo">Nomor Kontrak</label>
+                <input class="placeholder-gray-400" v-model="form.contractNo" type="text" id="contractNo" maxlength="20" placeholder="Nomor Kontrak"/>
+              </div>
+              <div class="form-group">
+                <label for="cityOrigin">Kota Asal</label>
+                <input class="placeholder-gray-400" v-model="form.cityOrigin" type="text" id="cityOrigin" maxlength="100" placeholder="Kota Asal"/>
+              </div>
+              <div class="form-group">
+                <label for="commodity">Komoditas</label>
+                <input class="placeholder-gray-400" v-model="form.commodity" type="text" id="commodity" maxlength="50" placeholder="Komoditas"/>
+              </div>
+              <div class="form-group">
+                <label for="commission">Komisi<span class="required">*</span></label>
+                <input class="placeholder-gray-400" v-model.number="form.commission" type="number" id="commission" min="0" step="0.01" placeholder="Rp0,00" required/>
+              </div>
             </div>
 
             <h2 class="text-xl font-bold text-[#1C5D99] mt-6 mb-4">Tariff</h2>
             <table v-if="form.tariffs.length" class="tariff-table">
               <thead>
                 <tr>
-                  <th>Type</th>
+                  <th>Chassis Type</th>
+                  <th>Move Type</th>
                   <th>Std Tariff</th>
                   <th>Insurance</th>
                   <th>Tips</th>
@@ -71,9 +71,17 @@
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody>
+                <tbody>
                 <tr v-for="(tariff, index) in form.tariffs" :key="index">
-                  <td><input v-model="tariff.type" class="tariff-input" :style="{ color: tariff.type ? '#000' : '#ccc' }" placeholder="Type" /></td>
+                  <td style="width: 7%;"><input v-model="tariff.chassisType" class="tariff-input" :style="{ color: tariff.chassisType ? '#000' : '#ccc' }" placeholder="Type" /></td>
+                  <td style="width: 15%;">
+                    <select v-model="tariff.moveType" class="tariff-input" :style="{ color: tariff.moveType ? '#000' : '#ccc' }">
+                      <option value="NORMAL">NORMAL</option>
+                      <option value="REPO">REPO</option>
+                      <option value="OFFHERE">OFFHERE</option>
+                      <option value="KADE">KADE</option>
+                    </select>
+                  </td>
                   <td><input v-model.number="tariff.stdTariff" type="number" class="tariff-input" :style="{ color: tariff.stdTariff ? '#000' : '#ccc' }" placeholder="Std Tariff" /></td>
                   <td><input v-model.number="tariff.insurance" type="number" class="tariff-input" :style="{ color: tariff.insurance ? '#000' : '#ccc' }" placeholder="Insurance" /></td>
                   <td><input v-model.number="tariff.tips" type="number" class="tariff-input" :style="{ color: tariff.tips ? '#000' : '#ccc' }" placeholder="Tips" /></td>
@@ -83,7 +91,7 @@
                   <td class="tariff-total">{{ formatRupiah(calculateTotal(tariff)) }}</td>
                   <td><VButton @click="removeTariff(index)" class="delete-tariff">Hapus</VButton></td>
                 </tr>
-              </tbody>
+                </tbody>
             </table>
             <VButton @click="addTariff" class="add-tariff">+ Tambah Tarif</VButton>
             <VButton type="submit" class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full mt-4" :disabled="loading">
@@ -145,10 +153,11 @@ const form = reactive({
   contractNo: '',
   cityOrigin: '',
   commodity: '',
-  moveType: '',
+  commission: 0,
   tariffs: [
     {
-      type: '',
+      chassisType: '',
+      moveType: '',
       stdTariff: 0,
       insurance: 0,
       tips: 0,
@@ -171,7 +180,8 @@ onMounted(async () => {
 
 const addTariff = () => {
   form.tariffs.push({
-    type: '',
+    chassisType: '',
+    moveType: '',
     stdTariff: 0,
     insurance: 0,
     tips: 0,
@@ -309,12 +319,6 @@ const formatRupiah = (angka: number | string) => {
 
   .back-button i {
     font-size: 1.2rem;
-  }
-
-  .error-text {
-    color: #EB5757;
-    font-size: 0.8rem;
-    margin-top: 5px;
   }
 
   .tariff-table {

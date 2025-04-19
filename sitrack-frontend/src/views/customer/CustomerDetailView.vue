@@ -35,7 +35,7 @@
                 <div class="detail-item"><span>City Origin</span><strong>{{ customer.cityOrigin || '-' }}</strong></div>
                 <div class="detail-item alt"><span>City Destination</span><strong>{{ customer.cityDestination || '-' }}</strong></div>
                 <div class="detail-item"><span>Commodity</span><strong>{{ customer.commodity || '-' }}</strong></div>
-                <div class="detail-item alt"><span>Move Type</span><strong>{{ customer.moveType || '-' }}</strong></div>
+                <div class="detail-item alt"><span>Commission</span><strong>{{ formatRupiah(customer.commission) || '-' }}</strong></div>
               </div>
               
               <div class="space-y-3">
@@ -51,7 +51,8 @@
                 <table v-if="customer.tariffs.length > 0" class="min-w-full">
                 <thead>
                   <tr class="tariff-table text-left">
-                    <th class="p-3 border">Type</th>
+                    <th class="p-3 border">Chassis Type</th>
+                    <th class="p-3 border">Move Type</th>
                     <th class="p-3 border">Std Tariff</th>
                     <th class="p-3 border">Insurance</th>
                     <th class="p-3 border">Tips</th>
@@ -63,7 +64,8 @@
                 </thead>
                 <tbody>
                   <tr v-for="tariff in customer.tariffs" :key="tariff.tariffId" class="tariff-table">
-                    <td class="p-3 border text-left font-bold">{{ tariff.type }}</td>
+                    <td class="p-3 border text-left font-bold">{{ tariff.chassisType }}</td>
+                    <td class="p-3 border text-left font-bold">{{ tariff.moveType }}</td>
                     <td class="p-3 border text-left">{{ formatRupiah(tariff.stdTariff) }}</td>
                     <td class="p-3 border text-left">{{ formatRupiah(tariff.insurance) }}</td>
                     <td class="p-3 border text-left">{{ formatRupiah(tariff.tips) }}</td>
@@ -114,7 +116,7 @@ const customerFields = {
     cityOrigin: "Kota Asal",
     cityDestination: "Kota Tujuan",
     commodity: "Komoditas",
-    moveType: "Tipe Perpindahan",
+    commission: "Komisi",
     insertedBy: "Inserted By",
     insertedDate: "Inserted Date",
     updatedBy: "Updated By",
@@ -141,7 +143,7 @@ const goToEdit = () => {
 
 const formatDate = (date: string | Date | null | undefined) => {
   if (!date) return '-';
-  const options = { year: "numeric", month: "long", day: "numeric" };
+  const options = { year: "numeric" as const, month: "long" as const, day: "numeric" as const };
   const formattedDate = new Date(date).toLocaleDateString('id-ID', options);
   return formattedDate;
 };
