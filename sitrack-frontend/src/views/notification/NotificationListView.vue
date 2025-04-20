@@ -46,17 +46,19 @@
                 <tr
                   v-for="(notif, idx) in filteredNotifications"
                   :key="notif.id"
-                  :class="[ 
+                  :class="[
                     'cursor-pointer transition',
                     idx % 2 === 0
                       ? 'bg-[#FAFAFF] hover:bg-[#E0E0E0] rounded-lg'
-                      : 'bg-[#BBCDE5] border border-[#222222] hover:bg-[#A4BEE0] rounded-lg'
+                      : 'bg-[#BBCDE5] hover:bg-[#A4BEE0] rounded-lg',
+                    !notif.isRead ? 'unread-row' : ''
                   ]"
                   @click="handleNotificationClick(notif)"
                 >
                   <td class="py-3 px-4 text-center text-lg font-semibold">{{ idx + 1 }}</td>
-                  <td class="py-3 px-4 text-lg">
-                    <span v-html="formatMessage(notif)"></span>
+                  <td class="py-3 px-4 text-lg flex items-center gap-2">
+                    <span class="text-xl" v-html="formatMessage(notif)"></span>
+                    <span v-if="!notif.isRead" class="ml-2 px-2 py-1 bg-blue-500 text-white text-xs rounded-full font-bold">New</span>
                   </td>
                   <td class="py-3 px-4 text-center" @click.stop>
                     <input
@@ -145,5 +147,9 @@ onMounted(() => {
   width: 22px;
   height: 22px;
   accent-color: #1C5D99;
+}
+
+.unread-row {
+  border-left: 8px solid #1C5D99 !important;
 }
 </style>
