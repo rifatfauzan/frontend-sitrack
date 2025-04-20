@@ -21,6 +21,7 @@ import TruckListView from '@/views/trucks/TruckListView.vue'
 import CreateTruckView from '@/views/trucks/CreateTruckView.vue'
 import TruckDetailView from '@/views/trucks/TruckDetailView.vue'
 import EditTruckView from '@/views/trucks/EditTruckView.vue'
+import NotificationListView from '@/views/notification/NotificationListView.vue'
 
 import AssetListView from '@/views/asset/AssetListView.vue'
 import CreateAssetView from '@/views/asset/CreateAssetView.vue'
@@ -224,6 +225,12 @@ const router = createRouter({
       name: 'create asset', 
       component: CreateAssetView, 
       meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] }
+    },
+    {
+      path: '/notifications',
+      name: 'view all notification',
+      component: NotificationListView,
+      meta: { requiresAuth: true , authorize: ['Supervisor', 'Manager', 'Admin', "Operasional"]},
     },
   ],
 })
