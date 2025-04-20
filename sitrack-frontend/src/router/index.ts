@@ -21,9 +21,11 @@ import TruckListView from '@/views/trucks/TruckListView.vue'
 import CreateTruckView from '@/views/trucks/CreateTruckView.vue'
 import TruckDetailView from '@/views/trucks/TruckDetailView.vue'
 import EditTruckView from '@/views/trucks/EditTruckView.vue'
+import EditAssetView from '@/views/asset/EditAssetView.vue'
 
 import AssetListView from '@/views/asset/AssetListView.vue'
 import CreateAssetView from '@/views/asset/CreateAssetView.vue'
+import DetailAssetView from '@/views/asset/DetailAssetView.vue'
 
 const decodeTokenPayload = (token: string) => {
   try {
@@ -225,6 +227,20 @@ const router = createRouter({
       component: CreateAssetView, 
       meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] }
     },
+    {
+      path: '/assets/update/:assetId',
+      name: 'update asset',
+      component: EditAssetView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']},
+      props: true,
+    },
+    {
+      path: '/assets/:assetId',
+      name: 'detail asset',
+      component: DetailAssetView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']},
+      props: true,
+    }
   ],
 })
 
