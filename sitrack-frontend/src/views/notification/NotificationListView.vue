@@ -11,9 +11,9 @@
                 v-for="tab in tabs"
                 :key="tab.value"
                 @click="activeTab = tab.value"
-                :class="[ 
-                  'px-4 py-2 rounded font-medium',
-                  activeTab === tab.value ? 'bg-[#1C5D99] text-white' : 'bg-gray-100 text-gray-700'
+                :class="[
+                  'tab-btn px-4 py-2 rounded font-medium',
+                  activeTab === tab.value ? 'active bg-[#1C5D99] text-white' : 'bg-gray-100 text-gray-700'
                 ]"
               >
                 {{ tab.label }}
@@ -152,4 +152,11 @@ onMounted(() => {
 .unread-row {
   border-left: 8px solid #1C5D99 !important;
 }
+
+.tab-btn:not(.active):hover {
+  background-color: #e0e7ef !important; /* atau warna hover yang Anda inginkan */
+  color: #1C5D99 !important;
+  transition: background 0.2s, color 0.2s;
+}
+
 </style>
