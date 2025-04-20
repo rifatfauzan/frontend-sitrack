@@ -12,7 +12,7 @@
                 :key="tab.value"
                 @click="activeTab = tab.value"
                 :class="[
-                  'tab-btn px-4 py-2 rounded font-medium',
+                    'tab-btn px-4 py-2 rounded font-medium font-semibold min-h-[48px] text-lg',
                   activeTab === tab.value ? 'active bg-[#1C5D99] text-white' : 'bg-gray-100 text-gray-700'
                 ]"
               >
@@ -22,10 +22,11 @@
             <VButton
               title="Hapus"
               icon="pi pi-trash"
-              class="bg-[#EB5757] hover:bg-[#C64646] text-white px-4 py-2 rounded flex items-center gap-2"
+              class="bg-[#EB5757] hover:bg-[#C64646] text-white px-4 py-2 rounded flex items-center gap-2 min-h-[48px]"
               @click="bulkDelete"
             />
           </div>
+
 
           <div v-if="store.loading" class="flex justify-center py-8">
             <i class="pi pi-spin pi-spinner text-3xl text-primary"></i>
