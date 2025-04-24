@@ -25,6 +25,10 @@ import EditTruckView from '@/views/trucks/EditTruckView.vue'
 import AssetListView from '@/views/asset/AssetListView.vue'
 import CreateAssetView from '@/views/asset/CreateAssetView.vue'
 
+import OrderListView from '@/views/order/OrderListView.vue'
+import OrderDetailView from '@/views/order/OrderDetailView.vue'
+import CreateOrderView from '@/views/order/CreateOrderView.vue'
+
 const decodeTokenPayload = (token: string) => {
   try {
     const payload = token.split('.')[1]
@@ -225,6 +229,27 @@ const router = createRouter({
       component: CreateAssetView, 
       meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] }
     },
+    {
+      path: '/orders',
+      name: 'view all order',
+      component: OrderListView,
+      meta: { public: true }
+    },
+    {
+      path: '/order/detail',
+      name: 'detail order',
+      component: OrderDetailView,
+      meta: { public: true },
+      props: (route) => ({ id: route.query.id })
+    },
+    {
+      path: '/order/create',
+      name: 'create order',
+      component: CreateOrderView,
+      meta: { public: true },
+      props: (route) => ({ id: route.query.id })
+    },
+    
   ],
 })
 
