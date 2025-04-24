@@ -41,43 +41,42 @@ export const useOrderStore = defineStore('order', {
     },
 
     async addOrder(orderData: CreateOrderRequest) {
-        this.loading = true;
-        this.error = null;
-        const authStore = useAuthStore();
-        const toast = useToast();
-      
-        try {
-          const response = await fetch(`${API_URL}/api/order/add`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${authStore.token}`,
-            },
-            body: JSON.stringify(orderData),
-          });
-      
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Gagal menambahkan order');
-          }
-      
-          const data: { data: CreateOrderResponse } = await response.json();
-      
-          // Fetch detail lengkap
-          const newOrder = await this.getOrderById(data.data.orderId);
-          if (newOrder) {
-            this.orderList.push(newOrder);
-          }
-      
-          return { success: true, message: 'Order berhasil ditambahkan!' };
-        } catch (err) {
-          this.error = `Gagal menambahkan order: ${(err as Error).message}`;
-          toast.error(this.error);
-          return { success: false, message: this.error };
-        } finally {
-          this.loading = false;
+      this.loading = true;
+      this.error = null;
+      const authStore = useAuthStore();
+      const toast = useToast();
+
+      try {
+        const response = await fetch(`${API_URL}/api/order/add`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authStore.token}`,
+          },
+          body: JSON.stringify(orderData),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || 'Gagal menambahkan order');
         }
-      },
+
+        const { data } = await response.json() as { data: CreateOrderResponse };
+
+        // const newOrder = await this.getOrderById(data.orderId);
+        // if (newOrder) this.orderList.push(newOrder);
+        
+
+        toast.success('Order berhasil ditambahkan!');
+        return { success: true, orderId: data.orderId };
+      } catch (err) {
+        this.error = `Gagal menambahkan order: ${(err as Error).message}`;
+        toast.error(this.error);
+        return { success: false, message: this.error };
+      } finally {
+        this.loading = false;
+      }
+    },
       
 
     async getOrderById(orderId: string): Promise<Order | null> {
@@ -94,10 +93,10 @@ export const useOrderStore = defineStore('order', {
           },
         });
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || 'Gagal mendapatkan data order');
-        }
+        // if (!response.ok) {
+        //   const errorData = await response.json();
+        //   throw new Error(errorData.message || 'Gagal mendapatkan data order');
+        // }
 
         const data: { data: Order } = await response.json();
         return data.data;

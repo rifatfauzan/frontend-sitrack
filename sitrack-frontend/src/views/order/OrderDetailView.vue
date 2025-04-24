@@ -9,6 +9,8 @@ import FooterComponent from '@/components/Footer.vue';
 import VButton from '@/components/VButton.vue';
 import Skeleton from 'primevue/skeleton';
 import { computed } from 'vue';
+import { useCustomerStore } from '@/stores/customer';
+
 
 const route = useRoute();
 const router = useRouter();
@@ -16,9 +18,14 @@ const orderStore = useOrderStore();
 const { loading } = storeToRefs(orderStore);
 const orderDetail = ref<any>(null);
 
+const customerStore = useCustomerStore();
+const { customers } = storeToRefs(customerStore);
+
 const orderId = route.query.id as string;
 
 onMounted(async () => {
+  customerStore.fetchCustomers(); // <-- ini dia
+
   if (orderId) {
     orderDetail.value = await orderStore.getOrderById(orderId);
   }
@@ -33,6 +40,11 @@ const goToEdit = () => {
     router.push({ name: 'edit order', query: { id: orderDetail.value.orderId } });
   }
 };
+
+function getCustomerNameById(customerId: string) {
+  const name = customers.value.find(c => c.id === customerId)?.name || 'Unknown';
+  return name.length > 30 ? name.slice(0, 30) + '...' : name;
+}
 
 
 const formatDate = (date) => {
@@ -115,54 +127,27 @@ const statusLabel = computed(() => {
               </div>
               <VButton title="Edit" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" @click="goToEdit" />
             </div>
-            
-            <!-- <div class="grid grid-cols-2 gap-4">
-              <div class="space-y-3">
-                <div class="detail-item"><span>Year</span><strong>{{ orderDetail.orderYear || '-' }}</strong></div>
-                <div class="detail-item alt"><span>KIR No.</span><strong>{{ orderDetail.orderKIRNo || '-' }}</strong></div>
-                
-                <div :class="['detail-item', getExpirationClass(orderDetail.orderKIRDate)]">
-                  <span>KIR Expiration</span>
-                  <strong>{{ formatDate(orderDetail.orderKIRDate) || '-' }}</strong>
-                </div>
-                
-                <div class="detail-item alt"><span>order No.</span><strong>{{ orderDetail.orderNumber || '-' }}</strong></div>
-                <div class="detail-item"><span>Type</span><strong>{{ orderTypeLabel }}</strong></div>
-                <div class="detail-item alt"><span>Division</span><strong>{{ orderDetail.division || '-' }}</strong></div>
-                <div class="detail-item"><span>Department</span><strong>{{ orderDetail.dept || '-' }}</strong></div>
-              </div>
-  
-              <div class="space-y-3">
-                <div class="detail-item"><span>Row Status</span><strong>{{ orderDetail.rowStatus || '-' }}</strong></div>
-                <div class="detail-item alt"><span>Axle</span><strong>{{ orderDetail.orderAxle || '-' }}</strong></div>
-                <div class="detail-item"><span>Size</span><strong>{{ orderDetail.orderSize || '-' }}</strong></div>
-                <div class="detail-item alt"><span>Site</span><strong>{{ orderDetail.siteId || '-' }}</strong></div>
-                <div class="detail-item"><span>Created by</span><strong>{{ orderDetail.insertedBy || '-' }}</strong></div>
-                <div class="detail-item alt"><span>Created at</span><strong>{{ formatDate(orderDetail.insertedDate) || '-' }}</strong></div>
-                <div class="detail-item"><span>Updated by</span><strong>{{ orderDetail.updatedBy || '-' }}</strong></div>
-                <div class="detail-item alt"><span>Updated at</span><strong>{{ formatDate(orderDetail.updatedDate) || '-' }}</strong></div>
-              </div>
-            </div>
-  
-            <div class="detail-remarks">
-                <span class="label">Remarks</span>
-                <p class="text">{{ orderDetail.orderRemarks || '-' }}</p>
-            </div> -->
 
             <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-3">
-                    <div class="detail-item"><span>Order Date</span><strong>{{ formatDate(orderDetail.orderDate) || '-' }}</strong></div>
-                    <div class="detail-item alt"><span>Customer</span><strong>{{ orderDetail.customerId || '-' }}</strong></div>
-                    
+                  <div class="detail-item"><span>Customer ID</span><strong>{{ orderDetail.customerId || '-' }}</strong></div>
+
+                    <div class="detail-item alt"><span>Order Date</span><strong>{{ formatDate(orderDetail.orderDate) || '-' }}</strong></div>                    
                     <div class="detail-item"><span>Move Type</span><strong>{{ orderDetail.moveType || '-' }}</strong></div>
                     <div class="detail-item alt"><span>Down Payment</span><strong>{{ orderDetail.downPayment ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Site</span><strong>{{ orderDetail.siteId || '-' }}</strong></div>
-                    <div class="detail-item alt"><span>Qty Chassis 20'</span><strong>{{ orderDetail.qtyChassis20 ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty Chassis 40'</span><strong>{{ orderDetail.qtyChassis40 ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Site ID</span><strong>{{ orderDetail.siteId || '-' }}</strong></div>
+                    <div class="detail-item alt"><span>20' Chassis Quantity</span><strong>{{ orderDetail.qtyChassis20 ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>40' Chassis Quantity</span><strong>{{ orderDetail.qtyChassis40 ?? '-' }}</strong></div>
                 </div>
 
                 <div class="space-y-3">
-                    <div class="detail-item"><span>Status</span><strong>{{ statusLabel.label }}</strong></div>
+                    <!-- <div class="detail-item"><span>Status</span><strong>{{ statusLabel.label }}</strong></div> -->
+                    <div class="detail-item">
+                    <span>Customer Name</span>
+                    <strong>{{ getCustomerNameById(orderDetail.customerId) }}</strong>
+                  </div>
+
+
                     <div class="detail-item alt"><span>Created By</span><strong>{{ orderDetail.createdBy || '-' }}</strong></div>
                     <div class="detail-item"><span>Created Date</span><strong>{{ formatDate(orderDetail.createdDate) || '-' }}</strong></div>
                     <div class="detail-item alt"><span>Updated By</span><strong>{{ orderDetail.updatedBy || '-' }}</strong></div>

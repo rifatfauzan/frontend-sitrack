@@ -1,5 +1,3 @@
-// order.interface.ts
-
 export interface Order {
     orderId: string;
     orderDate: Date;
@@ -44,7 +42,7 @@ export interface Order {
     qtyChassis20?: number;
     qtyChassis40?: number;
   
-    siteId?: string;
+    // siteId?: string;
     remarksOperasional?: string;
     moveType?: string;
     downPayment?: number;

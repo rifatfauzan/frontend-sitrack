@@ -12,17 +12,27 @@ import { useOrderStore } from '@/stores/order';
 import { storeToRefs } from 'pinia';
 import { FilterMatchMode } from '@primevue/core/api';
 import { format } from 'date-fns';
+import { useCustomerStore } from '@/stores/customer';
 
 const router = useRouter();
 const orderStore = useOrderStore();
 const { orderList: orders, loading } = storeToRefs(orderStore);
 
-const filters = ref({
-  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-});
+const customerStore = useCustomerStore();
+const { customers } = storeToRefs(customerStore);
 
 onMounted(() => {
   orderStore.fetchOrders();
+  customerStore.fetchCustomers(); // <-- ini dia
+});
+
+function getCustomerNameById(customerId: string) {
+  const name = customers.value.find(c => c.id === customerId)?.name || 'Unknown';
+  return name.length > 18 ? name.slice(0, 18) + '...' : name;
+}
+
+const filters = ref({
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 
 function onRowClick(event: { data: any }) {
@@ -90,7 +100,14 @@ const statusMap = {
               </Column>
 
               <Column field="orderId" header="ID" sortable />
-              <Column field="customerId" header="Customer" sortable />
+              <!-- <Column field="customerId" header="Customer" sortable /> -->
+
+              <Column header="Customer" sortable>
+                <template #body="{ data }">
+                  {{ getCustomerNameById(data.customerId) }}
+                </template>
+              </Column>
+
               <Column field="orderDate" header="Date" sortable>
                 <template #body="{ data }">
                   {{ formatDate(data.orderDate) }}
