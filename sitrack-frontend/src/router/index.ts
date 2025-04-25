@@ -24,6 +24,10 @@ import EditTruckView from '@/views/trucks/EditTruckView.vue'
 
 import AssetListView from '@/views/asset/AssetListView.vue'
 import CreateAssetView from '@/views/asset/CreateAssetView.vue'
+import RequestAssetListView from '@/views/requestasset/RequestAssetListView.vue';
+import CreateRequestAssetView from '@/views/requestasset/CreateRequestAssetView.vue';
+import DetailRequestAssetView from '@/views/requestAsset/DetailRequestAssetView.vue'
+
 
 const decodeTokenPayload = (token: string) => {
   try {
@@ -218,13 +222,32 @@ const router = createRouter({
     { path: '/assets', 
       name: 'assets', 
       component: AssetListView, 
-      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] }
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager','Operasional','Mekanik'] }
     },
     { path: '/assets/create', 
       name: 'create asset', 
       component: CreateAssetView, 
       meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] }
     },
+    {
+      path: '/request-assets',
+      name: 'request assets',
+      component: RequestAssetListView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager','Mekanik'] }
+    },
+    {
+      path: '/request-assets/create',
+      name: 'create request asset',
+      component: CreateRequestAssetView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager', 'Mekanik'] }
+    },    
+    {
+      path: '/request-assets/detail',
+      name: 'detail request asset',
+      component: DetailRequestAssetView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager', 'Mekanik'] },
+      props: (route) => ({ id: route.query.id }),
+    }
   ],
 })
 
