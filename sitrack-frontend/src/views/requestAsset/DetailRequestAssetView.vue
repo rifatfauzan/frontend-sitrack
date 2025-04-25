@@ -99,7 +99,7 @@ const formatDate = (date) => {
                     </span>
                 </div>
                 <div class="flex items-center gap-3">
-                    <VButton class="custom-button px-4 py-2 rounded" @click="goToEdit">Edit</VButton>
+                    <VButton v-if="['Supervisor', 'Manager','Mekanik'].includes(userRole) && ![1, 3].includes(requestAsset?.status)"class="custom-button px-4 py-2 rounded" @click="goToEdit">Edit</VButton>
                     <VButton v-if="['Supervisor', 'Manager'].includes(userRole) && ![1, 3].includes(requestAsset?.status)" class="custom-button px-4 py-2 rounded" @click="showApprovalDialog = true">Approval</VButton>
                 </div>
             </div>
@@ -131,14 +131,14 @@ const formatDate = (date) => {
           </div>
           <div class="grid grid-cols-2 gap-4 mt-6">
             <div class="space-y-3">
-                <div class="detail-item alt"><span>Created By</span><strong>{{ requestAsset?.createdBy || '-' }}</strong></div>
-                <div class="detail-item"><span>Created Date</span><strong>{{ formatDate(requestAsset?.createdDate) }}</strong></div>
-                <div class="detail-item alt"><span>Updated By</span><strong>{{ requestAsset?.updatedBy || '-' }}</strong></div>
-                <div class="detail-item"><span>Updated Date</span><strong>{{ formatDate(requestAsset?.updatedDate) }}</strong></div>
+                <div class="detail-item alt"><span>Created By</span><strong>{{ requestAsset.createdBy || '-' }}</strong></div>
+                <div class="detail-item"><span>Created Date</span><strong>{{ formatDate(requestAsset.createdDate)|| '-' }}</strong></div>
+                <div class="detail-item alt"><span>Updated By</span><strong>{{ requestAsset.updatedBy || '-' }}</strong></div>
+                <div class="detail-item"><span>Updated Date</span><strong>{{ formatDate(requestAsset.updatedDate) || '-' }}</strong></div>
             </div>
             <div class="space-y-3">
-                <div class="detail-item alt"><span>Approval By</span><strong>{{ requestAsset?.approvalBy || '-' }}</strong></div>
-                <div class="detail-item"><span>Approval Date</span><strong>{{ formatDate(requestAsset?.approvalDate) }}</strong></div>
+                <div class="detail-item alt"><span>Approval By</span><strong>{{ requestAsset.approvalBy || '-' }}</strong></div>
+                <div class="detail-item"><span>Approval Date</span><strong>{{ formatDate(requestAsset.approvalDate) || '-'}}</strong></div>
             </div>
            </div>
         </div>
