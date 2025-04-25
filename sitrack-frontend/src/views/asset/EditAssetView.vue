@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
-import { useSopirStore } from '@/stores/sopir';
 import { useToast } from 'vue-toastification';
 import Sidebar from '@/components/Sidebar.vue';
 import HeaderComponent from '@/components/Header.vue';
@@ -31,6 +30,9 @@ const form = reactive({
   assetRemark: '',
 });
 
+const goToDetail = () => {
+  router.push({ name: 'detail asset', params: { assetId: form.assetId } });
+};
 
 onMounted(async () => {
 const assetId = route.params.assetId as string;
@@ -122,7 +124,7 @@ const onSubmitForm = async () => {
             <div class="form-grid">
               <div class="form-group">
                 <label for="assetId"> Asset ID</label>
-                <input v-model="form.assetId" type="text" id="assetId" readonly />
+                <input v-model="form.assetId" type="text" id="assetId" readonly class="readonly-input" />
               </div>
 
               <div class="form-group">
@@ -163,10 +165,9 @@ const onSubmitForm = async () => {
 
       <SuccessDialog 
         :visible="showSuccess" 
-        @close="goBack" 
+        @close="goToDetail" 
         :message="'Berhasil Memperbarui Data Asset!'" 
-        redirectTo="/assets"
-        buttonText="Kembali ke List Asset" />
+        buttonText="Kembali ke Detail Asset" />
 
       <ErrorDialog
         :visible="showError"
@@ -245,6 +246,11 @@ textarea {
 .header-title {
   font-size: 1.5rem;
   font-weight: bold;
+}
+
+.readonly-input{
+  background-color: #C7C7C7;
+  cursor: not-allowed;
 }
 
 </style>
