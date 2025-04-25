@@ -25,7 +25,7 @@ onMounted(async () => {
 
 const getStatusLabel = (status: number) => {
   switch (status) {
-    case 0: return 'Pending';
+    case 0: return 'Pending Approval';
     case 1: return 'Approved';
     case 2: return 'Needs Revision';
     case 3: return 'Rejected';
@@ -100,7 +100,7 @@ const formatDate = (date) => {
                 </div>
                 <div class="flex items-center gap-3">
                     <VButton class="custom-button px-4 py-2 rounded" @click="goToEdit">Edit</VButton>
-                    <VButton v-if="['Supervisor', 'Manager'].includes(userRole)" class="custom-button px-4 py-2 rounded" @click="showApprovalDialog = true">Approval</VButton>
+                    <VButton v-if="['Supervisor', 'Manager'].includes(userRole) && ![1, 3].includes(requestAsset?.status)" class="custom-button px-4 py-2 rounded" @click="showApprovalDialog = true">Approval</VButton>
                 </div>
             </div>
 
@@ -152,7 +152,7 @@ const formatDate = (date) => {
         <textarea v-model="approvalRemark" class="w-full p-2 rounded border min-h-[100px]" />
         <div class="flex justify-between mt-4">
           <VButton class="bg-red-500 text-white px-4 py-2 rounded" @click="updateStatus(3)">Reject</VButton>
-          <VButton class="bg-yellow-400 text-white px-4 py-2 rounded" @click="updateStatus(2)">Request Revision</VButton>
+          <VButton class="bg-yellow-400 text-white px-4 py-2 rounded" @click="updateStatus(2)">Need Revision</VButton>
           <VButton class="bg-green-500 text-white px-4 py-2 rounded" @click="updateStatus(1)">Approve</VButton>
         </div>
       </div>
