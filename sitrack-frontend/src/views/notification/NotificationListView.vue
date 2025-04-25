@@ -12,7 +12,7 @@
                 :key="tab.value"
                 @click="activeTab = tab.value"
                 :class="[
-                    'tab-btn px-4 py-2 rounded font-medium font-semibold min-h-[48px] text-lg',
+                  'tab-btn px-4 py-2 rounded font-medium font-semibold min-h-[48px] text-lg',
                   activeTab === tab.value ? 'active bg-[#1C5D99] text-white' : 'bg-gray-100 text-gray-700'
                 ]"
               >
@@ -26,8 +26,6 @@
               @click="bulkDelete"
             />
           </div>
-
-
           <div v-if="store.loading" class="flex justify-center py-8">
             <i class="pi pi-spin pi-spinner text-3xl text-primary"></i>
           </div>
@@ -88,7 +86,9 @@ import Sidebar from '@/components/Sidebar.vue'
 import VButton from '@/components/VButton.vue'
 import HeaderComponent from '@/components/Header.vue'
 import FooterComponent from '@/components/Footer.vue'
+import { useAuthStore } from '@/stores/auth'
 
+const authStore = useAuthStore()
 const store = useNotificationStore()
 const router = useRouter()
 
@@ -109,6 +109,11 @@ const filteredNotifications = computed(() => {
       ['VEHICLE_STNK_EXPIRY', 'VEHICLE_KIR_EXPIRY', 'CHASSIS_KIR_EXPIRY', 'DRIVER_SIM_EXPIRY'].includes(n.category)
     )
   }
+  if (activeTab.value === 'order') {
+    return store.notifications.filter(n =>
+      ['ORDER_UPDATE'].includes(n.category)
+    )
+  }
   return store.notifications.filter(n => n.category === activeTab.value.toUpperCase())
 })
 
@@ -120,15 +125,30 @@ const handleNotificationClick = async (notif: any) => {
 }
 
 function formatMessage(notif: any): string {
-  const { message, referenceType, referenceId } = notif
-  const docType = notif.title.split(' ')[0]
+  if (notif.category === 'ORDER_UPDATE') {
+    if (notif.title && notif.title.includes('Persetujuan')) {
+      if (authStore.role === 'Operasional') {
+        return `<span class="text-blue-900 font-bold">[Pending Approval]</span> ${notif.message}`
+      }
+      if (['Supervisor', 'Manager', 'Admin'].includes(authStore.role)) {
+        return `<span class="text-blue-900 font-bold">[Approval Needed]</span> ${notif.message}`
+      }
+    }
+    if (notif.title && notif.title.includes('Status')) {
+      return `<span class="text-blue-900 font-bold">[Status Order]</span> ${notif.message}`
+    }
+  }
 
+  if (notif.category === 'VEHICLE_STNK_EXPIRY' || notif.category === 'VEHICLE_KIR_EXPIRY' || notif.category === 'CHASSIS_KIR_EXPIRY' || notif.category === 'DRIVER_SIM_EXPIRY') {
+    return `<span class="text-blue-900 font-bold">[Expiring]</span> ${notif.message}`
+  }
+
+  const { message, referenceType, referenceId } = notif
+  const docType = notif.title ? notif.title.split(' ')[0] : ''
   let formatted = message.replace(docType, `<b>${docType}</b>`)
   formatted = formatted.replace(referenceType, `<b>${referenceType}</b>`)
   formatted = formatted.replace(referenceId, `<b>${referenceId}</b>`)
-
   formatted = formatted.replace(/(expired|expired)/gi, '<i>$1</i>')
-
   return formatted
 }
 
@@ -155,9 +175,8 @@ onMounted(() => {
 }
 
 .tab-btn:not(.active):hover {
-  background-color: #e0e7ef !important; /* atau warna hover yang Anda inginkan */
+  background-color: #e0e7ef !important;
   color: #1C5D99 !important;
   transition: background 0.2s, color 0.2s;
 }
-
 </style>
