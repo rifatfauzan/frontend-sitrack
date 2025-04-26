@@ -74,5 +74,61 @@ export const useAssetStore = defineStore('asset', {
                 this.loading = false;
             }
         },
+        async editAsset(assetId: string, assetData: CreateAssetRequest) {
+            this.loading = true;
+            this.error = null;
+            const authStore = useAuthStore();
+            const toast = useToast();
+
+            try {
+                const response = await fetch(`${API_URL}/api/asset/update/${assetId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authStore.token}`
+                    },
+                    body: JSON.stringify(assetData),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || 'Gagal mengedit asset');
+                }
+
+                const data = await response.json();
+                this.assetList = this.assetList.map(asset => asset.assetId === assetId ? { ...asset, ...data.data } : asset);
+
+                toast.success('Asset berhasil diedit!');
+                return { success: true, message: "Asset berhasil diedit!" };
+            } catch (err) {
+                this.error = `Gagal mengedit asset: ${(err as Error).message}`;
+                toast.error(this.error);
+                return { success: false, message: this.error };
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        async getAssetById(assetId: string) {
+            this.loading = true;
+            this.error = null;
+            const authStore = useAuthStore();
+
+            try {
+                const response = await fetch(`${API_URL}/api/asset/${assetId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${authStore.token}`,
+                    },
+                });
+
+                const data = await response.json();
+                return data.data;
+            } catch (err) {
+                this.error = `Gagal mengambil data asset: ${(err as Error).message}`;
+            } finally {
+                this.loading = false;
+            }
+        }
     },
 });
