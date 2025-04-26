@@ -127,19 +127,33 @@ const showErrorDialog = ref(false)
 const dialogMessage = ref('')
 
 const filteredNotifications = computed(() => {
-  if (activeTab.value === 'all') return store.notifications
-  if (activeTab.value === 'reference') {
-    return store.notifications.filter(n =>
+  let filtered = [];
+  if (activeTab.value === 'all') filtered = store.notifications;
+  else if (activeTab.value === 'reference') {
+    filtered = store.notifications.filter(n => 
       ['VEHICLE_STNK_EXPIRY', 'VEHICLE_KIR_EXPIRY', 'CHASSIS_KIR_EXPIRY', 'DRIVER_SIM_EXPIRY'].includes(n.category)
-    )
+    );
   }
-  if (activeTab.value === 'order') {
-    return store.notifications.filter(n =>
-      ['ORDER_UPDATE'].includes(n.category)
-    )
+  else if (activeTab.value === 'order') {
+    filtered = store.notifications.filter(n => ['ORDER_UPDATE'].includes(n.category));
   }
-  return store.notifications.filter(n => n.category === activeTab.value.toUpperCase())
-})
+  else if (activeTab.value === 'inventory') {
+    filtered = store.notifications.filter(n => ['REQUEST_ASSET_UPDATE'].includes(n.category));
+  }
+  else {
+    filtered = store.notifications.filter(n => n.category === activeTab.value.toUpperCase());
+  }
+
+  return filtered.filter(notif => {
+    if (authStore.role === 'Operasional') {
+      return notif.category !== 'REQUEST_ASSET_UPDATE';
+    }
+    else if (authStore.role === 'Mekanik') {
+      return notif.category !== 'ORDER_UPDATE';
+    }
+    return true;
+  });
+});
 
 const handleNotificationClick = async (notif: any) => {
   if (!notif.isRead) {
@@ -149,9 +163,9 @@ const handleNotificationClick = async (notif: any) => {
 }
 
 function formatMessage(notif: any): string {
-  if (notif.category === 'ORDER_UPDATE') {
+  if (notif.category === 'ORDER_UPDATE' || notif.category === 'REQUEST_ASSET_UPDATE') {
     if (notif.title && notif.title.includes('Persetujuan')) {
-      if (authStore.role === 'Operasional') {
+      if (authStore.role === 'Operasional' || authStore.role === 'Mekanik') {
         return `<span class="text-blue-900 font-bold">[Pending Approval]</span> ${notif.message}`
       }
       if (['Supervisor', 'Manager', 'Admin'].includes(authStore.role)) {
@@ -159,9 +173,10 @@ function formatMessage(notif: any): string {
       }
     }
     if (notif.title && notif.title.includes('Status')) {
-      return `<span class="text-blue-900 font-bold">[Status Order]</span> ${notif.message}`
+      return `<span class="text-blue-900 font-bold">[Status Update]</span> ${notif.message}`
     }
   }
+  
   if (notif.category === 'VEHICLE_STNK_EXPIRY' || notif.category === 'VEHICLE_KIR_EXPIRY' || notif.category === 'CHASSIS_KIR_EXPIRY' || notif.category === 'DRIVER_SIM_EXPIRY') {
     return `<span class="text-blue-900 font-bold">[Expiring]</span> ${notif.message}`
   }
