@@ -80,7 +80,8 @@ console.log("Driver ID from route:", driverId);
 });
 // Navigasi kembali ke daftar chassis
 const goBack = () => {
-  router.push('/sopir/viewall');
+  showSuccess.value = false;
+  router.push({name: 'detail sopir', params: { driverId: form.driverId }});
 };
 
 const submitForm = () => {
@@ -88,7 +89,8 @@ const submitForm = () => {
 };
 // Fungsi submit form
 const onSubmitForm = async () => {
-  loading.value = true, showConfirm.value = true;
+  loading.value = true;
+  showConfirm.value = false;
   try {
     const response = await sopirStore.updateSopir(form.driverId,{
         driverName: form.driverName,
@@ -109,13 +111,14 @@ const onSubmitForm = async () => {
     });
 
     if (response.success) {
-      toast.success(response.message);
-      router.push('/sopir/viewall'); 
+      showSuccess.value = true;
     } else {
-      toast.error(response.message);
+      errorMessage.value = response.message || "Terjadi kesalahan!";
+      showError.value = true;
     }
   } catch (error) {
-    toast.error('Terjadi kesalahan!');
+    errorMessage.value = "Terjadi kesalahan saat menyimpan data!";
+    showError.value = true;
   } finally {
     loading.value = false;
   }
@@ -144,7 +147,6 @@ const onSubmitForm = async () => {
 
           <form @submit.prevent="submitForm">
             <div class="form-grid">
-              <!-- Chassis ID -->
               <div class="form-group">
                 <label for="driverId"> Driver ID</label>
                 <input v-model="form.driverId" type="text" id="driverId" readonly />
@@ -189,32 +191,32 @@ const onSubmitForm = async () => {
               
               <div class="form-group">
                 <label for="driverContact">Driver Contact</label>
-                <input v-model="form.driverContact" type="text" id="driverContact" maxlength="20" required />
+                <input v-model="form.driverContact" type="text" id="driverContact" maxlength="20"  />
               </div>
 
               <div class="form-group">
                 <label for="driverNumber">Driver Number</label>
-                <input v-model="form.driverNumber" type="text" id="driverNumber" maxlength="20" required />
+                <input v-model="form.driverNumber" type="text" id="driverNumber" maxlength="20"  />
               </div>
 
               <div class="form-group">
                 <label for="driverType">Driver Type</label>
-                <input v-model="form.driverType" type="text" id="driverType" maxlength="1" required />
+                <input v-model="form.driverType" type="text" id="driverType" maxlength="1"  />
               </div>
 
               <div class="form-group">
                 <label for="recordStatus">Record Status</label>
-                <input v-model="form.recordStatus" type="text" id="recordStatus" maxlength="1" required />
+                <input v-model="form.recordStatus" type="text" id="recordStatus" maxlength="1"  />
               </div>
 
               <div class="form-group">
                 <label for="driverJoinDate">Driver Join Date</label>
-                <input v-model="form.driverJoinDate" type="date" id="driverJoinDate" required />
+                <input v-model="form.driverJoinDate" type="date" id="driverJoinDate"  />
               </div>
 
               <div class="form-group">
                 <label for="rowStatus">Row Status</label>
-                <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1" required />
+                <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1"  />
               </div>
 
               <div class="form-group">
@@ -247,7 +249,7 @@ const onSubmitForm = async () => {
         @close="goBack" 
         :message="'Berhasil Memperbarui Data Sopir!'" 
         redirectTo="/sopir/viewall"
-        buttonText="Kembali ke List Sopir" />
+        buttonText="Kembali ke Detail Sopir" />
 
       <ErrorDialog
         :visible="showError"

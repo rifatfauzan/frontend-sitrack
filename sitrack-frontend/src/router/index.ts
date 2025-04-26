@@ -4,15 +4,15 @@ import LoginView from '../views/LoginView.vue'
 import UserListView from '../views/users/UserListView.vue'
 import CreateUserView from '../views/users/CreateUserView.vue'
 import EditUserView from '../views/users/EditUserView.vue'
+import CreateSopirView from '@/views/driver/CreateSopirView.vue'
+import ViewallSopirView from '@/views/driver/ViewallSopirView.vue'
+import ViewDetailSopirView from '@/views/driver/ViewDetailSopirView.vue'
+import EditSopirView from '@/views/driver/EditSopirView.vue'
 import UnauthorizedView from '../views/UnauthorizedView.vue'
 import ChassisListView from '../views/chassis/ChassisListView.vue'
 import ChassisDetailView from '../views/chassis/ChassisDetailView.vue'
 import CreateChassisView from '../views/chassis/CreateChassisView.vue'
 import EditChassisView from '../views/chassis/EditChassisView.vue'
-import CreateSopirView from '@/views/driver/CreateSopirView.vue'
-import ViewallSopirView from '@/views/driver/ViewallSopirView.vue'
-import ViewDetailSopirView from '@/views/driver/ViewDetailSopirView.vue'
-import EditSopirView from '@/views/driver/EditSopirView.vue'
 import CustomerListView from '../views/customer/CustomerListView.vue'
 import CreateCustomerView from '../views/customer/CreateCustomerView.vue'
 import EditCustomerView from '../views/customer/EditCustomerView.vue'
@@ -30,6 +30,10 @@ import CreateRequestAssetView from '@/views/requestAsset/CreateRequestAssetView.
 import DetailRequestAssetView from '@/views/requestAsset/DetailRequestAssetView.vue'
 
 import DetailAssetView from '@/views/asset/DetailAssetView.vue'
+
+import OrderListView from '@/views/order/OrderListView.vue'
+import OrderDetailView from '@/views/order/OrderDetailView.vue'
+import CreateOrderView from '@/views/order/CreateOrderView.vue'
 
 const decodeTokenPayload = (token: string) => {
   try {
@@ -263,7 +267,28 @@ const router = createRouter({
       component: DetailAssetView,
       meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']},
       props: true,
-    }
+    },
+    {
+      path: '/orders',
+      name: 'view all order',
+      component: OrderListView,
+      meta: { public: true }
+    },
+    {
+      path: '/order/detail',
+      name: 'detail order',
+      component: OrderDetailView,
+      meta: { public: true },
+      props: (route) => ({ id: route.query.id })
+    },
+    {
+      path: '/order/create',
+      name: 'create order',
+      component: CreateOrderView,
+      meta: { public: true },
+      props: (route) => ({ id: route.query.id })
+    },
+    
   ],
 })
 

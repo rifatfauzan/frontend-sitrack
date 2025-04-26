@@ -9,7 +9,10 @@ import FooterComponent from '@/components/Footer.vue';
 import VButton from '@/components/VButton.vue';
 import InputText from 'primevue/inputtext';
 import DataTable from 'primevue/datatable';
+<<<<<<< HEAD
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
+=======
+>>>>>>> 510a77e2472efd020fca571ffc700a4cb30a3eb5
 import Column from 'primevue/column';
 
 const assetStore = useAssetStore();
@@ -17,6 +20,7 @@ const { assetList, loading } = storeToRefs(assetStore);
 const router = useRouter();
 
 const filters = ref({
+<<<<<<< HEAD
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 
@@ -24,6 +28,11 @@ const goToDetail = (event: { data: any }) => {
   router.push({ name: 'detail asset', params: { assetId: event.data.assetId } });
 };
 
+=======
+  global: { value: null }
+});
+
+>>>>>>> 510a77e2472efd020fca571ffc700a4cb30a3eb5
 const selectedRow = ref(null);
 
 onMounted(async () => {

@@ -23,7 +23,7 @@
               :rows="10"
               dataKey="id"
               :rowsPerPageOptions="[5, 10, 20]" 
-              filterDisplay="row"
+              filterDisplay="menu"
               :loading="loading"
               :globalFilterFields="['username', 'role']"
               stripedRows

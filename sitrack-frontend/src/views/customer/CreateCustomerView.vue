@@ -46,13 +46,8 @@
                   <input class="placeholder-gray-400" v-model="form.commodity" type="text" id="commodity" maxlength="50" placeholder="Komoditas"/>
                 </div>
                 <div class="form-group">
-                  <label for="moveType">Tipe Perpindahan</label>
-                  <select v-model="form.moveType" id="moveType">
-                    <option value="NORMAL">NORMAL</option>
-                    <option value="REPO">REPO</option>
-                    <option value="OFFHERE">OFFHERE</option>
-                    <option value="KADE">KADE</option>
-                  </select> 
+                  <label for="commission">Komisi<span class="required">*</span></label>
+                  <input class="placeholder-gray-400" v-model="form.commission" type="number" id="commission" min="0" step="0.01" placeholder="Rp0,00" required/>
                 </div>
               </div>
               <VButton type="submit" class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full mt-4" :disabled="loading">
@@ -113,7 +108,8 @@
     contractNo: '',
     cityOrigin: '',
     commodity: '',
-    moveType: ''
+    // moveType: ''
+    commission: 0,
   });
   
   const goToList = () => {
@@ -214,12 +210,6 @@
 
   .back-button i {
     font-size: 1.2rem;
-  }
-
-  .error-text {
-    color: #EB5757;
-    font-size: 0.8rem;
-    margin-top: 5px;
   }
   </style>
   

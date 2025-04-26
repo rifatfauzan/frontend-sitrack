@@ -14,7 +14,7 @@
                 </li>
 
                 <li v-if="['Admin', 'Manager', 'Supervisor', 'Operasional'].includes(authStore.role)">
-                    <router-link to="/customer-booking" class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item">
+                    <router-link to="/orders" class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item">
                         <i class="fas fa-truck"></i>
                         <span>Customer Booking</span>
                     </router-link>
