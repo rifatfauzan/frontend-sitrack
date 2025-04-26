@@ -74,6 +74,22 @@
         </div>
       </div>
       <FooterComponent />
+      <ConfirmationDialog
+        :visible="showConfirmDialog"
+        :message="dialogMessage"
+        @close="showConfirmDialog = false"
+        @confirm="confirmBulkDelete"
+      />
+      <SuccessDialog
+        :visible="showSuccessDialog"
+        :message="dialogMessage"
+        @close="showSuccessDialog = false"
+      />
+      <ErrorDialog
+        :visible="showErrorDialog"
+        :message="dialogMessage"
+        @close="showErrorDialog = false"
+      />
     </div>
   </div>
 </template>
@@ -86,6 +102,9 @@ import Sidebar from '@/components/Sidebar.vue'
 import VButton from '@/components/VButton.vue'
 import HeaderComponent from '@/components/Header.vue'
 import FooterComponent from '@/components/Footer.vue'
+import ConfirmationDialog from '@/components/ConfirmationDialog.vue'
+import SuccessDialog from '@/components/SuccessDialog.vue'
+import ErrorDialog from '@/components/ErrorDialog.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
@@ -95,12 +114,17 @@ const router = useRouter()
 const tabs = [
   { label: 'All', value: 'all' },
   { label: 'Reference', value: 'reference' },
-  { label: 'SPJ', value: 'spj' },
   { label: 'Order', value: 'order' },
+  { label: 'SPJ', value: 'spj' },
   { label: 'Inventory', value: 'inventory' }
 ]
 const activeTab = ref('all')
 const selectedIds = ref<number[]>([])
+
+const showConfirmDialog = ref(false)
+const showSuccessDialog = ref(false)
+const showErrorDialog = ref(false)
+const dialogMessage = ref('')
 
 const filteredNotifications = computed(() => {
   if (activeTab.value === 'all') return store.notifications
@@ -138,11 +162,9 @@ function formatMessage(notif: any): string {
       return `<span class="text-blue-900 font-bold">[Status Order]</span> ${notif.message}`
     }
   }
-
   if (notif.category === 'VEHICLE_STNK_EXPIRY' || notif.category === 'VEHICLE_KIR_EXPIRY' || notif.category === 'CHASSIS_KIR_EXPIRY' || notif.category === 'DRIVER_SIM_EXPIRY') {
     return `<span class="text-blue-900 font-bold">[Expiring]</span> ${notif.message}`
   }
-
   const { message, referenceType, referenceId } = notif
   const docType = notif.title ? notif.title.split(' ')[0] : ''
   let formatted = message.replace(docType, `<b>${docType}</b>`)
@@ -153,7 +175,39 @@ function formatMessage(notif: any): string {
 }
 
 function bulkDelete() {
-  alert('Bulk delete: ' + selectedIds.value.join(', '))
+  const deletableIds = selectedIds.value.filter(id => {
+    const notif = store.notifications.find(n => n.id === id)
+    return notif && notif.isRead
+  })
+  if (selectedIds.value.length === 0) {
+    dialogMessage.value = 'Pilih notifikasi yang ingin dihapus terlebih dahulu.'
+    showErrorDialog.value = true
+    return
+  }
+  if (deletableIds.length === 0) {
+    dialogMessage.value = 'Notifikasi yang dipilih belum bisa dihapus. Hanya notifikasi yang sudah dibaca yang bisa dihapus.'
+    showErrorDialog.value = true
+    return
+  }
+  if (deletableIds.length < selectedIds.value.length) {
+    dialogMessage.value = 'Beberapa notifikasi yang dipilih belum bisa dihapus. Hanya notifikasi yang sudah dibaca yang bisa dihapus. Lanjutkan hapus yang sudah dibaca?'
+  } else {
+    dialogMessage.value = `Yakin ingin menghapus ${deletableIds.length} notifikasi?`
+  }
+  showConfirmDialog.value = true
+}
+
+async function confirmBulkDelete() {
+  showConfirmDialog.value = false
+  const deletableIds = selectedIds.value.filter(id => {
+    const notif = store.notifications.find(n => n.id === id)
+    return notif && notif.isRead
+  })
+  await store.bulkDeleteNotifications(deletableIds)
+  dialogMessage.value = 'Notifikasi berhasil dihapus.'
+  showSuccessDialog.value = true
+  selectedIds.value = []
+  await store.fetchAllNotifications()
 }
 
 onMounted(() => {

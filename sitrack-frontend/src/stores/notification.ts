@@ -88,24 +88,16 @@ export const useNotificationStore = defineStore('notification', {
             } catch (err) {}
         },
 
-        async deleteNotification(id: number) {
+        async bulkDeleteNotifications(ids: number[]) {
             const authStore = useAuthStore()
-
-            try {
-                const response = await fetch(`${API_URL}/api/notifications/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${authStore.token}`
-                    }
-                })
-
-                if (!response.ok) {
-                    throw new Error('Gagal menghapus notifikasi')
-                }
-
-                this.notifications = this.notifications.filter(n => n.id !== id)
-                this.calculateUnreadCount()
-            } catch (err) {}
+            await fetch(`${API_URL}/api/notifications/bulk-delete`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authStore.token}`
+              },
+              body: JSON.stringify(ids)
+            })
         },
 
         async triggerCheck() {
