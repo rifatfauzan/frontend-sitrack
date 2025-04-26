@@ -21,9 +21,15 @@ import TruckListView from '@/views/trucks/TruckListView.vue'
 import CreateTruckView from '@/views/trucks/CreateTruckView.vue'
 import TruckDetailView from '@/views/trucks/TruckDetailView.vue'
 import EditTruckView from '@/views/trucks/EditTruckView.vue'
+import EditAssetView from '@/views/asset/EditAssetView.vue'
 
 import AssetListView from '@/views/asset/AssetListView.vue'
 import CreateAssetView from '@/views/asset/CreateAssetView.vue'
+import RequestAssetListView from '@/views/requestAsset/RequestAssetListView.vue'
+import CreateRequestAssetView from '@/views/requestAsset/CreateRequestAssetView.vue'
+import DetailRequestAssetView from '@/views/requestAsset/DetailRequestAssetView.vue'
+
+import DetailAssetView from '@/views/asset/DetailAssetView.vue'
 
 import OrderListView from '@/views/order/OrderListView.vue'
 import OrderDetailView from '@/views/order/OrderDetailView.vue'
@@ -222,12 +228,45 @@ const router = createRouter({
     { path: '/assets', 
       name: 'assets', 
       component: AssetListView, 
-      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] }
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager','Operasional','Mekanik'] }
     },
     { path: '/assets/create', 
       name: 'create asset', 
       component: CreateAssetView, 
       meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] }
+    },
+    {
+      path: '/request-assets',
+      name: 'request assets',
+      component: RequestAssetListView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager','Mekanik'] }
+    },
+    {
+      path: '/request-assets/create',
+      name: 'create request asset',
+      component: CreateRequestAssetView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager', 'Mekanik'] }
+    },    
+    {
+      path: '/request-assets/detail',
+      name: 'detail request asset',
+      component: DetailRequestAssetView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager', 'Mekanik'] },
+      props: (route) => ({ id: route.query.id }),
+    },
+    {
+      path: '/assets/update/:assetId',
+      name: 'update asset',
+      component: EditAssetView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']},
+      props: true,
+    },
+    {
+      path: '/assets/:assetId',
+      name: 'detail asset',
+      component: DetailAssetView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']},
+      props: true,
     },
     {
       path: '/orders',

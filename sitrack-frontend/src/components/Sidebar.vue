@@ -82,7 +82,7 @@
                             </router-link>
                         </li>
                         <li>
-                            <router-link to="/asset-request" class="flex items-center gap-4 cursor-pointer text-lg sidebar-item">
+                            <router-link to="/request-assets" class="flex items-center gap-4 cursor-pointer text-lg sidebar-item">
                                 <i class="fas fa-file-signature"></i>
                                 <span>Request Asset</span>
                             </router-link>
