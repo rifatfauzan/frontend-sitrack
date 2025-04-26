@@ -28,6 +28,7 @@ const form = reactive({
   jumlahStok: '',
   brand: '',
   assetRemark: '',
+  assetPrice: '',
 });
 
 const goToDetail = () => {
@@ -58,6 +59,7 @@ console.log("Asset ID from route:", assetId);
       brand: assetData.brand,
       jumlahStok: assetData.jumlahStok,
       assetRemark: assetData.assetRemark,
+      assetPrice: assetData.assetPrice,
     });
   } catch (error) {
     toast.error('Terjadi kesalahan dalam mengambil data!');
@@ -65,10 +67,7 @@ console.log("Asset ID from route:", assetId);
     loading.value = false;
   }
 });
-// Navigasi kembali ke daftar chassis
-const goBack = () => {
-  router.push('/assets');
-};
+
 
 const submitForm = () => {
   showConfirm.value = true;
@@ -84,6 +83,7 @@ const onSubmitForm = async () => {
         jumlahStok: form.jumlahStok,
         brand: form.brand,
         assetRemark: form.assetRemark,
+        assetPrice: form.assetPrice,
     });
     if (response.success) {
       showSuccess.value = true;
@@ -112,7 +112,7 @@ const onSubmitForm = async () => {
             <!-- Header yang lebih rapi -->
             <div class="header-container">
                 <div class="header-content">
-                    <VButton title="Kembali" class="back-button" @click="goBack">
+                    <VButton title="Kembali" class="back-button" @click="goToDetail">
                         <i class="pi pi-arrow-left"></i>
                     </VButton>
                     <h1 class="header-title">Edit Data Asset</h1>
@@ -128,17 +128,22 @@ const onSubmitForm = async () => {
               </div>
 
               <div class="form-group">
-                <label for="jenisAsset"> Jenis Asset</label>
+                <label for="jenisAsset"> Jenis Asset <span class="required">*</span></label>
                 <input v-model="form.jenisAsset" type="text" id="jenisAsset" maxlength="50" required />
               </div>
 
               <div class="form-group">
-                <label for="jumlahStok"> Jumlah Stock</label>
-                <input v-model="form.jumlahStok" type="text" id="jumlahStok" maxlength="50" required />
+                <label for="assetPrice"> Harga Asset <span class="required">*</span></label>
+                <input v-model="form.assetPrice" type="number" id="assetPrice" maxlength="50" required />
               </div>
 
               <div class="form-group">
-                <label for="branch"> Brand</label>
+                <label for="jumlahStok"> Jumlah Stock<span class="required">*</span></label>
+                <input v-model="form.jumlahStok" type="number" id="jumlahStok" maxlength="50" required />
+              </div>
+
+              <div class="form-group">
+                <label for="branch"> Brand <span class="required">*</span></label>
                 <input v-model="form.brand" type="text" id="brand" maxlength="50" required />
               </div>
 
@@ -251,6 +256,11 @@ textarea {
 .readonly-input{
   background-color: #C7C7C7;
   cursor: not-allowed;
+}
+
+.required {
+  color: red;
+  margin-left: 4px;
 }
 
 </style>

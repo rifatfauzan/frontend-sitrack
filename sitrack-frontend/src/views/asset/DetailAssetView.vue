@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useSopirStore } from '@/stores/sopir';
 import { useToast } from 'vue-toastification';
@@ -25,15 +25,25 @@ const showSuccess = ref(false);
 const showError = ref(false);
 const errorMessage = ref("");
 
-// Ambil ID dari parameter
 const assetId = route.params.assetId as string;
 
-// Fetch data sopir saat komponen dimuat
-onMounted(async () => {
-  if (assetId) {
+
+
+const fetchAssetData = async () => {
+  loading.value = true;
+  try {
     assetDetail.value = await assetStore.getAssetById(assetId);
+  } catch (error) {
+    toast.error('Gagal memuat data asset');
+  } finally {
+    loading.value = false;
   }
+};
+
+onMounted(() => {
+  fetchAssetData();
 });
+
 const formatDate = (assetDate: string) => {
   const date = new Date(assetDate);
   const year = date.getFullYear();
@@ -42,11 +52,15 @@ const formatDate = (assetDate: string) => {
   return `${year}-${month}-${day}`;
 };
 
-const goToDetail = () => {
-  router.push({ name: 'detail asset', params: { assetId: assetId } });
+const goToDetail = async () => {
+  showSuccess.value = false;
+  await nextTick();
+  router.push({ name: 'detail asset', params: { assetId: assetId } }).then(() => {
+    fetchAssetData();
+  });
 };
 
-// Navigasi kembali ke daftar chassis
+
 const goBack = () => {
   router.push('/assets');
 };
@@ -55,25 +69,40 @@ const clickAddReqAsset = () => {
 };
 
 const addReqAsset = async () => {
+  loading.value = true;
   showConfirm.value = false;
   if (assetDetail.value.requestedStok === 0) {
     toast.error("Oi gaada")
     errorMessage.value = "Tidak ada stok yang diminta";
     showError.value = true;
+    loading.value = false;
   }else{
-    assetStore.editAsset(assetId, {
-      jumlahStok: assetDetail.value.jumlahStok + assetDetail.value.requestedStok,
-      requestedStok: 0,
-      assetId: assetDetail.value.assetId,
-      jenisAsset: assetDetail.value.jenisAsset,
-      brand: assetDetail.value.brand,
-      assetRemark: assetDetail.value.assetRemark,
-    });
-    showSuccess.value = true;
+    try{
+      const response = await assetStore.editAsset(assetId, {
+        jumlahStok: assetDetail.value.jumlahStok + assetDetail.value.requestedStok,
+        requestedStok: 0,
+        assetId: assetDetail.value.assetId,
+        jenisAsset: assetDetail.value.jenisAsset,
+        brand: assetDetail.value.brand,
+        assetRemark: assetDetail.value.assetRemark,
+        assetPrice: assetDetail.value.assetPrice,
+      });
+      if (response.success) {
+        showSuccess.value = true;  
+      } else {
+        errorMessage.value = response.message || "Terjadi kesalahan!";
+        showError.value = true;
+      }
+    } catch (error){
+      errorMessage.value = "Terjadi kesalahan saat menyimpan data!";
+      showError.value = true;
+    }finally {
+      loading.value = false;
+    }
   }
 }
 
-// Navigasi ke halaman edit
+
 const goToEdit = () => {
   router.push({ name: 'update asset', params: { assetId } });
 };
@@ -115,6 +144,7 @@ const goToEdit = () => {
                 <div class="detail-item alt"><span>Jumlah Stok</span><strong>{{ assetDetail.jumlahStok || '-' }}</strong></div>
                 <div class="detail-item"><span>Brand</span><strong>{{ assetDetail.brand || '-' }}</strong></div>
                 <div class="detail-item alt"><span> Requested Stok</span><strong>{{ assetDetail.requestedStok }}</strong></div>
+                <div class="detail-item alt"><span> Asset Price </span><strong>Rp.{{ assetDetail.assetPrice }}</strong></div>
               </div>
 
               <div class="space-y-3">
