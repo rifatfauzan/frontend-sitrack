@@ -127,21 +127,24 @@ const showErrorDialog = ref(false)
 const dialogMessage = ref('')
 
 const filteredNotifications = computed(() => {
+  const userNotifications = store.notifications;
+
   let filtered = [];
-  if (activeTab.value === 'all') filtered = store.notifications;
+  if (activeTab.value === 'all') filtered = userNotifications;
   else if (activeTab.value === 'reference') {
-    filtered = store.notifications.filter(n => 
-      ['VEHICLE_STNK_EXPIRY', 'VEHICLE_KIR_EXPIRY', 'CHASSIS_KIR_EXPIRY', 'DRIVER_SIM_EXPIRY'].includes(n.category)
+    filtered = userNotifications.filter(n => 
+      ['VEHICLE_STNK_EXPIRY', 'VEHICLE_KIR_EXPIRY', 'CHASSIS_KIR_EXPIRY', 'DRIVER_SIM_EXPIRY']
+      .includes(n.category)
     );
   }
   else if (activeTab.value === 'order') {
-    filtered = store.notifications.filter(n => ['ORDER_UPDATE'].includes(n.category));
+    filtered = userNotifications.filter(n => ['ORDER_UPDATE'].includes(n.category));
   }
   else if (activeTab.value === 'inventory') {
-    filtered = store.notifications.filter(n => ['REQUEST_ASSET_UPDATE'].includes(n.category));
+    filtered = userNotifications.filter(n => ['REQUEST_ASSET_UPDATE'].includes(n.category));
   }
   else {
-    filtered = store.notifications.filter(n => n.category === activeTab.value.toUpperCase());
+    filtered = userNotifications.filter(n => n.category === activeTab.value.toUpperCase());
   }
 
   return filtered.filter(notif => {
@@ -222,11 +225,11 @@ async function confirmBulkDelete() {
   dialogMessage.value = 'Notifikasi berhasil dihapus.'
   showSuccessDialog.value = true
   selectedIds.value = []
-  await store.fetchAllNotifications()
+  await store.fetchUserNotifications()
 }
 
 onMounted(() => {
-  store.fetchAllNotifications()
+  store.fetchUserNotifications()
 })
 </script>
 

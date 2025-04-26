@@ -52,7 +52,7 @@ const badgeValue = computed(() =>
 )
 
 onMounted(() => {
-    store.fetchAllNotifications()
+    store.fetchUserNotifications()
 })
 
 function goToNotifications() {

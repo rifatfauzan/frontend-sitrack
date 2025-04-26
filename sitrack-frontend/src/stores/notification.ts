@@ -13,7 +13,7 @@ export const useNotificationStore = defineStore('notification', {
     }),
 
     actions: {
-        async fetchAllNotifications() {
+        async fetchUserNotifications() {
             this.loading = true
             this.error = null
             const authStore = useAuthStore()
