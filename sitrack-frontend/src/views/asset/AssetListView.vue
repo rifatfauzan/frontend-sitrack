@@ -103,4 +103,6 @@ const goToCreateAsset = () => {
 .bg-[#C8D9ED] {
   background-color: #C8D9ED;
 }
+
+
 </style>
