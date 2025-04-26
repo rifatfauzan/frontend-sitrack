@@ -131,14 +131,14 @@ const formatDate = (date) => {
           </div>
           <div class="grid grid-cols-2 gap-4 mt-6">
             <div class="space-y-3">
-                <div class="detail-item alt"><span>Created By</span><strong>{{ requestAsset.createdBy || '-' }}</strong></div>
-                <div class="detail-item"><span>Created Date</span><strong>{{ formatDate(requestAsset.createdDate)|| '-' }}</strong></div>
-                <div class="detail-item alt"><span>Updated By</span><strong>{{ requestAsset.updatedBy || '-' }}</strong></div>
-                <div class="detail-item"><span>Updated Date</span><strong>{{ formatDate(requestAsset.updatedDate) || '-' }}</strong></div>
+                <div class="detail-item alt"><span>Created By</span><strong>{{ requestAsset?.createdBy || '-' }}</strong></div>
+                <div class="detail-item"><span>Created Date</span><strong>{{ formatDate(requestAsset?.createdDate)|| '-' }}</strong></div>
+                <div class="detail-item alt"><span>Updated By</span><strong>{{ requestAsset?.updatedBy || '-' }}</strong></div>
+                <div class="detail-item"><span>Updated Date</span><strong>{{ formatDate(requestAsset?.updatedDate) || '-' }}</strong></div>
             </div>
             <div class="space-y-3">
-                <div class="detail-item alt"><span>Approval By</span><strong>{{ requestAsset.approvalBy || '-' }}</strong></div>
-                <div class="detail-item"><span>Approval Date</span><strong>{{ formatDate(requestAsset.approvalDate) || '-'}}</strong></div>
+                <div class="detail-item alt"><span>Approval By</span><strong>{{ requestAsset?.approvalBy || '-' }}</strong></div>
+                <div class="detail-item"><span>Approval Date</span><strong>{{ formatDate(requestAsset?.approvalDate) || '-'}}</strong></div>
             </div>
            </div>
         </div>
