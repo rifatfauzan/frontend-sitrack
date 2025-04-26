@@ -28,6 +28,7 @@ import CreateAssetView from '@/views/asset/CreateAssetView.vue'
 import OrderListView from '@/views/order/OrderListView.vue'
 import OrderDetailView from '@/views/order/OrderDetailView.vue'
 import CreateOrderView from '@/views/order/CreateOrderView.vue'
+import EditOrderView from '@/views/order/EditOrderView.vue'
 
 const decodeTokenPayload = (token: string) => {
   try {
@@ -249,6 +250,12 @@ const router = createRouter({
       meta: { public: true },
       props: (route) => ({ id: route.query.id })
     },
+    {
+      path: '/order/edit/:orderId',
+      name: 'edit order',
+      component: EditOrderView,
+      meta: { public: true },
+    }
     
   ],
 })

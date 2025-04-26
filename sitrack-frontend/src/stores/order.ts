@@ -140,5 +140,38 @@ export const useOrderStore = defineStore('order', {
         this.loading = false;
       }
     },
+    async updateOrder(orderId: string, body: CreateOrderRequest ) {
+      this.loading = true;
+      this.error = null;
+      const authStore = useAuthStore();
+      const toast = useToast();
+
+      try{
+        const response = await fetch(`${API_URL}/api/order/update/${orderId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authStore.token}`,
+          },
+          body: JSON.stringify(body),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || 'Gagal mengupdate order');
+        }
+
+        const data = await response.json();
+        toast.success('Order berhasil diupdate!');
+        return { success: true, message: 'Order berhasil diupdate!' };
+      } catch (err) {
+        this.error = `Gagal mengupdate order: ${(err as Error).message}`;
+        toast.error(this.error);
+        return { success: false, message: this.error };
+      }
+      finally {
+        this.loading = false;
+      }
+    }
   },
-});
+})

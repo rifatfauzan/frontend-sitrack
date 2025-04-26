@@ -37,7 +37,7 @@ const goBack = () => {
 
 const goToEdit = () => {
   if (orderDetail.value?.orderId) {
-    router.push({ name: 'edit order', query: { id: orderDetail.value.orderId } });
+    router.push({ name: 'edit order', params: { orderId } });
   }
 };
 
@@ -125,7 +125,11 @@ const statusLabel = computed(() => {
 
                 </div>
               </div>
-              <VButton title="Edit" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" @click="goToEdit" />
+              <VButton 
+              v-if="orderDetail?.orderStatus === 1 || orderDetail?.orderStatus === 2"
+              title="Edit" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" 
+              @click="goToEdit" 
+              />
             </div>
 
             <div class="grid grid-cols-2 gap-4">
