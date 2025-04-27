@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useSopirStore } from '@/stores/sopir';
+import { useToast } from 'vue-toastification';
 import { storeToRefs } from 'pinia';
 import Sidebar from '@/components/Sidebar.vue';
 import HeaderComponent from '@/components/Header.vue';
@@ -9,29 +10,101 @@ import FooterComponent from '@/components/Footer.vue';
 import VButton from '@/components/VButton.vue';
 import Skeleton from 'primevue/skeleton';
 import { useAssetStore } from '@/stores/asset';
+import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
+import SuccessDialog from '@/components/SuccessDialog.vue';
+import ErrorDialog from '@/components/ErrorDialog.vue';
 
 const route = useRoute();
+const toast = useToast();
 const router = useRouter();
 const assetStore = useAssetStore();
 const { loading } = storeToRefs(assetStore);
 const assetDetail = ref<any>(null);
+const showConfirm = ref(false);
+const showSuccess = ref(false);
+const showError = ref(false);
+const errorMessage = ref("");
 
-// Ambil ID dari parameter
 const assetId = route.params.assetId as string;
 
-// Fetch data sopir saat komponen dimuat
-onMounted(async () => {
-  if (assetId) {
+
+
+const fetchAssetData = async () => {
+  loading.value = true;
+  try {
     assetDetail.value = await assetStore.getAssetById(assetId);
+  } catch (error) {
+    toast.error('Gagal memuat data asset');
+  } finally {
+    loading.value = false;
   }
+};
+
+onMounted(() => {
+  fetchAssetData();
 });
 
-// Navigasi kembali ke daftar chassis
+const formatDate = (assetDate: string | null) => {
+  if (!assetDate) return '-'; // Cek null/undefined
+  const date = new Date(assetDate);
+  if (isNaN(date.getTime())) return '-'; // Kalau date invalid
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); 
+  const day = String(date.getDate()).padStart(2, '0'); 
+  return `${year}-${month}-${day}`;
+};
+
+const goToDetail = async () => {
+  showSuccess.value = false;
+  await nextTick();
+  router.push({ name: 'detail asset', params: { assetId: assetId } }).then(() => {
+    fetchAssetData();
+  });
+};
+
+
 const goBack = () => {
   router.push('/assets');
 };
+const clickAddReqAsset = () => {
+  showConfirm.value = true;
+};
 
-// Navigasi ke halaman edit
+const addReqAsset = async () => {
+  loading.value = true;
+  showConfirm.value = false;
+  if (assetDetail.value.requestedStok === 0) {
+    toast.error("Oi gaada")
+    errorMessage.value = "Tidak ada stok yang diminta";
+    showError.value = true;
+    loading.value = false;
+  }else{
+    try{
+      const response = await assetStore.editAsset(assetId, {
+        jumlahStok: assetDetail.value.jumlahStok + assetDetail.value.requestedStok,
+        requestedStok: 0,
+        assetId: assetDetail.value.assetId,
+        jenisAsset: assetDetail.value.jenisAsset,
+        brand: assetDetail.value.brand,
+        assetRemark: assetDetail.value.assetRemark,
+        assetPrice: assetDetail.value.assetPrice,
+      });
+      if (response.success) {
+        showSuccess.value = true;  
+      } else {
+        errorMessage.value = response.message || "Terjadi kesalahan!";
+        showError.value = true;
+      }
+    } catch (error){
+      errorMessage.value = "Terjadi kesalahan saat menyimpan data!";
+      showError.value = true;
+    }finally {
+      loading.value = false;
+    }
+  }
+}
+
+
 const goToEdit = () => {
   router.push({ name: 'update asset', params: { assetId } });
 };
@@ -41,7 +114,7 @@ const goToEdit = () => {
     <div class="flex h-screen overflow-auto">
       <Sidebar />
       <div class="flex-1 flex flex-col min-h-screen">
-        <HeaderComponent title="Detail Driver" />
+        <HeaderComponent title="Detail Asset" />
   
         <div class="flex-1 p-6 main-content overflow-y-auto flex justify-center">
           <div v-if="loading" class="w-full max-w-4xl bg-white p-6 rounded-lg shadow-md">
@@ -61,7 +134,10 @@ const goToEdit = () => {
 
                 <h1 class="text-2xl font-bold">{{ assetDetail.assetId }}</h1>
               </div>
-              <VButton title="Edit" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" @click="goToEdit" />
+              <div class="flex space-x-4">
+                <VButton title="Add Requested Assets" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" @click="clickAddReqAsset" />
+                <VButton title="Edit" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" @click="goToEdit" />
+              </div>
             </div>
   
             <div class="grid grid-cols-2 gap-4">
@@ -69,14 +145,15 @@ const goToEdit = () => {
                 <div class="detail-item"><span>Jenis Asset</span><strong>{{ assetDetail.jenisAsset || '-' }}</strong></div>
                 <div class="detail-item alt"><span>Jumlah Stok</span><strong>{{ assetDetail.jumlahStok || '-' }}</strong></div>
                 <div class="detail-item"><span>Brand</span><strong>{{ assetDetail.brand || '-' }}</strong></div>
-                <div class="detail-item alt"><span> Requested Stok</span><strong>{{ assetDetail.requestedStok || '-' }}</strong></div>
+                <div class="detail-item alt"><span> Requested Stok</span><strong>{{ assetDetail.requestedStok }}</strong></div>
+                <div class="detail-item alt"><span> Asset Price (Satuan) </span><strong>Rp. {{ assetDetail.assetPrice.toLocaleString('id-ID') }}</strong></div>
               </div>
 
               <div class="space-y-3">
                 <div class="detail-item"><span>Created By</span><strong>{{ assetDetail.createdBy || '-' }}</strong></div>
-                <div class="detail-item alt"><span>Created Date</span><strong>{{ assetDetail.createdDate || '-' }}</strong></div>
+                <div class="detail-item alt"><span>Created Date</span><strong>{{ formatDate(assetDetail.createdDate) || '-' }}</strong></div>
                 <div class="detail-item"><span>Updated By</span><strong>{{ assetDetail.updatedBy || '-' }}</strong></div>
-                <div class="detail-item alt"><span>Updated Date</span><strong>{{ assetDetail.updatedDate || '-' }}</strong></div>
+                <div class="detail-item alt"><span>Updated Date</span><strong>{{ formatDate(assetDetail.updatedDate )|| '-' }}</strong></div>
                 </div>
             </div>
   
@@ -94,6 +171,22 @@ const goToEdit = () => {
   
         <FooterComponent class="mt-auto bg-white shadow-md" />
       </div>
+      <ConfirmationDialog
+          :visible="showConfirm"
+          @close="showConfirm = false"
+          @confirm="addReqAsset"
+          :message="'Apakah Anda ingin menambahkan jumlah Stok?'"/>
+
+        <SuccessDialog 
+          :visible="showSuccess" 
+          @close="goToDetail" 
+          :message="'Berhasil Memnambah Jumlah Stok Asset!'" 
+          buttonText="Kembali ke List Asset" />
+
+        <ErrorDialog
+          :visible="showError"
+          @close="showError = false"
+          :message="errorMessage"/>
     </div>
   </template>
   

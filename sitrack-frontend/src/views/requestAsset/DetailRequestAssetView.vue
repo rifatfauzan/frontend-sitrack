@@ -104,26 +104,39 @@ const formatDate = (date) => {
                 </div>
             </div>
 
-          <table class="w-full text-left border-collapse">
-            <thead class="bg-[#1C5D99] text-white">
-              <tr>
-                <th class="p-2">No.</th>
-                <th class="p-2">ID</th>
-                <th class="p-2">Type</th>
-                <th class="p-2">Brand</th>
-                <th class="p-2">Tambah Stok</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(item, index) in requestAsset?.assets || []" :key="item.assetId" class="odd:bg-gray-100 even:bg-white">
-                <td class="p-2">{{ index + 1 }}</td>
-                <td class="p-2">{{ item.assetId }}</td>
-                <td class="p-2">{{ item.jenisAsset}}</td>
-                <td class="p-2">{{ item.brand}}</td>
-                <td class="p-2">{{ item.requestedQuantity }}</td>
-              </tr>
-            </tbody>
-          </table>
+            <table class="w-full text-left border-collapse">
+              <thead class="bg-[#1C5D99] text-white">
+                <tr>
+                  <th class="p-2">No.</th>
+                  <th class="p-2">ID</th>
+                  <th class="p-2">Type</th>
+                  <th class="p-2">Brand</th>
+                  <th class="p-2">Asset Price (Satuan)</th>
+                  <th class="p-2">Requested Stok</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in requestAsset?.assets || []" :key="item.assetId" class="odd:bg-gray-100 even:bg-white">
+                  <td class="p-2 text-center">{{ index + 1 }}</td>
+                  <td class="p-2 text-center">{{ item.assetId }}</td>
+                  <td class="p-2 text-center">{{ item.jenisAsset || '-' }}</td>
+                  <td class="p-2 text-center">{{ item.brand || '-' }}</td>
+                  <td class="p-2 text-center">Rp.{{ item.assetPrice?.toLocaleString('id-ID') || '-' }}</td>
+                  <td class="p-2 text-center">{{ item.requestedQuantity }}</td>
+                </tr>
+
+                <tr class="font-bold bg-gray-200">
+                  <td class="p-2 text-left" colspan="4">Total</td>
+                  <td class="p-2 text-center" colspan="2">
+                    Rp.{{
+                      (requestAsset?.assets || [])
+                        .reduce((total, item) => total + (item.assetPrice * item.requestedQuantity), 0)
+                        .toLocaleString('id-ID')
+                    }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
 
           <div class="bg-[#C8D9ED] p-4 rounded mt-4">
             <strong>Remarks:</strong>

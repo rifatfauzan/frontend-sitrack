@@ -26,7 +26,7 @@ const form = reactive({
   remark: '',
   selectedAssetId: '',
   requestedQty: 1,
-  assets: [] as { assetId: string; requestedQuantity: number }[],
+  assets: [] as { assetId: string; requestedQuantity: number; assetPrice: number }[],
 });
 
 const assetOptions = computed(() => {
@@ -52,9 +52,16 @@ const addAsset = () => {
     return;
   }
 
+  const selectedAsset = assetList.value.find(a => a.assetId === form.selectedAssetId);
+  if (!selectedAsset) {
+    toast.error('Asset tidak ditemukan');
+    return;
+  }
+
   form.assets.push({
     assetId: form.selectedAssetId,
     requestedQuantity: form.requestedQty,
+    assetPrice: selectedAsset.assetPrice || 0,
   });
 
   form.selectedAssetId = '';
@@ -137,6 +144,7 @@ const goBack = () => {
                     <th class="p-2">ID</th>
                     <th class="p-2">Type</th>
                     <th class="p-2">Brand</th>
+                    <th class="p-2">Asset Price (Satuan)</th>
                     <th class="p-2">Tambah Stok</th>
                     <th class="p-2">Aksi</th>
                   </tr>
@@ -151,9 +159,19 @@ const goBack = () => {
                     <td class="p-2">{{ item.assetId }}</td>
                     <td class="p-2">{{ assetList.find(a => a.assetId === item.assetId)?.jenisAsset || '-' }}</td>
                     <td class="p-2">{{ assetList.find(a => a.assetId === item.assetId)?.brand || '-' }}</td>
+                    <td class="p-2">Rp. {{ item.assetPrice.toLocaleString('id-ID') }}</td>
                     <td class="p-2">{{ item.requestedQuantity }}</td>
                     <td class="p-2">
                       <button @click="removeAsset(index)" class="text-red-500 hover:underline">Hapus</button>
+                    </td>
+                  </tr>
+                  <tr class="font-bold bg-gray-200">
+                    <td class="p-2 text-left" colspan="4">Total</td>
+                    <td class="p-2 text-center" colspan="3">
+                      Rp. {{
+                        form.assets.reduce((total, item) => total + (item.assetPrice * item.requestedQuantity), 0)
+                          .toLocaleString('id-ID')
+                      }}
                     </td>
                   </tr>
                 </tbody>

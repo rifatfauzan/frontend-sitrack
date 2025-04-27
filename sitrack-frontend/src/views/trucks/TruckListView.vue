@@ -95,7 +95,7 @@ const goToDetail = (event: { data: any }) => {
                 :globalFilterFields="['vehicleId', 'vehicleBrand', 'vehiclePlateNo']"
                 stripedRows
                 tableStyle="width: 100%"
-                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                paginatorTemplate="RowsPerPageDropdown PrevPageLink CurrentPageReport NextPageLink"
                 currentPageReportTemplate="{first} to {last} of {totalRecords} vehicles"
                 class="custom-datatable"
                 selectionMode="single"

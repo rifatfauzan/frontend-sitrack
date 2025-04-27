@@ -28,12 +28,10 @@ import CreateAssetView from '@/views/asset/CreateAssetView.vue'
 import RequestAssetListView from '@/views/requestAsset/RequestAssetListView.vue'
 import CreateRequestAssetView from '@/views/requestAsset/CreateRequestAssetView.vue'
 import DetailRequestAssetView from '@/views/requestAsset/DetailRequestAssetView.vue'
-
-import DetailAssetView from '@/views/asset/DetailAssetView.vue'
-
 import OrderListView from '@/views/order/OrderListView.vue'
 import OrderDetailView from '@/views/order/OrderDetailView.vue'
 import CreateOrderView from '@/views/order/CreateOrderView.vue'
+import DetailAssetView from '@/views/asset/DetailAssetView.vue'
 
 const decodeTokenPayload = (token: string) => {
   try {

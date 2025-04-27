@@ -19,6 +19,7 @@ const form = reactive({
   jumlahStok: '',
   brand: '',
   assetRemark: '',
+  assetPrice: '',
 });
 
 const showConfirm = ref(false);
@@ -63,6 +64,7 @@ const resetForm = () => {
     jumlahStok: '',
     brand: '',
     assetRemark: '',
+    assetPrice:'',
   });
 };
 
@@ -106,6 +108,11 @@ const goBack = () => {
               <div class="form-group">
                 <label for="jumlahStok">Stock <span class="required">*</span></label>
                 <input v-model.number="form.jumlahStok" type="number" id="jumlahStok" min="0" required />
+              </div>
+
+              <div class="form-group">
+                <label for="assetPrice">Asset Price (Satuan/Rp)<span class="required">*</span></label>
+                <input v-model="form.assetPrice" type="number" id="assetPrice"  required />
               </div>
 
               <div class="form-group">
