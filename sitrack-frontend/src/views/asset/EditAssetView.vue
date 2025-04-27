@@ -61,7 +61,7 @@ console.log("Asset ID from route:", assetId);
       assetRemark: assetData.assetRemark,
       assetPrice: assetData.assetPrice,
     });
-  } catch (error) {
+  } catch {
     toast.error('Terjadi kesalahan dalam mengambil data!');
   } finally {
     loading.value = false;
@@ -90,7 +90,7 @@ const onSubmitForm = async () => {
         errorMessage.value = response.message || "Terjadi kesalahan!";
         showError.value = true;
     }
-  } catch (error) {
+  } catch {
     errorMessage.value = "Terjadi kesalahan saat menyimpan data!";
     showError.value = true;
   } finally {

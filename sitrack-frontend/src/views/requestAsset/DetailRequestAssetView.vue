@@ -7,6 +7,7 @@ import HeaderComponent from '@/components/Header.vue';
 import FooterComponent from '@/components/Footer.vue';
 import VButton from '@/components/VButton.vue';
 import Dialog from 'primevue/dialog';
+import type { RequestAsset } from '@/interfaces/requestAsset.interfaces';
 
 
 const route = useRoute();
@@ -14,7 +15,7 @@ const router = useRouter();
 const requestAssetStore = useRequestAssetStore();
 
 const id = route.query.id as string;
-const requestAsset = ref<any>(null);
+const requestAsset = ref<RequestAsset | null>(null);
 const showApprovalDialog = ref(false);
 const approvalRemark = ref('');
 const loading = ref(false);
@@ -66,7 +67,7 @@ const getCurrentUserRole = (): string | null => {
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
     return payload.role || null;
-  } catch (e) {
+  } catch{
     return null;
   }
 };
@@ -99,7 +100,7 @@ const formatDate = (date) => {
                     </span>
                 </div>
                 <div class="flex items-center gap-3">
-                    <VButton v-if="['Supervisor', 'Manager','Mekanik'].includes(userRole) && ![1, 3].includes(requestAsset?.status)"class="custom-button px-4 py-2 rounded" @click="goToEdit">Edit</VButton>
+                    <VButton v-if="['Supervisor', 'Manager','Mekanik'].includes(userRole) && ![1, 3].includes(requestAsset?.status)" class="custom-button px-4 py-2 rounded" @click="goToEdit">Edit</VButton>
                     <VButton v-if="['Supervisor', 'Manager'].includes(userRole) && ![1, 3].includes(requestAsset?.status)" class="custom-button px-4 py-2 rounded" @click="showApprovalDialog = true">Approval</VButton>
                 </div>
             </div>
@@ -162,7 +163,7 @@ const formatDate = (date) => {
     <Dialog v-model:visible="showApprovalDialog" modal header="Approval" class="w-[30rem] rounded bg-[#C8D9ED]">
       <div class="space-y-3">
         <label class="font-semibold text-sm">Remarks</label>
-        <textarea v-model="approvalRemark" class="w-full p-2 rounded border min-h-[100px]" />
+        <textarea v-model="approvalRemark" class="w-full p-2 rounded border min-h-[100px]"></textarea>
         <div class="flex justify-between mt-4">
           <VButton class="bg-red-500 text-white px-4 py-2 rounded" @click="updateStatus(3)">Reject</VButton>
           <VButton class="bg-yellow-400 text-white px-4 py-2 rounded" @click="updateStatus(2)">Need Revision</VButton>

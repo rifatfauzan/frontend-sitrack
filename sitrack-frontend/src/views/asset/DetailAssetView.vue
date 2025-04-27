@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useSopirStore } from '@/stores/sopir';
 import { useToast } from 'vue-toastification';
 import { storeToRefs } from 'pinia';
 import Sidebar from '@/components/Sidebar.vue';
@@ -13,13 +12,14 @@ import { useAssetStore } from '@/stores/asset';
 import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
 import SuccessDialog from '@/components/SuccessDialog.vue';
 import ErrorDialog from '@/components/ErrorDialog.vue';
+import type { Asset } from '@/interfaces/asset.interface';
 
 const route = useRoute();
 const toast = useToast();
 const router = useRouter();
 const assetStore = useAssetStore();
 const { loading } = storeToRefs(assetStore);
-const assetDetail = ref<any>(null);
+const assetDetail = ref<Asset | null>(null);
 const showConfirm = ref(false);
 const showSuccess = ref(false);
 const showError = ref(false);
@@ -33,7 +33,7 @@ const fetchAssetData = async () => {
   loading.value = true;
   try {
     assetDetail.value = await assetStore.getAssetById(assetId);
-  } catch (error) {
+  } catch  {
     toast.error('Gagal memuat data asset');
   } finally {
     loading.value = false;
@@ -95,7 +95,7 @@ const addReqAsset = async () => {
         errorMessage.value = response.message || "Terjadi kesalahan!";
         showError.value = true;
       }
-    } catch (error){
+    } catch {
       errorMessage.value = "Terjadi kesalahan saat menyimpan data!";
       showError.value = true;
     }finally {

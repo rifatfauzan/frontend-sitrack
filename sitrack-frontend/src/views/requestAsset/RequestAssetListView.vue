@@ -9,7 +9,7 @@ import HeaderComponent from '@/components/Header.vue'
 import FooterComponent from '@/components/Footer.vue'
 import VButton from '@/components/VButton.vue'
 import InputText from 'primevue/inputtext'
-import DataTable from 'primevue/datatable'
+import DataTable, { type DataTableRowSelectEvent } from 'primevue/datatable'
 import Column from 'primevue/column'
 import Dropdown from 'primevue/dropdown'
 
@@ -55,7 +55,7 @@ const getStatusColorClass = (status: number) => {
   }
 }
 
-const goToDetail = (event: { data: any }) => {
+const goToDetail = (event: DataTableRowSelectEvent) => {
   router.push({ path: '/request-assets/detail', query: { id: event.data.requestAssetId } })
 }
 
