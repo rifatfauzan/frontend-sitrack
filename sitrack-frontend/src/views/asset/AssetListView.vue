@@ -9,6 +9,7 @@ import FooterComponent from '@/components/Footer.vue';
 import VButton from '@/components/VButton.vue';
 import InputText from 'primevue/inputtext';
 import DataTable from 'primevue/datatable';
+import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 import Column from 'primevue/column';
 
 const assetStore = useAssetStore();
@@ -16,8 +17,12 @@ const { assetList, loading } = storeToRefs(assetStore);
 const router = useRouter();
 
 const filters = ref({
-  global: { value: null }
+  global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
+
+const goToDetail = (event: { data: any }) => {
+  router.push({ name: 'detail asset', params: { assetId: event.data.assetId } });
+};
 
 const selectedRow = ref(null);
 
@@ -50,12 +55,14 @@ const goToCreateAsset = () => {
             dataKey="assetId"
             :loading="loading"
             :globalFilterFields="['assetId', 'jenisAsset', 'brand']"
-            v-model:filters="filters"
+            :rowsPerPageOptions="[5, 10, 20]"
+            :filters="filters"            
             stripedRows
             tableStyle="min-width: 100%"
             paginatorTemplate="PrevPageLink CurrentPageReport NextPageLink"
             currentPageReportTemplate="{first} to {last} of {totalRecords} assets"
             class="custom-datatable"
+            @row-click="goToDetail"
           >
             <template #empty>No asset found.</template>
             <template #loading>Loading assets. Please wait.</template>
@@ -96,4 +103,6 @@ const goToCreateAsset = () => {
 .bg-[#C8D9ED] {
   background-color: #C8D9ED;
 }
+
+
 </style>
