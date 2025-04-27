@@ -19,7 +19,7 @@ export const useSopirStore = defineStore('sopir', {
             const authStore = useAuthStore();
 
             try {
-                const response = await fetch(`${API_URL}/api/sopir/viewall`, {
+                const response = await fetch(`${API_URL}/api/sopir/all`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${authStore.token}`,

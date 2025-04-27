@@ -28,6 +28,10 @@ import CreateAssetView from '@/views/asset/CreateAssetView.vue'
 import OrderListView from '@/views/order/OrderListView.vue'
 import OrderDetailView from '@/views/order/OrderDetailView.vue'
 import CreateOrderView from '@/views/order/CreateOrderView.vue'
+import VehicleOutListView from '@/views/spj/VehicleOutListView.vue'
+import VehicleInListView from '@/views/spj/VehicleInListView.vue'
+import CreateSpjView from '@/views/spj/CreateSpjView.vue'
+import SpjDetailView from '@/views/spj/SpjDetailView.vue'
 
 const decodeTokenPayload = (token: string) => {
   try {
@@ -249,7 +253,31 @@ const router = createRouter({
       meta: { public: true },
       props: (route) => ({ id: route.query.id })
     },
-    
+    {
+      path: '/vehicle-out',
+      name: 'view all vehicle out',
+      component: VehicleOutListView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] }
+    },
+    {
+      path: '/vehicle-in',
+      name: 'view all vehicle in',
+      component: VehicleInListView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] }
+    },
+    {
+      path: '/spj/create',
+      name: 'create spj',
+      component: CreateSpjView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] }
+    },
+    {
+      path: '/spj/detail',
+      name: 'detail spj',
+      component: SpjDetailView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] },
+      props: (route) => ({ id: route.query.id })
+    }
   ],
 })
 

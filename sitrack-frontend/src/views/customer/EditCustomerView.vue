@@ -220,7 +220,7 @@ const updateCustomer = async () => {
       errorMessage.value = result.message || "Terjadi kesalahan!";
       showError.value = true;
     }
-  } catch (error) {
+  } catch {
     errorMessage.value = "Terjadi kesalahan saat menyimpan data.";
     showError.value = true;
   }
