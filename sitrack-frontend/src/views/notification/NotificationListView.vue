@@ -98,10 +98,11 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useNotificationStore } from '@/stores/notification'
-import Sidebar from '@/components/Sidebar.vue'
+import type { Notification } from '@/interfaces/notification.interfaces'
+import Sidebar from '@/components/vSidebar.vue'
 import VButton from '@/components/VButton.vue'
-import HeaderComponent from '@/components/Header.vue'
-import FooterComponent from '@/components/Footer.vue'
+import HeaderComponent from '@/components/vHeader.vue'
+import FooterComponent from '@/components/vFooter.vue'
 import ConfirmationDialog from '@/components/ConfirmationDialog.vue'
 import SuccessDialog from '@/components/SuccessDialog.vue'
 import ErrorDialog from '@/components/ErrorDialog.vue'
@@ -158,14 +159,14 @@ const filteredNotifications = computed(() => {
   });
 });
 
-const handleNotificationClick = async (notif: any) => {
+const handleNotificationClick = async (notif: Notification) => {
   if (!notif.isRead) {
     await store.markAsRead(notif.id)
   }
   router.push(notif.redirectEndpoint)
 }
 
-function formatMessage(notif: any): string {
+function formatMessage(notif: Notification): string {
   if (notif.category === 'ORDER_UPDATE' || notif.category === 'REQUEST_ASSET_UPDATE') {
     if (notif.title && notif.title.includes('Persetujuan')) {
       if (authStore.role === 'Operasional' || authStore.role === 'Mekanik') {

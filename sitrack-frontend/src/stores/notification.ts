@@ -85,7 +85,7 @@ export const useNotificationStore = defineStore('notification', {
                     this.notifications[index].isRead = true
                     this.calculateUnreadCount()
                 }
-            } catch (err) {}
+            } catch {}
         },
 
         async bulkDeleteNotifications(ids: number[]) {

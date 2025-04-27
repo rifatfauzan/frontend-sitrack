@@ -7,10 +7,11 @@
     </header>
 </template>
 
-<script>
+<script lang="ts">
 import NotificationBell from '@/components/NotificationBell.vue'
 
 export default {
+    name: 'vHeader',
     components: {
         NotificationBell
     },
