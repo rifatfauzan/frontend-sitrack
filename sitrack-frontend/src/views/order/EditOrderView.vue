@@ -59,7 +59,7 @@ const form = reactive({
 });
 
 onMounted(async () => {
-    const orderId = route.params.orderId as string;
+    const orderId = route.query.id as string;
     if (!orderId){
         toast.error("Order ID tidak ditemukan");
         router.push('/orders');

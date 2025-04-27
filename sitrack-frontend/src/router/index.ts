@@ -234,28 +234,30 @@ const router = createRouter({
       path: '/orders',
       name: 'view all order',
       component: OrderListView,
-      meta: { public: true }
+      meta: { requiresAuth: true , authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin']},
     },
     {
       path: '/order/detail',
       name: 'detail order',
       component: OrderDetailView,
-      meta: { public: true },
+      meta: { requiresAuth: true , authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin']},
       props: (route) => ({ id: route.query.id })
     },
     {
       path: '/order/create',
       name: 'create order',
       component: CreateOrderView,
-      meta: { public: true },
+      meta: { requiresAuth: true , authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin']},
       props: (route) => ({ id: route.query.id })
     },
     {
-      path: '/order/edit/:orderId',
+      path: '/order/edit',
       name: 'edit order',
       component: EditOrderView,
-      meta: { public: true },
+      meta: { requiresAuth: true , authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin']},
+      props: (route) => ({ id: route.query.id })
     }
+    
     
   ],
 })

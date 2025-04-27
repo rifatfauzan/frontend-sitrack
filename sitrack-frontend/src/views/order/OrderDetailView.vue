@@ -11,6 +11,10 @@ import Skeleton from 'primevue/skeleton';
 import { computed } from 'vue';
 import { useCustomerStore } from '@/stores/customer';
 
+import ApprovalDialog from '@/components/ApprovalDialog.vue';
+import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
+import SuccessDialog from '@/components/SuccessDialog.vue';
+import ErrorDialog from '@/components/ErrorDialog.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -37,9 +41,10 @@ const goBack = () => {
 
 const goToEdit = () => {
   if (orderDetail.value?.orderId) {
-    router.push({ name: 'edit order', params: { orderId } });
+    router.push({ name: 'edit order', query: { id: orderDetail.value.orderId } });
   }
 };
+
 
 function getCustomerNameById(customerId: string) {
   const name = customers.value.find(c => c.id === customerId)?.name || 'Unknown';
@@ -89,6 +94,71 @@ const statusLabel = computed(() => {
   return statusMap[status] || { label: 'Unknown', class: 'bg-gray-300 text-black' };
 });
 
+const showApprovalDialog = ref(false);
+const selectedApprovalAction = ref('');
+const approvalRemarks = ref('');
+const showConfirmation = ref(false);
+const showSuccess = ref(false);
+const showError = ref(false);
+const errorMessage = ref('');
+
+const getCurrentUserRole = (): string | null => {
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.role || null;
+  } catch {
+    return null;
+  }
+};
+
+const userRole = ref(getCurrentUserRole());
+
+const handleOpenApproval = () => {
+  showApprovalDialog.value = true;
+};
+
+const handleApprovalAction = (action: string, remarks: string) => {
+  selectedApprovalAction.value = action;
+  approvalRemarks.value = remarks;
+  showApprovalDialog.value = false;
+  showConfirmation.value = true;
+};
+
+const confirmApproval = async () => {
+  showConfirmation.value = false;
+  try {
+    if (!selectedApprovalAction.value) {
+      throw new Error('Action approval tidak valid.');
+    }
+
+    let status: number;
+    if (selectedApprovalAction.value === 'approve') status = 3;
+    else if (selectedApprovalAction.value === 'revision') status = 2;
+    else if (selectedApprovalAction.value === 'reject') status = 0;
+    else throw new Error('Action tidak dikenali');
+
+    await orderStore.approveOrder({
+      orderId: orderDetail.value?.orderId || '',
+      remarksSupervisor: approvalRemarks.value,
+      orderStatus: status,
+    });
+
+    showSuccess.value = true;
+  } catch (error) {
+    errorMessage.value = (error as Error).message || 'Gagal melakukan approval Order.';
+    showError.value = true;
+  }
+};
+
+
+const goToDetail = () => {
+  router.go(0);
+};
+
+
 </script>
 
 <template>
@@ -125,11 +195,20 @@ const statusLabel = computed(() => {
 
                 </div>
               </div>
-              <VButton 
-              v-if="orderDetail?.orderStatus === 1 || orderDetail?.orderStatus === 2"
-              title="Edit" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" 
-              @click="goToEdit" 
-              />
+              <div class="flex gap-2">
+                <VButton
+                  v-if="userRole && ['Supervisor', 'Manager', 'Admin'].includes(userRole) && [1].includes(orderDetail?.orderStatus)"
+                  title="Approve"
+                  class="bg-[#639FAB] text-white px-4 py-2 rounded shadow-md"
+                  @click="handleOpenApproval"
+                />
+
+                <VButton 
+                v-if="orderDetail?.orderStatus === 1 || orderDetail?.orderStatus === 2"
+                title="Edit" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" 
+                @click="goToEdit" 
+                />
+              </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4">
@@ -150,7 +229,6 @@ const statusLabel = computed(() => {
                     <span>Customer Name</span>
                     <strong>{{ getCustomerNameById(orderDetail.customerId) }}</strong>
                   </div>
-
 
                     <div class="detail-item alt"><span>Created By</span><strong>{{ orderDetail.createdBy || '-' }}</strong></div>
                     <div class="detail-item"><span>Created Date</span><strong>{{ formatDate(orderDetail.createdDate) || '-' }}</strong></div>
@@ -188,7 +266,7 @@ const statusLabel = computed(() => {
             </div>
 
             <div class="detail-remarks">
-            <span class="label">Remarks (Operational)</span>
+            <span class="label">Remarks (Operasional)</span>
             <p class="text">{{ orderDetail.remarksOperasional || '-' }}</p>
             </div>
 
@@ -208,6 +286,37 @@ const statusLabel = computed(() => {
         <FooterComponent class="mt-auto bg-white shadow-md" />
       </div>
     </div>
+
+    <ApprovalDialog
+      :visible="showApprovalDialog"
+      title="Approval Order"
+      label="Remarks Supervisor:"
+      @close="showApprovalDialog = false"
+      @approve="(remarks) => handleApprovalAction('approve', remarks)"
+      @revision="(remarks) => handleApprovalAction('revision', remarks)"
+      @reject="(remarks) => handleApprovalAction('reject', remarks)" 
+    />
+
+    <ConfirmationDialog
+      :visible="showConfirmation"
+      @close="showConfirmation = false"
+      @confirm="confirmApproval"
+      :message="'Apakah Anda yakin dengan keputusan ini?'"
+    />
+
+    <SuccessDialog
+      :visible="showSuccess"
+      @close="goToDetail"
+      :message="'Approval berhasil!'"
+      buttonText="Kembali ke Detail Order"
+    />
+
+    <ErrorDialog
+      :visible="showError"
+      @close="showError = false"
+      :message="errorMessage"
+    />
+
   </template>
   
 <style scoped>

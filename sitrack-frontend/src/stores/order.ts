@@ -109,7 +109,7 @@ export const useOrderStore = defineStore('order', {
       }
     },
 
-    async approveOrder(payload: { orderId: string; approvedBy: string }) {
+    async approveOrder(payload: { orderId: string; remarksSupervisor: string; orderStatus: number }) {
       this.loading = true;
       this.error = null;
       const authStore = useAuthStore();
@@ -140,6 +140,7 @@ export const useOrderStore = defineStore('order', {
         this.loading = false;
       }
     },
+
     async updateOrder(orderId: string, body: CreateOrderRequest ) {
       this.loading = true;
       this.error = null;
