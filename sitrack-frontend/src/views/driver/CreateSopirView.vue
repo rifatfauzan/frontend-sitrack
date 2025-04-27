@@ -80,7 +80,7 @@ const onSubmitForm = async () => {
       errorMessage.value = response.message;
       showError.value = true;
     }
-  } catch (error) {
+  } catch {
     toast.error('Terjadi kesalahan!');
     errorMessage.value ="Terjadi kesalahan!";
     showError.value = true;

@@ -8,20 +8,22 @@ import HeaderComponent from '@/components/Header.vue';
 import FooterComponent from '@/components/Footer.vue';
 import VButton from '@/components/VButton.vue';
 import Skeleton from 'primevue/skeleton';
+import type { Sopir } from '@/interfaces/sopir.interfaces';
 
 const route = useRoute();
 const router = useRouter();
 const sopirStore = useSopirStore();
 const { loading } = storeToRefs(sopirStore);
-const driverDetail = ref<any>(null);
+const driverDetail = ref<Sopir | null>(null);
 
 // Ambil ID dari parameter
 const driverId = route.params.driverId as string;
-const isSIMExpired = ref(false);
+
 // Fetch data sopir saat komponen dimuat
 onMounted(async () => {
   if (driverId) {
-    driverDetail.value = await sopirStore.getSopirById(driverId);
+    const result = await sopirStore.getSopirById(driverId);
+    driverDetail.value = result ?? null;
   }
 });
 

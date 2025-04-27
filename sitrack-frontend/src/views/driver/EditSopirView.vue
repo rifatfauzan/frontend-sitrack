@@ -72,7 +72,7 @@ console.log("Driver ID from route:", driverId);
         ? new Date(sopirData.driverJoinDate).toISOString().split('T')[0] 
         : '',
     });
-  } catch (error) {
+  } catch  {
     toast.error('Terjadi kesalahan dalam mengambil data!');
   } finally {
     loading.value = false;
@@ -116,7 +116,7 @@ const onSubmitForm = async () => {
       errorMessage.value = response.message || "Terjadi kesalahan!";
       showError.value = true;
     }
-  } catch (error) {
+  } catch  {
     errorMessage.value = "Terjadi kesalahan saat menyimpan data!";
     showError.value = true;
   } finally {
