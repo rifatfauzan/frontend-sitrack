@@ -1,5 +1,4 @@
-import type { Tariff, TariffRequest, TariffResponse } from './tariff.interfaces';
-import type { CommonResponseInterface } from '@/interfaces/common.interfaces';
+import type { Tariff, TariffRequest} from './tariff.interfaces';
 
 export interface Customer {
     id: string;
@@ -33,6 +32,3 @@ export interface UpdateCustomerRequest extends CreateCustomerRequest {
     id: string;
     tariffs: TariffRequest[];
 }
-
-export interface CustomerResponse extends CommonResponseInterface<Customer> {}
-export interface CustomersResponse extends CommonResponseInterface<Customer[]> {}
