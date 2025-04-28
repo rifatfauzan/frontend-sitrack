@@ -13,6 +13,7 @@ import { storeToRefs } from 'pinia';
 import { FilterMatchMode } from '@primevue/core/api';
 import { format } from 'date-fns';
 import { useCustomerStore } from '@/stores/customer';
+import type { Order } from '@/interfaces/order.interfaces';
 
 const router = useRouter();
 const orderStore = useOrderStore();
@@ -23,7 +24,7 @@ const { customers } = storeToRefs(customerStore);
 
 onMounted(() => {
   orderStore.fetchOrders();
-  customerStore.fetchCustomers(); // <-- ini dia
+  customerStore.fetchCustomers();
 });
 
 function getCustomerNameById(customerId: string) {
@@ -35,7 +36,7 @@ const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 
-function onRowClick(event: { data: any }) {
+function onRowClick(event: { data: Order }) {
   router.push({ name: 'detail order', query: { id: event.data.orderId } });
 }
 
@@ -113,22 +114,31 @@ const statusMap = {
                   {{ formatDate(data.orderDate) }}
                 </template>
               </Column>
-              <Column header="Status">
+              <Column
+                field="orderStatus"
+                header="Status"
+                sortable
+                :filter="true"
+                :filterMatchMode="'equals'"
+                :showFilterMenu="false"
+                :filterElement="statusFilterTemplate"
+              >
                 <template #body="{ data }">
-                    <span
+                  <span
                     class="status-pill px-3 py-1 rounded font-semibold text-sm"
                     :class="{
-                        'bg-[#EB5757] text-white': data.orderStatus === 0, // Rejected
-                        'bg-[#639FAB] text-white': data.orderStatus === 1, // Pending Approval
-                        'bg-[#F7B500] text-black': data.orderStatus === 2, // Needs Revision
-                        'bg-[#27AE60] text-white': data.orderStatus === 3, // Ongoing
-                        'bg-[#1C5D99] text-white': data.orderStatus === 4  // Done
+                      'bg-[#EB5757] text-white': data.orderStatus === 0,
+                      'bg-[#639FAB] text-white': data.orderStatus === 1,
+                      'bg-[#F7B500] text-black': data.orderStatus === 2,
+                      'bg-[#27AE60] text-white': data.orderStatus === 3,
+                      'bg-[#1C5D99] text-white': data.orderStatus === 4
                     }"
-                    >
+                  >
                     {{ statusMap[data.orderStatus]?.label || 'Unknown' }}
-                    </span>
+                  </span>
                 </template>
               </Column>
+
             </DataTable>
           </div>
         </div>

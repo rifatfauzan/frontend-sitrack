@@ -65,7 +65,7 @@ onMounted(async () => {
         ? new Date(chassisData.chassisKIRDate).toISOString().split('T')[0]
         : ''
     });
-  } catch (error) {
+  } catch {
     errorMessage.value = 'Terjadi kesalahan saat mengambil data';
     showError.value = true;
   } finally {
@@ -101,7 +101,7 @@ const submitForm = async () => {
       errorMessage.value = response.message || 'Terjadi kesalahan!';
       showError.value = true;
     }
-  } catch (error) {
+  } catch {
     errorMessage.value = 'Terjadi kesalahan saat menyimpan data.';
     showError.value = true;
   } finally {

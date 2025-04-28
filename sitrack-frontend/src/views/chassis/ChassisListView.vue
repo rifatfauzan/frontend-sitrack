@@ -11,6 +11,7 @@ import InputText from 'primevue/inputtext';
 import { storeToRefs } from 'pinia';
 import { FilterMatchMode } from '@primevue/core/api';
 import { ref, onMounted } from 'vue';
+import type { Chassis } from '@/interfaces/chassis.interfaces';
 
 const router = useRouter();
 const chassisStore = useChassisStore();
@@ -25,7 +26,7 @@ onMounted(async () => {
   await chassisStore.fetchChassis();
 });
 
-const goToDetail = (event: { data: any }) => {
+const goToDetail = (event: { data: Chassis }) => {
   router.push({ name: 'detail chassis', query: { id: event.data.chassisId } });
 };
 </script>
@@ -74,7 +75,6 @@ const goToDetail = (event: { data: any }) => {
               :rows="10"
               datakey="chassisId"
               :rowsPerPageOptions="[5, 10, 20]"
-              dataKey="chassisId" 
               filterDisplay="menu"
               :loading="loading"
               selectionMode="single"
