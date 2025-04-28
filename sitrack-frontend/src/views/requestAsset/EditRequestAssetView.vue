@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { reactive, computed, onMounted } from 'vue';
+import { reactive, computed, ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { useToast } from 'vue-toastification';
 
 import { useAssetStore } from '@/stores/asset';
 import { useRequestAssetStore } from '@/stores/requestAsset';
@@ -11,15 +10,23 @@ import HeaderComponent from '@/components/Header.vue';
 import FooterComponent from '@/components/Footer.vue';
 import VButton from '@/components/VButton.vue';
 import Dropdown from 'primevue/dropdown';
+import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
+import SuccessDialog from '@/components/SuccessDialog.vue';
+import ErrorDialog from '@/components/ErrorDialog.vue';
 
 const router = useRouter();
 const route = useRoute();
-const toast = useToast();
 const assetStore = useAssetStore();
 const requestAssetStore = useRequestAssetStore();
 const { assetList } = storeToRefs(assetStore);
 
 const id = route.query.id as string;
+
+const showConfirm = ref(false);
+const showSuccess = ref(false);
+const showError = ref(false);
+const errorMessage = ref("");
+const loading = ref(false);
 
 const form = reactive({
   remark: '',
@@ -50,23 +57,27 @@ const assetOptions = computed(() => {
 
 const addAsset = () => {
   if (!form.selectedAssetId) {
-    toast.error('Pilih asset terlebih dahulu');
+    errorMessage.value = 'Pilih asset terlebih dahulu';
+    showError.value = true;
     return;
   }
 
   if (form.assets.some(a => a.assetId === form.selectedAssetId)) {
-    toast.error('Asset sudah ada di daftar');
+    errorMessage.value = 'Asset sudah ada di daftar';
+    showError.value = true;
     return;
   }
 
-  if (form.requestedQty < 1) {
-    toast.error('Jumlah harus minimal 1');
+  if (form.requestedQty < 1 || form.requestedQty > 1000) {
+    errorMessage.value = 'Jumlah minimal 1 dan maksimal 1000';
+    showError.value = true;
     return;
   }
 
   const selectedAsset = assetList.value.find(a => a.assetId === form.selectedAssetId);
   if (!selectedAsset) {
-    toast.error('Asset tidak ditemukan');
+    errorMessage.value = 'Asset tidak ditemukan';
+    showError.value = true;
     return;
   }
 
@@ -84,28 +95,47 @@ const removeAsset = (index: number) => {
   form.assets.splice(index, 1);
 };
 
-const submitUpdate = async () => {
+const confirmSubmit = () => {
   if (form.assets.length === 0) {
-    toast.error('Minimal 1 asset harus dimasukkan');
+    errorMessage.value = 'Minimal 1 asset harus dimasukkan';
+    showError.value = true;
     return;
   }
+  showConfirm.value = true;
+};
+
+const submitForm = async () => {
+  showConfirm.value = false;
+  loading.value = true;
 
   const payload = {
     requestRemark: form.remark,
     assets: form.assets,
   };
 
-  const result = await requestAssetStore.updateRequestAsset(id, payload);
-  if (result.success) {
-    toast.success('Request Asset berhasil diupdate');
-    router.push('/request-assets');
-  } else {
-    toast.error(result.message);
+  try {
+    const result = await requestAssetStore.updateRequestAsset(id, payload);
+    if (result.success) {
+      showSuccess.value = true;
+    } else {
+      errorMessage.value = result.message;
+      showError.value = true;
+    }
+  } catch {
+    errorMessage.value = "Terjadi kesalahan saat memperbarui Request Asset!";
+    showError.value = true;
+  } finally {
+    loading.value = false;
   }
 };
 
 const goBack = () => {
   router.push('/request-assets');
+};
+
+const goToDetail = () => {
+  showSuccess.value = false;
+  router.push(`/request-assets/detail?id=${id}`);
 };
 </script>
 
@@ -121,8 +151,10 @@ const goBack = () => {
               <VButton title="Kembali" class="back-button" @click="goBack">
                 <i class="pi pi-arrow-left"></i>
               </VButton>
-              <h1 class="header-title">Edit Request Asset</h1>
-              <p class="text-sm font-medium text-gray-200 mt-1">ID: {{ id }}</p>
+              <div>
+                <h1 class="header-title">Edit Request Asset</h1>
+                <p class="text-sm font-medium text-gray-200 mt-1">ID: {{ id }}</p>
+              </div>
             </div>
           </div>
 
@@ -142,7 +174,7 @@ const goBack = () => {
 
           <div>
             <label class="font-bold block mb-1">Tambah Stok</label>
-            <input type="number" v-model="form.requestedQty" min="1" class="w-full border rounded px-3 py-2" />
+            <input type="number" v-model="form.requestedQty" min="1" max="999" class="w-full border rounded px-3 py-2" />
           </div>
 
           <VButton class="bg-[#1C5D99] text-white px-4 py-2 rounded" @click="addAsset">
@@ -163,11 +195,7 @@ const goBack = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  v-for="(item, index) in form.assets"
-                  :key="item.assetId"
-                  class="odd:bg-gray-100 even:bg-white text-center"
-                >
+                <tr v-for="(item, index) in form.assets" :key="item.assetId" class="odd:bg-gray-100 even:bg-white text-center">
                   <td class="p-2">{{ index + 1 }}</td>
                   <td class="p-2">{{ item.assetId }}</td>
                   <td class="p-2">{{ assetList.find(a => a.assetId === item.assetId)?.jenisAsset || '-' }}</td>
@@ -182,8 +210,7 @@ const goBack = () => {
                   <td class="p-2 text-left" colspan="4">Total</td>
                   <td class="p-2 text-center" colspan="3">
                     Rp.{{
-                      form.assets.reduce((total, item) => total + (item.assetPrice * item.requestedQuantity), 0)
-                        .toLocaleString('id-ID')
+                      form.assets.reduce((total, item) => total + (item.assetPrice * item.requestedQuantity), 0).toLocaleString('id-ID')
                     }}
                   </td>
                 </tr>
@@ -193,21 +220,35 @@ const goBack = () => {
 
           <div>
             <label class="font-bold block mb-1">Remarks</label>
-            <textarea
-              v-model="form.remark"
-              class="w-full border rounded px-3 py-2"
-              rows="3"
-              placeholder="Keterangan (opsional)....."
-            ></textarea>
+            <textarea v-model="form.remark" class="w-full border rounded px-3 py-2" rows="3" placeholder="Keterangan (opsional)....."></textarea>
           </div>
 
-          <VButton class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full" @click="submitUpdate">
-            Simpan Perubahan
+          <VButton class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full" @click="confirmSubmit" :disabled="loading">
+            {{ loading ? 'Menyimpan...' : 'Simpan Perubahan' }}
           </VButton>
         </div>
       </div>
       <FooterComponent />
     </div>
+
+    <ConfirmationDialog
+      :visible="showConfirm"
+      @close="showConfirm = false"
+      @confirm="submitForm"
+      :message="'Apakah Anda yakin ingin memperbarui Request Asset ini?'"
+    />
+    <SuccessDialog
+      :visible="showSuccess"
+      @close="goToDetail"
+      :message="'Request Asset berhasil diperbarui!'"
+      redirectTo="/request-assets"
+      buttonText="Kembali ke Detail Request Asset"
+    />
+    <ErrorDialog
+      :visible="showError"
+      @close="showError = false"
+      :message="errorMessage"
+    />
   </div>
 </template>
 

@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { reactive, computed, onMounted } from 'vue';
+import { reactive, computed, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { useToast } from 'vue-toastification';
 
 import { useAssetStore } from '@/stores/asset';
 import { useRequestAssetStore } from '@/stores/requestAsset';
@@ -11,22 +10,30 @@ import HeaderComponent from '@/components/Header.vue';
 import FooterComponent from '@/components/Footer.vue';
 import VButton from '@/components/VButton.vue';
 import Dropdown from 'primevue/dropdown';
+import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
+import SuccessDialog from '@/components/SuccessDialog.vue';
+import ErrorDialog from '@/components/ErrorDialog.vue';
 
 const router = useRouter();
-const toast = useToast();
 const assetStore = useAssetStore();
 const requestAssetStore = useRequestAssetStore();
 const { assetList } = storeToRefs(assetStore);
 
-onMounted(async () => {
-  await assetStore.fetchAssets();
-});
+const showConfirm = ref(false);
+const showSuccess = ref(false);
+const showError = ref(false);
+const errorMessage = ref("");
+const loading = ref(false);
 
 const form = reactive({
   remark: '',
   selectedAssetId: '',
   requestedQty: 1,
   assets: [] as { assetId: string; requestedQuantity: number; assetPrice: number }[],
+});
+
+onMounted(async () => {
+  await assetStore.fetchAssets();
 });
 
 const assetOptions = computed(() => {
@@ -38,23 +45,27 @@ const assetOptions = computed(() => {
 
 const addAsset = () => {
   if (!form.selectedAssetId) {
-    toast.error('Pilih asset terlebih dahulu');
+    errorMessage.value = 'Pilih asset terlebih dahulu';
+    showError.value = true;
     return;
   }
 
   if (form.assets.some(a => a.assetId === form.selectedAssetId)) {
-    toast.error('Asset sudah ada di daftar');
+    errorMessage.value = 'Asset sudah ada di daftar';
+    showError.value = true;
     return;
   }
 
-  if (form.requestedQty < 1) {
-    toast.error('Jumlah harus minimal 1');
+  if (form.requestedQty < 1 || form.requestedQty > 1000) {
+    errorMessage.value = 'Jumlah minimal 1 dan maksimal 1000';
+    showError.value = true;
     return;
   }
 
   const selectedAsset = assetList.value.find(a => a.assetId === form.selectedAssetId);
   if (!selectedAsset) {
-    toast.error('Asset tidak ditemukan');
+    errorMessage.value = 'Asset tidak ditemukan';
+    showError.value = true;
     return;
   }
 
@@ -72,130 +83,168 @@ const removeAsset = (index: number) => {
   form.assets.splice(index, 1);
 };
 
-const submitRequest = async () => {
+const confirmSubmit = () => {
   if (form.assets.length === 0) {
-    toast.error('Minimal 1 asset harus dimasukkan');
+    errorMessage.value = 'Minimal 1 asset harus dimasukkan';
+    showError.value = true;
     return;
   }
+  showConfirm.value = true;
+};
+
+const submitForm = async () => {
+  showConfirm.value = false;
+  loading.value = true;
 
   const payload = {
     requestRemark: form.remark,
     assets: form.assets,
   };
 
-  const result = await requestAssetStore.createRequestAsset(payload);
-  if (result.success) {
-    toast.success('Request berhasil dibuat');
-    router.push('/request-assets');
-  } else {
-    toast.error(result.message);
+  try {
+    const result = await requestAssetStore.createRequestAsset(payload);
+    if (result.success) {
+      showSuccess.value = true;
+      resetForm();
+    } else {
+      errorMessage.value = result.message;
+      showError.value = true;
+    }
+  } catch {
+    errorMessage.value = "Terjadi kesalahan saat membuat Request Asset!";
+    showError.value = true;
+  } finally {
+    loading.value = false;
   }
+};
+
+const resetForm = () => {
+  Object.assign(form, {
+    remark: '',
+    selectedAssetId: '',
+    requestedQty: 1,
+    assets: [],
+  });
 };
 
 const goBack = () => {
   router.push('/request-assets');
 };
+
+const goToList = () => {
+  showSuccess.value = false;
+  router.push('/request-assets');
+};
 </script>
 
 <template>
-    <div class="flex h-screen">
-      <Sidebar />
-      <div class="flex-1 flex flex-col min-h-screen bg-[#C8D9ED]">
-        <HeaderComponent title="Buat Request Asset" />
-        <div class="flex-1 p-6 overflow-auto">
-          <div class="max-w-4xl mx-auto bg-white p-6 rounded shadow space-y-6">
-            <div class="header-container">
-              <div class="header-content">
-                <VButton title="Kembali" class="back-button" @click="goBack">
-                  <i class="pi pi-arrow-left"></i>
-                </VButton>
-                <h1 class="header-title">Buat Request Asset</h1>
-              </div>
+  <div class="flex h-screen">
+    <Sidebar />
+    <div class="flex-1 flex flex-col min-h-screen bg-[#C8D9ED]">
+      <HeaderComponent title="Buat Request Asset" />
+      <div class="flex-1 p-6 overflow-auto">
+        <div class="max-w-4xl mx-auto bg-white p-6 rounded shadow space-y-6">
+          <div class="header-container">
+            <div class="header-content">
+              <VButton title="Kembali" class="back-button" @click="goBack">
+                <i class="pi pi-arrow-left"></i>
+              </VButton>
+              <h1 class="header-title">Buat Request Asset</h1>
             </div>
-  
-            <div>
-              <label class="font-bold block mb-1">Pilih Asset</label>
-              <Dropdown
-                v-model="form.selectedAssetId"
-                :options="assetOptions"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="-- Pilih Asset --"
-                filter
-                class="w-full"
-                :virtualScrollerOptions="{ itemSize: 38 }"
-              />
-            </div>
-  
-            <div>
-              <label class="font-bold block mb-1">Tambah Stok</label>
-              <input type="number" v-model="form.requestedQty" min="1" class="w-full border rounded px-3 py-2" />
-            </div>
-  
-            <VButton class="bg-[#1C5D99] text-white px-4 py-2 rounded" @click="addAsset">
-              Tambah Asset
-            </VButton>
-  
-            <div v-if="form.assets.length > 0">
-              <table class="w-full mt-6 border-collapse">
-                <thead class="bg-[#1C5D99] text-white">
-                  <tr>
-                    <th class="p-2">No.</th>
-                    <th class="p-2">ID</th>
-                    <th class="p-2">Type</th>
-                    <th class="p-2">Brand</th>
-                    <th class="p-2">Asset Price (Satuan)</th>
-                    <th class="p-2">Tambah Stok</th>
-                    <th class="p-2">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="(item, index) in form.assets"
-                    :key="item.assetId"
-                    class="odd:bg-gray-100 even:bg-white text-center"
-                  >
-                    <td class="p-2">{{ index + 1 }}</td>
-                    <td class="p-2">{{ item.assetId }}</td>
-                    <td class="p-2">{{ assetList.find(a => a.assetId === item.assetId)?.jenisAsset || '-' }}</td>
-                    <td class="p-2">{{ assetList.find(a => a.assetId === item.assetId)?.brand || '-' }}</td>
-                    <td class="p-2">Rp. {{ item.assetPrice.toLocaleString('id-ID') }}</td>
-                    <td class="p-2">{{ item.requestedQuantity }}</td>
-                    <td class="p-2">
-                      <button @click="removeAsset(index)" class="text-red-500 hover:underline">Hapus</button>
-                    </td>
-                  </tr>
-                  <tr class="font-bold bg-gray-200">
-                    <td class="p-2 text-left" colspan="4">Total</td>
-                    <td class="p-2 text-center" colspan="3">
-                      Rp. {{
-                        form.assets.reduce((total, item) => total + (item.assetPrice * item.requestedQuantity), 0)
-                          .toLocaleString('id-ID')
-                      }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            
-            <div>
-              <label class="font-bold block mb-1">Remarks</label>
-              <textarea
-                v-model="form.remark"
-                class="w-full border rounded px-3 py-2"
-                rows="3"
-                placeholder="Keterangan (opsional)....."
-              ></textarea>
-            </div>
-
-            <VButton class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full" @click="submitRequest">
-              Simpan
-            </VButton>
           </div>
+
+          <div>
+            <label class="font-bold block mb-1">Pilih Asset</label>
+            <Dropdown
+              v-model="form.selectedAssetId"
+              :options="assetOptions"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="-- Pilih Asset --"
+              filter
+              class="w-full"
+              :virtualScrollerOptions="{ itemSize: 38 }"
+            />
+          </div>
+
+          <div>
+            <label class="font-bold block mb-1">Tambah Stok</label>
+            <input type="number" v-model="form.requestedQty" min="1" class="w-full border rounded px-3 py-2" />
+          </div>
+
+          <VButton class="bg-[#1C5D99] text-white px-4 py-2 rounded" @click="addAsset">
+            Tambah Asset
+          </VButton>
+
+          <div v-if="form.assets.length > 0">
+            <table class="w-full mt-6 border-collapse">
+              <thead class="bg-[#1C5D99] text-white">
+                <tr>
+                  <th class="p-2">No.</th>
+                  <th class="p-2">ID</th>
+                  <th class="p-2">Type</th>
+                  <th class="p-2">Brand</th>
+                  <th class="p-2">Asset Price (Satuan)</th>
+                  <th class="p-2">Tambah Stok</th>
+                  <th class="p-2">Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, index) in form.assets" :key="item.assetId" class="odd:bg-gray-100 even:bg-white text-center">
+                  <td class="p-2">{{ index + 1 }}</td>
+                  <td class="p-2">{{ item.assetId }}</td>
+                  <td class="p-2">{{ assetList.find(a => a.assetId === item.assetId)?.jenisAsset || '-' }}</td>
+                  <td class="p-2">{{ assetList.find(a => a.assetId === item.assetId)?.brand || '-' }}</td>
+                  <td class="p-2">Rp. {{ item.assetPrice.toLocaleString('id-ID') }}</td>
+                  <td class="p-2">{{ item.requestedQuantity }}</td>
+                  <td class="p-2">
+                    <button @click="removeAsset(index)" class="text-red-500 hover:underline">Hapus</button>
+                  </td>
+                </tr>
+                <tr class="font-bold bg-gray-200">
+                  <td class="p-2 text-left" colspan="4">Total</td>
+                  <td class="p-2 text-center" colspan="3">
+                    Rp. {{
+                      form.assets.reduce((total, item) => total + (item.assetPrice * item.requestedQuantity), 0).toLocaleString('id-ID')
+                    }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <label class="font-bold block mb-1">Remarks</label>
+            <textarea v-model="form.remark" class="w-full border rounded px-3 py-2" rows="3" placeholder="Keterangan (opsional)....." maxlength="300"></textarea>
+          </div>
+
+          <VButton class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full" @click="confirmSubmit" :disabled="loading">
+            {{ loading ? 'Menyimpan...' : 'Simpan' }}
+          </VButton>
         </div>
-        <FooterComponent />
       </div>
+      <FooterComponent />
     </div>
+
+    <ConfirmationDialog
+      :visible="showConfirm"
+      @close="showConfirm = false"
+      @confirm="submitForm"
+      :message="'Apakah data Request Asset sudah sesuai?'"
+    />
+    <SuccessDialog
+      :visible="showSuccess"
+      @close="goToList"
+      :message="'Request Asset berhasil dibuat!'"
+      redirectTo="/request-assets"
+      buttonText="Kembali ke List Request Asset"
+    />
+    <ErrorDialog
+      :visible="showError"
+      @close="showError = false"
+      :message="errorMessage"
+    />
+  </div>
 </template>
 
 <style scoped>

@@ -74,7 +74,6 @@ const addReqAsset = async () => {
   loading.value = true;
   showConfirm.value = false;
   if (assetDetail.value.requestedStok === 0) {
-    toast.error("Oi gaada")
     errorMessage.value = "Tidak ada stok yang diminta";
     showError.value = true;
     loading.value = false;

@@ -25,7 +25,7 @@ const selectedStatus = ref<null | number>(null)
 
 const statusOptions = [
   { label: 'All Status', value: null },
-  { label: 'Pending', value: 0 },
+  { label: 'Pending Approval', value: 0 },
   { label: 'Approved', value: 1 },
   { label: 'Needs Revision', value: 2 },
   { label: 'Rejected', value: 3 }
@@ -37,7 +37,7 @@ onMounted(async () => {
 
 const getStatusLabel = (status: number) => {
   switch (status) {
-    case 0: return 'Pending'
+    case 0: return 'Pending Approval'
     case 1: return 'Approved'
     case 2: return 'Needs Revision'
     case 3: return 'Rejected'

@@ -227,7 +227,7 @@ const router = createRouter({
     { path: '/assets', 
       name: 'assets', 
       component: AssetListView, 
-      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager','Operasional','Mekanik'] }
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager','Mekanik'] }
     },
     { path: '/assets/create', 
       name: 'create asset', 
@@ -271,7 +271,7 @@ const router = createRouter({
       path: '/assets/:assetId',
       name: 'detail asset',
       component: DetailAssetView,
-      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']},
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager','Mekanik']},
       props: true,
     },
     {
