@@ -12,7 +12,7 @@
 </template>
   
 <script setup lang="ts">
-    import Dialog from "@/components/Dialog.vue";
+    import Dialog from "@/components/vDialog.vue";
     import { defineProps, defineEmits } from "vue";
     import VButton from "@/components/VButton.vue";
     import { useRouter } from "vue-router";
