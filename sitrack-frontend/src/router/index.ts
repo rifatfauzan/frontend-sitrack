@@ -21,8 +21,8 @@ import TruckListView from '@/views/trucks/TruckListView.vue'
 import CreateTruckView from '@/views/trucks/CreateTruckView.vue'
 import TruckDetailView from '@/views/trucks/TruckDetailView.vue'
 import EditTruckView from '@/views/trucks/EditTruckView.vue'
+import NotificationListView from '@/views/notification/NotificationListView.vue'
 import EditAssetView from '@/views/asset/EditAssetView.vue'
-
 import AssetListView from '@/views/asset/AssetListView.vue'
 import CreateAssetView from '@/views/asset/CreateAssetView.vue'
 import RequestAssetListView from '@/views/requestAsset/RequestAssetListView.vue'
@@ -169,6 +169,7 @@ const router = createRouter({
       meta: { requiresAuth: true , authorize: ['Admin', 'Supervisor', 'Manager'] },
       props: (route) => ({ siteId: route.query.siteId }),
     },
+
     // Route untuk Truck Management
     {
       path: '/trucks',
@@ -206,9 +207,6 @@ const router = createRouter({
     },
 
     {
-      path: '/',
-      redirect: '/login'
-    },{
       path: '/sopir/add',
       name: 'add sopir',
       component: CreateSopirView,
@@ -234,6 +232,14 @@ const router = createRouter({
       meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']},
       props: true,
     },
+    
+    {
+      path: '/notifications',
+      name: 'view all notification',
+      component: NotificationListView,
+      meta: { requiresAuth: true , authorize: ['Supervisor', 'Manager', 'Admin', 'Operasional', 'Mekanik']},
+    },
+
     { path: '/assets', 
       name: 'assets', 
       component: AssetListView, 
@@ -244,6 +250,8 @@ const router = createRouter({
       component: CreateAssetView, 
       meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] }
     },
+    
+
     {
       path: '/orders',
       name: 'view all order',
@@ -283,6 +291,7 @@ const router = createRouter({
       meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']},
       props: true,
     },
+    
     {
       path: '/orders',
       name: 'view all order',
