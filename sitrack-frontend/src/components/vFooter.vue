@@ -4,6 +4,8 @@
     </footer>
 </template>
 
-<script>
-export default {};
+<script lang="ts">
+export default {
+    name: 'vFooter',
+};
 </script>
