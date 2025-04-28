@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { reactive, computed, ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
 import { useAssetStore } from '@/stores/asset';
@@ -15,9 +15,12 @@ import SuccessDialog from '@/components/SuccessDialog.vue';
 import ErrorDialog from '@/components/ErrorDialog.vue';
 
 const router = useRouter();
+const route = useRoute();
 const assetStore = useAssetStore();
 const requestAssetStore = useRequestAssetStore();
 const { assetList } = storeToRefs(assetStore);
+
+const id = route.query.id as string;
 
 const showConfirm = ref(false);
 const showSuccess = ref(false);
@@ -34,6 +37,15 @@ const form = reactive({
 
 onMounted(async () => {
   await assetStore.fetchAssets();
+  const data = await requestAssetStore.fetchRequestAssetById(id);
+  if (data) {
+    form.remark = data.requestRemark || '';
+    form.assets = (data.assets || []).map(a => ({
+      assetId: a.assetId,
+      requestedQuantity: a.requestedQuantity,
+      assetPrice: a.assetPrice || 0,
+    }));
+  }
 });
 
 const assetOptions = computed(() => {
@@ -102,38 +114,28 @@ const submitForm = async () => {
   };
 
   try {
-    const result = await requestAssetStore.createRequestAsset(payload);
+    const result = await requestAssetStore.updateRequestAsset(id, payload);
     if (result.success) {
       showSuccess.value = true;
-      resetForm();
     } else {
       errorMessage.value = result.message;
       showError.value = true;
     }
   } catch {
-    errorMessage.value = "Terjadi kesalahan saat membuat Request Asset!";
+    errorMessage.value = "Terjadi kesalahan saat memperbarui Request Asset!";
     showError.value = true;
   } finally {
     loading.value = false;
   }
 };
 
-const resetForm = () => {
-  Object.assign(form, {
-    remark: '',
-    selectedAssetId: '',
-    requestedQty: 1,
-    assets: [],
-  });
-};
-
 const goBack = () => {
   router.push('/request-assets');
 };
 
-const goToList = () => {
+const goToDetail = () => {
   showSuccess.value = false;
-  router.push('/request-assets');
+  router.push(`/request-assets/detail?id=${id}`);
 };
 </script>
 
@@ -141,7 +143,7 @@ const goToList = () => {
   <div class="flex h-screen">
     <Sidebar />
     <div class="flex-1 flex flex-col min-h-screen bg-[#C8D9ED]">
-      <HeaderComponent title="Buat Request Asset" />
+      <HeaderComponent title="Edit Request Asset" />
       <div class="flex-1 p-6 overflow-auto">
         <div class="max-w-4xl mx-auto bg-white p-6 rounded shadow space-y-6">
           <div class="header-container">
@@ -149,7 +151,10 @@ const goToList = () => {
               <VButton title="Kembali" class="back-button" @click="goBack">
                 <i class="pi pi-arrow-left"></i>
               </VButton>
-              <h1 class="header-title">Buat Request Asset</h1>
+              <div>
+                <h1 class="header-title">Edit Request Asset</h1>
+                <p class="text-sm font-medium text-gray-200 mt-1">ID: {{ id }}</p>
+              </div>
             </div>
           </div>
 
@@ -169,7 +174,7 @@ const goToList = () => {
 
           <div>
             <label class="font-bold block mb-1">Tambah Stok</label>
-            <input type="number" v-model="form.requestedQty" min="1" class="w-full border rounded px-3 py-2" />
+            <input type="number" v-model="form.requestedQty" min="1" max="999" class="w-full border rounded px-3 py-2" />
           </div>
 
           <VButton class="bg-[#1C5D99] text-white px-4 py-2 rounded" @click="addAsset">
@@ -204,7 +209,7 @@ const goToList = () => {
                 <tr class="font-bold bg-gray-200">
                   <td class="p-2 text-left" colspan="4">Total</td>
                   <td class="p-2 text-center" colspan="3">
-                    Rp. {{
+                    Rp.{{
                       form.assets.reduce((total, item) => total + (item.assetPrice * item.requestedQuantity), 0).toLocaleString('id-ID')
                     }}
                   </td>
@@ -215,11 +220,11 @@ const goToList = () => {
 
           <div>
             <label class="font-bold block mb-1">Remarks</label>
-            <textarea v-model="form.remark" class="w-full border rounded px-3 py-2" rows="3" placeholder="Keterangan (opsional)....." maxlength="300"></textarea>
+            <textarea v-model="form.remark" class="w-full border rounded px-3 py-2" rows="3" placeholder="Keterangan (opsional)....."></textarea>
           </div>
 
           <VButton class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full" @click="confirmSubmit" :disabled="loading">
-            {{ loading ? 'Menyimpan...' : 'Simpan' }}
+            {{ loading ? 'Menyimpan...' : 'Simpan Perubahan' }}
           </VButton>
         </div>
       </div>
@@ -230,14 +235,14 @@ const goToList = () => {
       :visible="showConfirm"
       @close="showConfirm = false"
       @confirm="submitForm"
-      :message="'Apakah data Request Asset sudah sesuai?'"
+      :message="'Apakah Anda yakin ingin memperbarui Request Asset ini?'"
     />
     <SuccessDialog
       :visible="showSuccess"
-      @close="goToList"
-      :message="'Request Asset berhasil dibuat!'"
+      @close="goToDetail"
+      :message="'Request Asset berhasil diperbarui!'"
       redirectTo="/request-assets"
-      buttonText="Kembali ke List Request Asset"
+      buttonText="Kembali ke Detail Request Asset"
     />
     <ErrorDialog
       :visible="showError"
@@ -252,20 +257,16 @@ table {
   border-collapse: collapse;
   width: 100%;
 }
-
 th, td {
   border: 1px solid #ccc;
   padding: 8px;
 }
-
 .bg-c8d9ed {
   background-color: #C8D9ED;
 }
-
 :deep(.p-dropdown) {
   min-height: 42px;
 }
-
 .header-container {
   background-color: #1C5D99;
   color: white;
@@ -273,13 +274,11 @@ th, td {
   border-radius: 8px;
   margin-bottom: 24px;
 }
-
 .header-content {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-
 .back-button {
   border-radius: 6px;
   padding: 8px 12px;
@@ -287,11 +286,9 @@ th, td {
   align-items: center;
   justify-content: center;
 }
-
 .back-button i {
   font-size: 1.2rem;
 }
-
 .header-title {
   font-size: 1.5rem;
   font-weight: bold;

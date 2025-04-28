@@ -9,8 +9,9 @@ import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
 import InputText from 'primevue/inputtext';
 import DataTable from 'primevue/datatable';
-import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
+import { FilterMatchMode } from '@primevue/core/api';
 import Column from 'primevue/column';
+import type { Asset } from '@/interfaces/asset.interface';
 
 const assetStore = useAssetStore();
 const { assetList, loading } = storeToRefs(assetStore);
@@ -20,11 +21,9 @@ const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 });
 
-const goToDetail = (event: { data: any }) => {
+const goToDetail = (event: { data: Asset }) => {
   router.push({ name: 'detail asset', params: { assetId: event.data.assetId } });
 };
-
-const selectedRow = ref(null);
 
 onMounted(async () => {
   await assetStore.fetchAssets();

@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import { useAuthStore } from './auth';
-import { useToast } from 'vue-toastification';
-import type { Truck, CreateTruckRequest, CreateTruckResponse, UpdateTruckResponse, UpdateTruckRequest } from '@/interfaces/truck.interfaces';
+import type { Truck, CreateTruckRequest, CreateTruckResponse,  UpdateTruckRequest } from '@/interfaces/truck.interfaces';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -18,7 +17,6 @@ export const useTruckStore = defineStore('truck', {
             this.loading = true;
             this.error = null;
             const authStore = useAuthStore();
-            const toast = useToast();
 
             try {
                 const response = await fetch(`${API_URL}/api/truck/all`, {
@@ -120,7 +118,7 @@ export const useTruckStore = defineStore('truck', {
                     throw new Error(errorData.message || 'Gagal memperbarui truck');
                 }
         
-                const data: { data: UpdateTruckResponse } = await response.json();
+                
         
                 const index = this.truckList.findIndex(truck => truck.vehicleId === vehicleId);
                 if (index !== -1) {

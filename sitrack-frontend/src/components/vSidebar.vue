@@ -69,7 +69,7 @@
                     </ul>
                 </li>
 
-                <li v-if="['Admin', 'Manager', 'Supervisor', 'Operasional', 'Mekanik'].includes(authStore.role)" class="relative">
+                <li v-if="['Admin', 'Manager', 'Supervisor', 'Mekanik'].includes(authStore.role)" class="relative">
                     <div class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item" @click="toggleInventoryMenu">
                         <i class="pi pi-box text-3xl"></i>
                         <span>Inventory</span>

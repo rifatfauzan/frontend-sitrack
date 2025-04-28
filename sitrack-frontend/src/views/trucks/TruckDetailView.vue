@@ -8,12 +8,13 @@ import HeaderComponent from '@/components/vHeader.vue';
 import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
 import Skeleton from 'primevue/skeleton';
+import type { Truck } from '@/interfaces/truck.interfaces';
 
 const route = useRoute();
 const router = useRouter();
 const truckStore = useTruckStore();
 const { loading } = storeToRefs(truckStore);
-const truckDetail = ref<any>(null);
+const truckDetail = ref<Truck | null>(null);
 
 // Ambil ID dari query parameter
 const vehicleId = route.query.id as string;
