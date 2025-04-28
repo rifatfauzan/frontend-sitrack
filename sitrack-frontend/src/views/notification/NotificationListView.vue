@@ -37,43 +37,45 @@
 
           <div v-else>
             <div class="card">
-              <table class="min-w-full divide-y divide-gray-200 bg-white rounded-lg shadow">
-                <thead>
-                  <tr class="bg-[#1C5D99] text-white text-lg font-bold">
-                    <th class="py-3 px-4 text-center w-16">No.</th>
-                    <th class="py-3 px-4 text-left w-full"></th>
-                    <th class="py-3 px-4 text-center w-12"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="(notif, idx) in filteredNotifications"
-                    :key="notif.id"
-                    :class="[
-                      'cursor-pointer transition',
-                      idx % 2 === 0
-                        ? 'bg-[#FAFAFF] hover:bg-[#E0E0E0] rounded-lg'
-                        : 'bg-[#BBCDE5] hover:bg-[#A4BEE0] rounded-lg',
-                      !notif.isRead ? 'unread-row' : ''
-                    ]"
-                    @click="handleNotificationClick(notif)"
-                  >
-                    <td class="py-3 px-4 text-center text-lg font-semibold">{{ idx + 1 }}</td>
-                    <td class="py-3 px-4 text-lg flex items-center gap-2">
-                      <span class="text-xl" v-html="formatMessage(notif)"></span>
-                      <span v-if="!notif.isRead" class="ml-2 px-2 py-1 bg-blue-500 text-white text-xs rounded-full font-bold">New</span>
-                    </td>
-                    <td class="py-3 px-4 text-center" @click.stop>
-                      <input
-                        type="checkbox"
-                        v-model="selectedIds"
-                        :value="notif.id"
-                        class="outline-checkbox"
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="scrollable-table-wrapper">
+                <table class="min-w-full divide-y divide-gray-200 bg-white rounded-lg shadow">
+                  <thead>
+                    <tr>
+                      <th class="py-3 px-4 text-center text-xl w-16 sticky-header">No.</th>
+                      <th class="py-3 px-4 text-left text-xl w-full sticky-header">Notifikasi</th>
+                      <th class="py-3 px-4 text-center w-12 sticky-header"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="(notif, idx) in filteredNotifications"
+                      :key="notif.id"
+                      :class="[
+                        'cursor-pointer transition',
+                        idx % 2 === 0
+                          ? 'bg-[#FAFAFF] hover:bg-[#E0E0E0] rounded-lg'
+                          : 'bg-[#BBCDE5] hover:bg-[#A4BEE0] rounded-lg',
+                        !notif.isRead ? 'unread-row' : ''
+                      ]"
+                      @click="handleNotificationClick(notif)"
+                    >
+                      <td class="py-3 px-4 text-center text-lg font-semibold">{{ idx + 1 }}</td>
+                      <td class="py-3 px-4 text-lg flex items-center gap-2">
+                        <span class="text-xl" v-html="formatMessage(notif)"></span>
+                        <span v-if="!notif.isRead" class="ml-2 px-2 py-1 bg-blue-500 text-white text-xs rounded-full font-bold">New</span>
+                      </td>
+                      <td class="py-3 px-4 text-center" @click.stop>
+                        <input
+                          type="checkbox"
+                          v-model="selectedIds"
+                          :value="notif.id"
+                          class="outline-checkbox"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -241,6 +243,29 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.scrollable-table-wrapper {
+  max-height: 400px;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Sticky header */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  background: #1C5D99;
+  color: white;
+  z-index: 2;
+}
+
+/* Sticky footer */
+.sticky-footer {
+  position: sticky;
+  bottom: 0;
+  background: #f3f4f6;
+  z-index: 1;
+}
+
 .outline-checkbox {
   border: 2px solid #222222;
   border-radius: 4px;
