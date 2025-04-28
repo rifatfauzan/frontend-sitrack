@@ -51,6 +51,22 @@ function getCustomerNameById(customerId: string) {
   return name.length > 30 ? name.slice(0, 30) + '...' : name;
 }
 
+const formatRupiah = (angka: number | string) => {
+  if (!angka) return "Rp0,00";
+  const rupiah = angka.toString().replace(/[^,\d]/g, "");
+  const split = rupiah.split(",");
+  const sisa = split[0].length % 3;
+  let rupiahFormatted = split[0].substr(0, sisa);
+  const ribuan = split[0].substr(sisa).match(/\d{3}/g);
+
+  if (ribuan) {
+    const separator = sisa ? "." : "";
+    rupiahFormatted += separator + ribuan.join(".");
+  }
+
+  rupiahFormatted = split[1] ? rupiahFormatted + "," + split[1] : rupiahFormatted;
+  return "Rp" + rupiahFormatted;
+};
 
 const formatDate = (date) => {
   if (!date) return '-';
@@ -195,7 +211,7 @@ const goToDetail = () => {
 
                     <div class="detail-item alt"><span>Order Date</span><strong>{{ formatDate(orderDetail.orderDate) || '-' }}</strong></div>                    
                     <div class="detail-item"><span>Move Type</span><strong>{{ orderDetail.moveType || '-' }}</strong></div>
-                    <div class="detail-item alt"><span>Down Payment</span><strong>{{ orderDetail.downPayment ?? '-' }}</strong></div>
+                    <div class="detail-item alt"><span>Down Payment</span><strong>{{ formatRupiah(orderDetail.downPayment) ?? '-' }}</strong></div>
                     <div class="detail-item"><span>Site ID</span><strong>{{ orderDetail.siteId || '-' }}</strong></div>
                     <div class="detail-item alt"><span>20' Chassis Quantity</span><strong>{{ orderDetail.qtyChassis20 ?? '-' }}</strong></div>
                     <div class="detail-item"><span>40' Chassis Quantity</span><strong>{{ orderDetail.qtyChassis40 ?? '-' }}</strong></div>
