@@ -15,12 +15,13 @@ import ApprovalDialog from '@/components/ApprovalDialog.vue';
 import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
 import SuccessDialog from '@/components/SuccessDialog.vue';
 import ErrorDialog from '@/components/ErrorDialog.vue';
+import type { Order } from '@/interfaces/order.interfaces';
 
 const route = useRoute();
 const router = useRouter();
 const orderStore = useOrderStore();
 const { loading } = storeToRefs(orderStore);
-const orderDetail = ref<any>(null);
+const orderDetail = ref<Order>();
 
 const customerStore = useCustomerStore();
 const { customers } = storeToRefs(customerStore);
@@ -57,28 +58,6 @@ const formatDate = (date) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   const formattedDate = new Date(date).toLocaleDateString('id-ID', options);
   return formattedDate;
-};
-
-const getExpirationClass = (expirationDate: string | null): string => {
-  if (!expirationDate) return '';
-
-  const expDate = new Date(expirationDate);
-  const currentDate = new Date();
-
-  currentDate.setHours(0, 0, 0, 0);
-  expDate.setHours(0, 0, 0, 0);
-
-  const timeDifference = expDate.getTime() - currentDate.getTime();
-  const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
-
-  if (daysRemaining < 0 || daysRemaining === 0) {
-    return 'bg-red-100';
-  } else if (daysRemaining <= 30) {
-    return 'bg-yellow-100';
-  } else {
-    return '';
-  }
-
 };
 
 const statusMap = {

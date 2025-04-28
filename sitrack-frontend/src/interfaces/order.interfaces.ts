@@ -67,5 +67,5 @@ export interface Order {
     orderId: string;
   }
   
-  export interface OrderDetailResponse extends Order {}
+  // export interface OrderDetailResponse extends Order {}
   

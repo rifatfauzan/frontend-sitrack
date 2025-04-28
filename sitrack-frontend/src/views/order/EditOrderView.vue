@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
-import { useSopirStore } from '@/stores/sopir';
+// import { useSopirStore } from '@/stores/sopir';
 import { useToast } from 'vue-toastification';
 import Sidebar from '@/components/Sidebar.vue';
 import HeaderComponent from '@/components/Header.vue';
@@ -12,10 +12,10 @@ import ErrorDialog from '@/components/ErrorDialog.vue';
 import router from '@/router';
 import { useOrderStore } from '@/stores/order';
 import { useRoute } from 'vue-router';
-import { useCustomerStore } from '@/stores/customer';
+// import { useCustomerStore } from '@/stores/customer';
 
 const orderStore = useOrderStore();
-const customerStore = useCustomerStore();
+// const customerStore = useCustomerStore();
 
 const toast = useToast();
 const loading = ref(false);
@@ -77,7 +77,7 @@ onMounted(async () => {
         }
 
         Object.assign(form, orderData);
-    } catch (error) {
+    } catch {
         toast.error("Terjadi kesalahan saat mengambil data order");
     } finally {
         loading.value = false;
@@ -123,7 +123,7 @@ const submitForm = async () => {
       errorMessage.value = response.message;
       showError.value = true;
     }
-  } catch (error) {
+  } catch {
     toast.error('Terjadi kesalahan!');
     errorMessage.value ="Terjadi kesalahan!";
     showError.value = true;
