@@ -100,8 +100,8 @@ const formatDate = (date) => {
                     </span>
                 </div>
                 <div class="flex items-center gap-3">
-                    <VButton v-if="['Supervisor', 'Manager','Mekanik'].includes(userRole) && ![1, 3].includes(requestAsset?.status)" class="custom-button px-4 py-2 rounded" @click="goToEdit">Edit</VButton>
-                    <VButton v-if="['Supervisor', 'Manager'].includes(userRole) && ![1, 3].includes(requestAsset?.status)" class="custom-button px-4 py-2 rounded" @click="showApprovalDialog = true">Approval</VButton>
+                    <VButton v-if="['Admin','Mekanik','Supervisor'].includes(userRole) && ![1, 3].includes(requestAsset?.status)" class="custom-button px-4 py-2 rounded" @click="goToEdit">Edit</VButton>
+                    <VButton v-if="['Admin','Supervisor', 'Manager'].includes(userRole) && ![1, 3].includes(requestAsset?.status)" class="custom-button px-4 py-2 rounded" @click="showApprovalDialog = true">Approval</VButton>
                 </div>
             </div>
 

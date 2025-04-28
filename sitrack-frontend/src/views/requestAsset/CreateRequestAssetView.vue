@@ -189,7 +189,7 @@ const goBack = () => {
             </div>
 
             <VButton class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full" @click="submitRequest">
-              Simpan Request Asset
+              Simpan
             </VButton>
           </div>
         </div>

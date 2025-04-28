@@ -32,6 +32,7 @@ import OrderListView from '@/views/order/OrderListView.vue'
 import OrderDetailView from '@/views/order/OrderDetailView.vue'
 import CreateOrderView from '@/views/order/CreateOrderView.vue'
 import DetailAssetView from '@/views/asset/DetailAssetView.vue'
+import EditRequestAssetView from '@/views/requestAsset/EditRequestAssetView.vue'
 
 const decodeTokenPayload = (token: string) => {
   try {
@@ -243,13 +244,20 @@ const router = createRouter({
       path: '/request-assets/create',
       name: 'create request asset',
       component: CreateRequestAssetView,
-      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager', 'Mekanik'] }
+      meta: { requiresAuth: true, authorize: ['Admin', 'Mekanik','Supervisor'] }
     },    
     {
       path: '/request-assets/detail',
       name: 'detail request asset',
       component: DetailRequestAssetView,
       meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager', 'Mekanik'] },
+      props: (route) => ({ id: route.query.id }),
+    },
+    {
+      path: '/request-assets/edit',
+      name: 'edit request asset',
+      component: EditRequestAssetView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Mekanik','Supervisor'] },
       props: (route) => ({ id: route.query.id }),
     },
     {
