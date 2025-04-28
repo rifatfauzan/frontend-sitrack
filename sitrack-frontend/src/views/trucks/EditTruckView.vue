@@ -3,9 +3,9 @@ import { ref, reactive, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useTruckStore } from '@/stores/truck';
 import { useToast } from 'vue-toastification';
-import Sidebar from '@/components/Sidebar.vue';
-import HeaderComponent from '@/components/Header.vue';
-import FooterComponent from '@/components/Footer.vue';
+import Sidebar from '@/components/vSidebar.vue';
+import HeaderComponent from '@/components/vHeader.vue';
+import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
 import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
 import SuccessDialog from '@/components/SuccessDialog.vue';
@@ -16,7 +16,6 @@ const router = useRouter();
 const truckStore = useTruckStore();
 const toast = useToast();
 const loading = ref(false);
-const truckId = route.query.id as string;
 
 const form = reactive({
   vehicleId: '',
@@ -86,7 +85,7 @@ onMounted(async () => {
         ? new Date(truckData.vehicleDispensationDate).toISOString().split('T')[0] 
         : '',
     });
-  } catch (error) {
+  } catch {
     toast.error('Terjadi kesalahan dalam mengambil data!');
   } finally {
     loading.value = false;
@@ -112,7 +111,7 @@ const saveChanges = async () => {
       errorMessage.value = response.message || "Gagal menyimpan!";
       showError.value = true;
     }
-  } catch (error) {
+  } catch {
     errorMessage.value = "Terjadi kesalahan saat menyimpan data!";
     showError.value = true;
   } finally {

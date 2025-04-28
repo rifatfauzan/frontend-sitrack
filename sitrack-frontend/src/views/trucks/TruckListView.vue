@@ -1,65 +1,48 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
+
 import Sidebar from '@/components/Sidebar.vue';
 import HeaderComponent from '@/components/Header.vue';
 import FooterComponent from '@/components/Footer.vue';
 import VButton from '@/components/VButton.vue';
-import { useRouter } from 'vue-router';
-import { useTruckStore } from '@/stores/truck'; // Import store truck
+import { useTruckStore } from '@/stores/truck';
+
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
-import { storeToRefs } from 'pinia';
 import { FilterMatchMode } from '@primevue/core/api';
-import { ref, onMounted } from 'vue';
 
 const router = useRouter();
-const truckStore = useTruckStore(); // Gunakan store truck
+const truckStore = useTruckStore();
 
-// Ambil state dari store
 const { truckList, loading } = storeToRefs(truckStore);
 
-const selectedRow = ref(null);
+interface Truck {
+  vehicleId: string;
+  vehicleBrand: string;
+  vehiclePlateNo: string;
+}
 
-// Filters
+const selectedRow = ref<Truck | null>(null);
+
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS }
 });
 
-// Fetch data truck saat komponen dimuat
 onMounted(async () => {
-  await truckStore.fetchTrucks(); // Ambil data dari API
+  await truckStore.fetchTrucks();
 });
 
-// Navigasi ke halaman detail truck saat row diklik
-const goToDetail = (event: { data: any }) => {
+const goToDetail = (event: { data: Truck }) => {
   router.push({ name: 'truck detail', query: { id: event.data.vehicleId } });
 };
 
-
+const goToCreateTruck = () => {
+  router.push('/trucks/create');
+};
 </script>
-
-<style scoped>
-:deep(.p-inputtext) {
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  padding: 0.5rem;
-}
-
-.clickable-row {
-  cursor: pointer;
-}
-
-.clickable-row:hover {
-  background-color: #f3f4f6 !important;
-}
-
-/* Tambahkan overflow-x agar tabel tidak terpotong */
-.table-container {
-  overflow-x: auto;
-  white-space: auto;
-}
-
-</style>
 
 <template>
   <div class="flex h-screen">
@@ -71,13 +54,16 @@ const goToDetail = (event: { data: any }) => {
           <div class="card">
             <div class="flex justify-between items-center mb-4">
               <span class="p-input-icon-left">
-                <InputText v-model="filters.global.value" placeholder="Search Vehicle..." />
+                <InputText
+                  v-model="filters.global.value"
+                  placeholder="Search Vehicle..."
+                />
               </span>
 
               <VButton
-                title="+ Buat"
+                title="+ Create"
                 class="bg-[#1C5D99] text-white px-4 py-2 rounded"
-                @click="() => $router.push('/trucks/create')"
+                @click="goToCreateTruck"
               />
             </div>
 
@@ -95,7 +81,7 @@ const goToDetail = (event: { data: any }) => {
                 :globalFilterFields="['vehicleId', 'vehicleBrand', 'vehiclePlateNo']"
                 stripedRows
                 tableStyle="width: 100%"
-                paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
+                paginatorTemplate="RowsPerPageDropdown PrevPageLink CurrentPageReport NextPageLink"
                 currentPageReportTemplate="{first} to {last} of {totalRecords} vehicles"
                 class="custom-datatable"
                 selectionMode="single"
@@ -111,21 +97,13 @@ const goToDetail = (event: { data: any }) => {
                   </template>
                 </Column>
 
-                <Column field="vehicleId" header="ID" style="width: 3rem" sortable >
+                <Column field="vehicleId" header="ID" style="width: 6rem" sortable />
 
-                </Column>
+                <Column field="vehicleBrand" header="Brand" style="width: 6rem" sortable />
 
-                <Column field="vehicleBrand" header="Brand" style="width: 3rem" sortable>
-
-                </Column> 
-
-                <Column field="vehiclePlateNo" header="Plat No" style="width: 3rem" sortable>
-
-                </Column>
-
+                <Column field="vehiclePlateNo" header="Plate No" style="width: 6rem" sortable />
               </DataTable>
             </div>
-
           </div>
         </div>
       </div>
@@ -133,3 +111,24 @@ const goToDetail = (event: { data: any }) => {
     </div>
   </div>
 </template>
+
+<style scoped>
+::v-deep(.p-inputtext) {
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover {
+  background-color: #f3f4f6 !important;
+}
+
+.table-container {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+</style>

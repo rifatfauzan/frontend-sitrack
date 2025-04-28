@@ -42,7 +42,7 @@ export const useChassisStore = defineStore('chassis', {
             this.loading = true;
             this.error = null;
             const authStore = useAuthStore();
-            const toast = useToast();
+            // const toast = useToast();
 
             try {
                 const response = await fetch(`${API_URL}/api/chassis/add`, {
@@ -107,7 +107,7 @@ export const useChassisStore = defineStore('chassis', {
             this.loading = true;
             this.error = null;
             const authStore = useAuthStore();
-            const toast = useToast();
+            // const toast = useToast();
 
             try {
                 const response = await fetch(`${API_URL}/api/chassis/update?id=${chassisId}`, {
@@ -124,7 +124,7 @@ export const useChassisStore = defineStore('chassis', {
                     throw new Error(errorData.message || 'Gagal memperbarui chassis');
                 }
 
-                const data: { data: CreateChassisResponse } = await response.json();
+                // const data: { data: CreateChassisResponse } = await response.json();
 
                 const index = this.chassisList.findIndex(chassis => chassis.chassisId === chassisId);
                 if (index !== -1) {
