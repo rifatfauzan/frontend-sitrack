@@ -46,7 +46,6 @@ const goToEdit = () => {
   }
 };
 
-
 function getCustomerNameById(customerId: string) {
   const name = customers.value.find(c => c.id === customerId)?.name || 'Unknown';
   return name.length > 30 ? name.slice(0, 30) + '...' : name;

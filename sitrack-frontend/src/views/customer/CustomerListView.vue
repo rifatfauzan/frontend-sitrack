@@ -70,6 +70,7 @@
   import InputText from 'primevue/inputtext';
   import { FilterMatchMode } from '@primevue/core/api';
   import router from '@/router';
+import type { Customer } from '@/interfaces/customer.interfaces';
 
   const customerStore = useCustomerStore();
   const loading = ref(true);
@@ -86,13 +87,9 @@
     loading.value = false;
   });
 
-  const sortedCustomers = computed(() => {
-    return customerStore.customers.sort((a, b) => {
-      return a.id.localeCompare(b.id);
-    });
-  });
+  const sortedCustomers = computed(() => customerStore.customers.slice().sort((a, b) => a.id.localeCompare(b.id)));
 
-  const goToDetail = (event: { data: any }) => {
+  const goToDetail = (event: { data: Customer }) => {
     router.push({ name: 'detail customers', query: { id: event.data.id } });
   };
 </script>

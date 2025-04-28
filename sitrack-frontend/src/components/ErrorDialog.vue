@@ -16,7 +16,7 @@
     import { defineProps, defineEmits } from "vue";
     import VButton from "@/components/VButton.vue";
     
-    const props = defineProps({
+    defineProps({
         visible: Boolean,
         message: String,
     });
@@ -65,7 +65,3 @@
 
 </style>
   
-<<<<<<< HEAD
-=======
-
->>>>>>> e5ffae67cfe7348b7467f1d072047f6c154d1e2a
