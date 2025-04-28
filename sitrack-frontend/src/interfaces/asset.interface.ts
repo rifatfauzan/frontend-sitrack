@@ -9,6 +9,7 @@ export interface Asset {
     createdDate?: Date;
     updatedBy?: string;
     updatedDate?: Date;
+    assetPrice: number;
 }
 
 export interface CreateAssetRequest {
@@ -22,4 +23,5 @@ export interface CreateAssetRequest {
     createdDate?: Date;
     updatedBy?: string;
     updatedDate?: Date;
+    assetPrice: number;
 }
