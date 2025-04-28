@@ -2,9 +2,9 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useRequestAssetStore } from '@/stores/requestAsset';
-import Sidebar from '@/components/Sidebar.vue';
-import HeaderComponent from '@/components/Header.vue';
-import FooterComponent from '@/components/Footer.vue';
+import Sidebar from '@/components/vSidebar.vue';
+import HeaderComponent from '@/components/vHeader.vue';
+import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
 import Dialog from 'primevue/dialog';
 import type { RequestAsset } from '@/interfaces/requestAsset.interfaces';

@@ -35,7 +35,7 @@
                 <div class="detail-item"><span>City Origin</span><strong>{{ customer.cityOrigin || '-' }}</strong></div>
                 <div class="detail-item alt"><span>City Destination</span><strong>{{ customer.cityDestination || '-' }}</strong></div>
                 <div class="detail-item"><span>Commodity</span><strong>{{ customer.commodity || '-' }}</strong></div>
-                <div class="detail-item alt"><span>Commission</span><strong>{{ formatRupiah(customer.commission) || '-' }}</strong></div>
+                <div class="detail-item alt"><span>Commission</span><strong>{{ formatRupiah(customer.commission ?? 0) || '-' }}</strong></div>
               </div>
               
               <div class="space-y-3">
@@ -95,33 +95,18 @@
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useCustomerStore } from '@/stores/customer';
-import Sidebar from '@/components/Sidebar.vue';
-import HeaderComponent from '@/components/Header.vue';
-import FooterComponent from '@/components/Footer.vue';
+import Sidebar from '@/components/vSidebar.vue';
+import HeaderComponent from '@/components/vHeader.vue';
+import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
 import Skeleton from 'primevue/skeleton';
+import type { Customer } from '@/interfaces/customer.interfaces';
 
 const route = useRoute();
 const router = useRouter();
 const customerStore = useCustomerStore();
-const customer = ref<any>(null);
+const customer = ref<Customer | null>(null);
 const loading = ref(true);
-
-const customerFields = {
-    id: "Customer ID",
-    siteId: "Site ID",
-    name: "Nama Customer",
-    address: "Alamat",
-    contractNo: "Nomor Kontrak",
-    cityOrigin: "Kota Asal",
-    cityDestination: "Kota Tujuan",
-    commodity: "Komoditas",
-    commission: "Komisi",
-    insertedBy: "Inserted By",
-    insertedDate: "Inserted Date",
-    updatedBy: "Updated By",
-    updatedDate: "Updated Date",
-};
 
 onMounted(async () => {
     const customerId = route.query.id as string;

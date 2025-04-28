@@ -59,9 +59,9 @@
 </template>
 
 <script setup lang="ts">
-  import Sidebar from '@/components/Sidebar.vue';
-  import HeaderComponent from '@/components/Header.vue';
-  import FooterComponent from '@/components/Footer.vue';
+  import Sidebar from '@/components/vSidebar.vue';
+  import HeaderComponent from '@/components/vHeader.vue';
+  import FooterComponent from '@/components/vFooter.vue';
   import VButton from '@/components/VButton.vue';
   import { useCustomerStore } from '@/stores/customer';
   import { onMounted, ref, computed } from 'vue';
@@ -70,6 +70,7 @@
   import InputText from 'primevue/inputtext';
   import { FilterMatchMode } from '@primevue/core/api';
   import router from '@/router';
+import type { Customer } from '@/interfaces/customer.interfaces';
 
   const customerStore = useCustomerStore();
   const loading = ref(true);
@@ -86,13 +87,9 @@
     loading.value = false;
   });
 
-  const sortedCustomers = computed(() => {
-    return customerStore.customers.sort((a, b) => {
-      return a.id.localeCompare(b.id);
-    });
-  });
+  const sortedCustomers = computed(() => customerStore.customers.slice().sort((a, b) => a.id.localeCompare(b.id)));
 
-  const goToDetail = (event: { data: any }) => {
+  const goToDetail = (event: { data: Customer }) => {
     router.push({ name: 'detail customers', query: { id: event.data.id } });
   };
 </script>

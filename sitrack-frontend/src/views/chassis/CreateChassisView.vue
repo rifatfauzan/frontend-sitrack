@@ -2,9 +2,9 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { useChassisStore } from '@/stores/chassis';
-import Sidebar from '@/components/Sidebar.vue';
-import HeaderComponent from '@/components/Header.vue';
-import FooterComponent from '@/components/Footer.vue';
+import Sidebar from '@/components/vSidebar.vue';
+import HeaderComponent from '@/components/vHeader.vue';
+import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
 import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
 import SuccessDialog from '@/components/SuccessDialog.vue';
@@ -61,7 +61,7 @@ const submitForm = async () => {
       errorMessage.value = response.message || 'Terjadi kesalahan!';
       showError.value = true;
     }
-  } catch (error) {
+  } catch {
     errorMessage.value = 'Terjadi kesalahan saat menyimpan data.';
     showError.value = true;
   } finally {
