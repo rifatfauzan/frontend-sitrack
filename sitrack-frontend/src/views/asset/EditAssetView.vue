@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
-import { useSopirStore } from '@/stores/sopir';
 import { useToast } from 'vue-toastification';
 import Sidebar from '@/components/vSidebar.vue';
 import HeaderComponent from '@/components/vHeader.vue';
@@ -29,8 +28,12 @@ const form = reactive({
   jumlahStok: '',
   brand: '',
   assetRemark: '',
+  assetPrice: '',
 });
 
+const goToDetail = () => {
+  router.push({ name: 'detail asset', params: { assetId: form.assetId } });
+};
 
 onMounted(async () => {
 const assetId = route.params.assetId as string;
@@ -56,17 +59,14 @@ console.log("Asset ID from route:", assetId);
       brand: assetData.brand,
       jumlahStok: assetData.jumlahStok,
       assetRemark: assetData.assetRemark,
+      assetPrice: assetData.assetPrice,
     });
-  } catch (error) {
+  } catch {
     toast.error('Terjadi kesalahan dalam mengambil data!');
   } finally {
     loading.value = false;
   }
 });
-// Navigasi kembali ke daftar chassis
-const goBack = () => {
-  router.push('/assets');
-};
 
 const submitForm = () => {
   showConfirm.value = true;
@@ -82,6 +82,7 @@ const onSubmitForm = async () => {
         jumlahStok: form.jumlahStok,
         brand: form.brand,
         assetRemark: form.assetRemark,
+        assetPrice: form.assetPrice,
     });
     if (response.success) {
       showSuccess.value = true;
@@ -89,7 +90,7 @@ const onSubmitForm = async () => {
         errorMessage.value = response.message || "Terjadi kesalahan!";
         showError.value = true;
     }
-  } catch (error) {
+  } catch {
     errorMessage.value = "Terjadi kesalahan saat menyimpan data!";
     showError.value = true;
   } finally {
@@ -110,7 +111,7 @@ const onSubmitForm = async () => {
             <!-- Header yang lebih rapi -->
             <div class="header-container">
                 <div class="header-content">
-                    <VButton title="Kembali" class="back-button" @click="goBack">
+                    <VButton title="Kembali" class="back-button" @click="goToDetail">
                         <i class="pi pi-arrow-left"></i>
                     </VButton>
                     <h1 class="header-title">Edit Data Asset</h1>
@@ -122,21 +123,26 @@ const onSubmitForm = async () => {
             <div class="form-grid">
               <div class="form-group">
                 <label for="assetId"> Asset ID</label>
-                <input v-model="form.assetId" type="text" id="assetId" readonly />
+                <input v-model="form.assetId" type="text" id="assetId" readonly class="readonly-input" />
               </div>
 
               <div class="form-group">
-                <label for="jenisAsset"> Jenis Asset</label>
+                <label for="jenisAsset"> Jenis Asset <span class="required">*</span></label>
                 <input v-model="form.jenisAsset" type="text" id="jenisAsset" maxlength="50" required />
               </div>
 
               <div class="form-group">
-                <label for="jumlahStok"> Jumlah Stock</label>
-                <input v-model="form.jumlahStok" type="text" id="jumlahStok" maxlength="50" required />
+                <label for="assetPrice">Asset Price (Satuan/Rp) <span class="required">*</span></label>
+                <input v-model="form.assetPrice" type="number" id="assetPrice" maxlength="50" required />
               </div>
 
               <div class="form-group">
-                <label for="branch"> Brand</label>
+                <label for="jumlahStok"> Jumlah Stock<span class="required">*</span></label>
+                <input v-model="form.jumlahStok" type="number" id="jumlahStok" maxlength="50" required />
+              </div>
+
+              <div class="form-group">
+                <label for="branch"> Brand <span class="required">*</span></label>
                 <input v-model="form.brand" type="text" id="brand" maxlength="50" required />
               </div>
 
@@ -163,10 +169,9 @@ const onSubmitForm = async () => {
 
       <SuccessDialog 
         :visible="showSuccess" 
-        @close="goBack" 
+        @close="goToDetail" 
         :message="'Berhasil Memperbarui Data Asset!'" 
-        redirectTo="/assets"
-        buttonText="Kembali ke List Asset" />
+        buttonText="Kembali ke Detail Asset" />
 
       <ErrorDialog
         :visible="showError"
@@ -245,6 +250,16 @@ textarea {
 .header-title {
   font-size: 1.5rem;
   font-weight: bold;
+}
+
+.readonly-input{
+  background-color: #C7C7C7;
+  cursor: not-allowed;
+}
+
+.required {
+  color: red;
+  margin-left: 4px;
 }
 
 </style>

@@ -62,6 +62,7 @@ const onSubmitForm = async () => {
         driver_SIM_Date: new Date(form.driver_SIM_Date) ,
         driverCo: form.driverCo,
         driverCoContact: form.driverCoContact,
+        driverContact : form.driverContact,
         driverNumber: form.driverNumber,
         driverRemarks: form.driverRemarks,
         recordStatus: form.recordStatus,
