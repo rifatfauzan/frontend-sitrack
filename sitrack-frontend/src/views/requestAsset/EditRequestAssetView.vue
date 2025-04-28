@@ -5,9 +5,9 @@ import { storeToRefs } from 'pinia';
 
 import { useAssetStore } from '@/stores/asset';
 import { useRequestAssetStore } from '@/stores/requestAsset';
-import Sidebar from '@/components/Sidebar.vue';
-import HeaderComponent from '@/components/Header.vue';
-import FooterComponent from '@/components/Footer.vue';
+import Sidebar from '@/components/vSidebar.vue';
+import HeaderComponent from '@/components/vHeader.vue';
+import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
 import Dropdown from 'primevue/dropdown';
 import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
