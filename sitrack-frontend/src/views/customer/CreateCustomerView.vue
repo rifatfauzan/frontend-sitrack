@@ -135,7 +135,7 @@
         errorMessage.value = response.message || "Terjadi kesalahan!";
         showError.value = true;
       }
-    } catch (error) {
+    } catch {
       errorMessage.value = "Terjadi kesalahan saat menyimpan data.";
       showError.value = true;
     }

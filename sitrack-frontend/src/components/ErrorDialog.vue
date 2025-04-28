@@ -16,7 +16,7 @@
     import { defineProps, defineEmits } from "vue";
     import VButton from "@/components/VButton.vue";
     
-    const props = defineProps({
+    defineProps({
         visible: Boolean,
         message: String,
     });
