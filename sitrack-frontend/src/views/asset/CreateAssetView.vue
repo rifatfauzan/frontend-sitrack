@@ -3,9 +3,9 @@ import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAssetStore } from '@/stores/asset';
 import VButton from '@/components/VButton.vue';
-import Sidebar from '@/components/Sidebar.vue';
-import HeaderComponent from '@/components/Header.vue';
-import FooterComponent from '@/components/Footer.vue';
+import Sidebar from '@/components/vSidebar.vue';
+import HeaderComponent from '@/components/vHeader.vue';
+import FooterComponent from '@/components/vFooter.vue';
 import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
 import SuccessDialog from '@/components/SuccessDialog.vue';
 import ErrorDialog from '@/components/ErrorDialog.vue';
@@ -19,6 +19,7 @@ const form = reactive({
   jumlahStok: '',
   brand: '',
   assetRemark: '',
+  assetPrice: '',
 });
 
 const showConfirm = ref(false);
@@ -48,7 +49,7 @@ const submitForm = async () => {
       errorMessage.value = response.message || "Gagal menyimpan Asset!";
       showError.value = true;
     }
-  } catch (error) {
+  } catch  {
     errorMessage.value = "Terjadi kesalahan saat menyimpan data!";
     showError.value = true;
   } finally {
@@ -63,6 +64,7 @@ const resetForm = () => {
     jumlahStok: '',
     brand: '',
     assetRemark: '',
+    assetPrice:'',
   });
 };
 
@@ -106,6 +108,11 @@ const goBack = () => {
               <div class="form-group">
                 <label for="jumlahStok">Stock <span class="required">*</span></label>
                 <input v-model.number="form.jumlahStok" type="number" id="jumlahStok" min="0" required />
+              </div>
+
+              <div class="form-group">
+                <label for="assetPrice">Asset Price (Satuan/Rp)<span class="required">*</span></label>
+                <input v-model="form.assetPrice" type="number" id="assetPrice"  required />
               </div>
 
               <div class="form-group">

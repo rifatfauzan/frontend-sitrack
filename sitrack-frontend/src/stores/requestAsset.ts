@@ -106,7 +106,7 @@ export const useRequestAssetStore = defineStore('requestAsset', {
         this.loading = false;
       }
     },
-    // Update Request Asset
+    // Update Request Asset (approval)
     async updateRequestAssetStatus(id: string, status: number, remark: string) {
         this.loading = true;
         try {
@@ -132,6 +132,39 @@ export const useRequestAssetStore = defineStore('requestAsset', {
         } finally {
           this.loading = false;
         }
-    }
+    },
+    // Update seluruh data Request Asset (edit asset dan items)
+    async updateRequestAsset(id: string, updatedData: { requestRemark?: string, assets: RequestAssetItem[] }) {
+      this.loading = true;
+      const authStore = useAuthStore();
+      const toast = useToast();
+
+      try {
+        const response = await fetch(`${API_URL}/api/request-assets/edit?id=${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authStore.token}`,
+          },
+          body: JSON.stringify(updatedData),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Gagal mengupdate Request Asset');
+        }
+
+        
+        toast.success('Request Asset berhasil diupdate!');
+
+        return { success: true, message: "Request Asset berhasil diupdate" };
+      } catch (err) {
+        this.error = `Gagal mengupdate Request Asset: ${(err as Error).message}`;
+        toast.error(this.error);
+        return { success: false, message: this.error };
+      } finally {
+        this.loading = false;
+      }
+    },
   },
 });

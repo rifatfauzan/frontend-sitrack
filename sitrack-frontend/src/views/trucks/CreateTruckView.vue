@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive} from 'vue';
 import { useTruckStore } from '@/stores/truck';
-import { useToast } from 'vue-toastification';
-import Sidebar from '@/components/Sidebar.vue';
-import HeaderComponent from '@/components/Header.vue';
-import FooterComponent from '@/components/Footer.vue';
+import Sidebar from '@/components/vSidebar.vue';
+import HeaderComponent from '@/components/vHeader.vue';
+import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
 import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
 import SuccessDialog from '@/components/SuccessDialog.vue';
@@ -12,7 +11,6 @@ import ErrorDialog from '@/components/ErrorDialog.vue';
 import router from '@/router';
 
 const truckStore = useTruckStore();
-const toast = useToast();
 const loading = ref(false);
 
 // State Form
@@ -64,7 +62,7 @@ const submitForm = async () => {
       errorMessage.value = response.message || "Gagal menyimpan!";
       showError.value = true;
     }
-  } catch (error) {
+  } catch {
     errorMessage.value = "Terjadi kesalahan saat menyimpan data!";
     showError.value = true;
   } finally {

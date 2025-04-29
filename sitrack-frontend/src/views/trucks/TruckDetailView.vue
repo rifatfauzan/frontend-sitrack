@@ -3,17 +3,18 @@ import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useTruckStore } from '@/stores/truck';
 import { storeToRefs } from 'pinia';
-import Sidebar from '@/components/Sidebar.vue';
-import HeaderComponent from '@/components/Header.vue';
-import FooterComponent from '@/components/Footer.vue';
+import Sidebar from '@/components/vSidebar.vue';
+import HeaderComponent from '@/components/vHeader.vue';
+import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
 import Skeleton from 'primevue/skeleton';
+import type { Truck } from '@/interfaces/truck.interfaces';
 
 const route = useRoute();
 const router = useRouter();
 const truckStore = useTruckStore();
 const { loading } = storeToRefs(truckStore);
-const truckDetail = ref<any>(null);
+const truckDetail = ref<Truck | null>(null);
 
 // Ambil ID dari query parameter
 const vehicleId = route.query.id as string;
