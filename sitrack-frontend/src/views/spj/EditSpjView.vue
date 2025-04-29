@@ -2,7 +2,7 @@
     <div class="flex h-screen">
       <Sidebar />
       <div class="flex-1 flex flex-col min-h-screen">
-        <HeaderComponent title="Buat Surat Perintah Jalan" />
+        <HeaderComponent title="Edit Surat Perintah Jalan" />
         <div class="flex-1 p-4 main-content overflow-auto">
           <div class="container mx-auto max-w-4xl bg-white p-6 rounded shadow">
             
@@ -11,40 +11,37 @@
                 <VButton title="" class="back-button" @click="goBack">
                   <i class="pi pi-arrow-left"></i>
                 </VButton>
-                <h1 class="header-title">Buat SPJ</h1>
+                <h1 class="header-title">Edit SPJ</h1>
               </div>
             </div>
   
             <form @submit.prevent="confirmSubmit">
               <div class="form-grid">
                 <div class="form-group">
-                  <label>Order<span class="text-red-500">*</span></label>
-                  <select v-model="selectedOrderId" required @change="onOrderChange">
-                    <option value="" disabled>Pilih Order</option>
-                    <option v-for="order in availableOrders" :key="order.orderId" :value="order.orderId">
-                        {{ order.orderId }}
-                    </option>
-                  </select>
+                  <label for="customer">Customer <span class="text-red-500">*</span></label>
+                  <input v-model="form.customerId" type="text" id="customerId" class="readonly-input" readonly />
                 </div>
-  
+                
+
                 <div class="form-group">
-                  <label>Other Commission</label>
-                  <input v-model.number="form.othersCommission" type="number" min="0" :disabled="!selectedOrderId" />
+                  <label for="othersCommission">Other Commision <span class="text-red-500">*</span></label>
+                  <input v-model="form.othersCommission" type="number" id="othersCommission" required />
                 </div>
+
   
                 <div class="form-group">
                   <label>Date Out<span class="text-red-500">*</span></label>
-                  <input v-model="form.dateOut" type="date" :disabled="!selectedOrderId" />
+                  <input v-model="form.dateOut" type="date"  />
                 </div>
   
                 <div class="form-group">
                   <label>Date In<span class="text-red-500">*</span></label>
-                  <input v-model="form.dateIn" type="date" :disabled="!selectedOrderId" />
+                  <input v-model="form.dateIn" type="date"  />
                 </div>
   
                 <div class="form-group">
                   <label>Chassis Size<span class="text-red-500">*</span></label>
-                  <select v-model="selectedChassisSize" required @change="filterChassisOptions" :disabled="!selectedOrderId">
+                  <select v-model="selectedChassisSize" required @change="filterChassisOptions">
                     <option value="" disabled>Pilih Chassis Size</option>
                     <option v-for="size in availableChassisSizes" :key="size" :value="size">{{ size }}</option>
                   </select>
@@ -52,18 +49,19 @@
   
                 <div class="form-group">
                   <label>Chassis<span class="text-red-500">*</span></label>
-                  <select v-model="form.chassisId" required :disabled="!selectedChassisSize">
-                    <option value="" disabled>Pilih Chassis</option>
+                  <select v-model="form.chassisId" required >
+                    <option value="" >Pilih Chassis</option>
                     <option v-for="chassis in filteredChassisList" :key="chassis.chassisId" :value="chassis.chassisId">
                       {{ chassis.chassisId }}
                     </option>
                   </select>
                 </div>
+
   
                 <div class="form-group">
                   <label>Container Type<span class="text-red-500">*</span></label>
-                  <select v-model="form.containerType" required :disabled="!selectedOrderId">
-                    <option value="" disabled>Pilih Container</option>
+                  <select v-model="form.containerType" required >
+                    <option value="" >Pilih Container</option>
                     <option v-for="type in availableContainerTypes" :key="type" :value="type">
                       {{ type }}
                     </option>
@@ -72,12 +70,12 @@
   
                 <div class="form-group">
                   <label>Container Qty<span class="text-red-500">*</span></label>
-                  <input v-model.number="form.containerQty" type="number" min="1" :disabled="!form.containerType" />
+                  <input v-model.number="form.containerQty" type="number" min="1"  />
                 </div>
   
                 <div class="form-group">
                   <label>Driver<span class="text-red-500">*</span></label>
-                  <select v-model="form.driverId" required :disabled="!selectedOrderId">
+                  <select v-model="form.driverId" required >
                     <option value="" disabled>Pilih Sopir</option>
                     <option v-for="sopir in availableSopirs" :key="sopir.driverId" :value="sopir.driverId">
                         {{ sopir.driverName }}
@@ -87,7 +85,7 @@
   
                 <div class="form-group">
                   <label>Vehicle<span class="text-red-500">*</span></label>
-                  <select v-model="form.vehicleId" required :disabled="!selectedOrderId">
+                  <select v-model="form.vehicleId" required >
                     <option value="" disabled>Pilih Truck</option>
                     <option v-for="truck in availableTrucks" :key="truck.vehicleId" :value="truck.vehicleId">
                         {{ truck.vehicleId }}
@@ -136,7 +134,7 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue';
+  import { ref, computed, onMounted, reactive } from 'vue';
   import Sidebar from '@/components/Sidebar.vue';
   import HeaderComponent from '@/components/Header.vue';
   import FooterComponent from '@/components/Footer.vue';
@@ -144,31 +142,31 @@
   import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
   import SuccessDialog from '@/components/SuccessDialog.vue';
   import ErrorDialog from '@/components/ErrorDialog.vue';
-  import { useOrderStore } from '@/stores/order';
   import { useTruckStore } from '@/stores/truck';
   import { useChassisStore } from '@/stores/chassis';
   import { useSopirStore } from '@/stores/sopir';
   import { useSpjStore } from '@/stores/spj';
   import router from '@/router';
-  import type { CreateSpjRequest } from '@/interfaces/spj.interfaces';
   import type { Order } from '@/interfaces/order.interfaces';
+import { useRoute } from 'vue-router';
   
-  const orderStore = useOrderStore();
   const truckStore = useTruckStore();
   const chassisStore = useChassisStore();
   const sopirStore = useSopirStore();
   const spjStore = useSpjStore();
+  const route = useRoute();
   
   const availableOrders = ref<Order[]>([]);
   const availableChassisSizes = ref<number[]>([]);
   const availableContainerTypes = ref<string[]>([]);
   const availableChassis = ref<Map<number, number>>(new Map());
   const availableContainerQty = ref<Map<string, number>>(new Map());
-  
-  const selectedOrderId = ref<string>('');
+const originalContainerType = ref<string>('');
+const originalContainerQty   = ref<number>(0);
   const selectedChassisSize = ref<number | null>(null);
   
-  const form = ref<CreateSpjRequest>({
+  const form = reactive({
+    spjId: '',
     orderId: '',
     customerId: '',
     vehicleId: '',
@@ -176,7 +174,7 @@
     driverId: '',
     chassisSize: 0,
     containerType: '',
-    containerQty: 1,
+    containerQty: 0,
     dateOut: undefined,
     dateIn: undefined,
     othersCommission: 0,
@@ -189,66 +187,104 @@
   const showError = ref(false);
   const errorMessage = ref('');
   
-  const availableTrucks = computed(() => truckStore.truckList.filter(truck => truck.rowStatus === 'A'));
-  const availableSopirs = computed(() => sopirStore.sopirs.filter(sopir => sopir.rowStatus === 'A'));
+  const availableTrucks = computed(() => truckStore.truckList.filter(truck => truck.rowStatus === 'A' || truck.rowStatus === 'I' && truck.vehicleId === form.vehicleId));
+  const availableSopirs = computed(() => sopirStore.sopirs.filter(sopir => sopir.rowStatus === 'A' || sopir.rowStatus === 'I' && sopir.driverId === form.driverId));
   const filteredChassisList = computed(() =>
-    chassisStore.chassisList.filter(ch => ch.rowStatus === 'A' && Number(ch.chassisSize) === selectedChassisSize.value)
+    chassisStore.chassisList.filter(ch => ch.rowStatus === 'A' && (Number(ch.chassisSize) === selectedChassisSize.value) || (ch.rowStatus === 'I' && ch.chassisId === form.chassisId &&(Number(ch.chassisSize) === selectedChassisSize.value) ) )
   );
   
+
+  
   onMounted(async () => {
-    await Promise.all([
-      orderStore.fetchOrders(),
-      truckStore.fetchTrucks(),
-      chassisStore.fetchChassis(),
-      sopirStore.fetchSopirs()
-    ]);
-    availableOrders.value = orderStore.orderList.filter(order => order.orderStatus === 3);
-  });
-  
-  async function onOrderChange() {
-    const order = orderStore.orderList.find(o => o.orderId === selectedOrderId.value);
-    if (!order) return;
-  
-    form.value = {
-      orderId: order.orderId,
-      customerId: order.customerId,
-      vehicleId: '',
-      chassisId: '',
-      driverId: '',
-      chassisSize: 0,
-      containerType: '',
-      containerQty: 1,
-      dateOut: undefined,
-      dateIn: undefined,
-      othersCommission: 0,
-      remarksOperasional: '',
-    };
-    selectedChassisSize.value = null;
-  
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/spj/available/${order.orderId}`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-    });
-    const resData = await res.json();
-    const data = resData.data;
-  
-    availableChassisSizes.value = [];
-    availableContainerTypes.value = [];
-    availableChassis.value.clear();
-    availableContainerQty.value.clear();
-  
-    if (data.chassis20 > 0) availableChassisSizes.value.push(20);
-    if (data.chassis40 > 0) availableChassisSizes.value.push(40);
-  
-    for (const [key, qty] of Object.entries(data)) {
-      if (Number(qty) > 0 && key !== 'chassis20' && key !== 'chassis40') {
-        availableContainerTypes.value.push(key);
-        availableContainerQty.value.set(key, Number(qty));
-      }
-    }
+  const spjId = route.params.spjId as string;
+  if (!spjId){
+      router.push('/vehicle-out');
+      return;
   }
+
+  loading.value = true;
+  try {
+
+      await Promise.all([
+          truckStore.fetchTrucks(),
+          chassisStore.fetchChassis(),
+          sopirStore.fetchSopirs()
+      ]);
+
+
+      const spjData = await spjStore.fetchSpjById(spjId);
+      if (!spjData) {
+          router.push('/vehicle-out');
+          return;
+      }
+
+
+      Object.assign(form, {
+          ...spjData,
+          spjId: spjData.id,
+          orderId: spjData.orderId,
+          customerId: spjData.customerId,
+          vehicleId: spjData.vehicleId,
+          chassisId: spjData.chassisId,
+          driverId: spjData.driverId,
+          chassisSize: spjData.chassisSize,
+          containerType: spjData.containerType,
+          containerQty: spjData.containerQty,
+          dateOut: spjData.dateOut,
+          dateIn: spjData.dateIn,
+          othersCommission: spjData.othersCommission,
+          remarksOperasional: spjData.remarksOperasional
+      });
+      selectedChassisSize.value = form.chassisSize;
+      originalContainerType.value = spjData.containerType;
+      originalContainerQty.value  = spjData.containerQty;
+
+      const orderId = spjData.orderId;
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/spj/available/${orderId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      });
+      const resData = await res.json();
+      const data = resData.data;
+
+      availableChassisSizes.value = [];
+      availableContainerTypes.value = [];
+      availableChassis.value.clear();
+      availableContainerQty.value.clear();
+
+      if (data.chassis20 > 0) availableChassisSizes.value.push(20);
+      if (data.chassis40 > 0) availableChassisSizes.value.push(40);
+
+      for (const [key, qty] of Object.entries(data)) {
+          if (Number(qty) > 0 && key !== 'chassis20' && key !== 'chassis40') {
+              availableContainerTypes.value.push(key);
+              availableContainerQty.value.set(key, Number(qty));
+          }
+      }
+
+      if (
+        form.containerType &&
+        !availableContainerTypes.value.includes(form.containerType)
+        ) {
+        availableContainerTypes.value.push(form.containerType);
+        }
+
+      if (form.chassisSize && !availableChassisSizes.value.includes(form.chassisSize) ) {
+        const matchingChassis = chassisStore.chassisList.find(chassis => chassis.chassisId === form.chassisId);
+  
+        if (matchingChassis && Number(matchingChassis.chassisSize) === form.chassisSize) {
+                availableChassisSizes.value.push(form.chassisSize);
+            }
+        }
+  } catch (error) {
+  } finally {
+      loading.value = false;
+  }
+});
+
+  
   
   function filterChassisOptions() {
-    form.value.chassisId = '';
+    form.chassisId = '';
   }
   
   async function confirmSubmit() {
@@ -256,30 +292,34 @@
   }
   
   async function submitForm() {
-    showConfirm.value = false;
-    loading.value = true;
-    try {
-      const maxContainer = selectedChassisSize.value === 20 ? 1 : 2;
-      if (form.value.containerQty > maxContainer) {
-        throw new Error(`Maksimal ${maxContainer} container untuk chassis size ${selectedChassisSize.value}`);
+  showConfirm.value = false;
+  loading.value = true;
+  try {
+      const maxContainer = form.chassisSize === 20 ? 1 : 2;
+      if (form.containerQty > maxContainer) {
+          throw new Error(`Maksimal ${maxContainer} container untuk chassis size ${form.chassisSize}`);
       }
-  
-      const containerAvailable = availableContainerQty.value.get(form.value.containerType) || 0;
-      if (form.value.containerQty > containerAvailable) {
-        throw new Error(`Sisa container hanya ${containerAvailable}`);
+
+      const unchangedContainer = form.containerType === originalContainerType.value && form.containerQty === originalContainerQty.value;
+
+      if (!unchangedContainer){
+          const containerAvailable = availableContainerQty.value.get(form.containerType) || 0;
+    
+          if (form.containerQty > containerAvailable ) {
+              throw new Error(`Sisa container hanya ${containerAvailable}`);
+          }
       }
-  
-      form.value.chassisSize = selectedChassisSize.value!;
-  
-      await spjStore.createSpj(form.value);
+      form.chassisSize = selectedChassisSize.value!;
+      await spjStore.editSpj(form.spjId, form);
       showSuccess.value = true;
-    } catch (err) {
+  } catch (err) {
       errorMessage.value = (err as Error).message || 'Gagal membuat SPJ';
       showError.value = true;
-    } finally {
+  } finally {
       loading.value = false;
-    }
   }
+}
+
   
   const goToList = () => {
     showSuccess.value = false;

@@ -39,6 +39,12 @@ import VehicleInListView from '@/views/spj/VehicleInListView.vue'
 import CreateSpjView from '@/views/spj/CreateSpjView.vue'
 import SpjDetailView from '@/views/spj/SpjDetailView.vue'
 
+// import OrderListView from '@/views/order/OrderListView.vue'
+// import OrderDetailView from '@/views/order/OrderDetailView.vue'
+// import CreateOrderView from '@/views/order/CreateOrderView.vue'
+import EditOrderView from '@/views/order/EditOrderView.vue'
+import EditSpjView from '@/views/spj/EditSpjView.vue'
+
 const decodeTokenPayload = (token: string) => {
   try {
     const payload = token.split('.')[1]
@@ -240,6 +246,12 @@ const router = createRouter({
       meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] }
     },
     {
+      path: '/orders',
+      name: 'view all order',
+      component: OrderListView,
+      meta: { requiresAuth: true , authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin']},
+    },
+    {
       path: '/request-assets',
       name: 'request assets',
       component: RequestAssetListView,
@@ -282,14 +294,21 @@ const router = createRouter({
       path: '/order/detail',
       name: 'detail order',
       component: OrderDetailView,
-      meta: { public: true },
+      meta: { requiresAuth: true , authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin']},
       props: (route) => ({ id: route.query.id })
     },
     {
       path: '/order/create',
       name: 'create order',
       component: CreateOrderView,
-      meta: { public: true },
+      meta: { requiresAuth: true , authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin']},
+      props: (route) => ({ id: route.query.id })
+    },
+    {
+      path: '/order/edit',
+      name: 'edit order',
+      component: EditOrderView,
+      meta: { requiresAuth: true , authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin']},
       props: (route) => ({ id: route.query.id })
     },
     {
@@ -316,6 +335,13 @@ const router = createRouter({
       component: SpjDetailView,
       meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] },
       props: (route) => ({ id: route.query.id })
+    },
+    {
+      path: '/spj/edit/:spjId',
+      name: 'edit spj',
+      component: EditSpjView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] },
+      props: true,
     }
   ],
 })
