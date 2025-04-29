@@ -11,7 +11,7 @@ export interface RequestAsset {
     createdDate?: Date;
     updatedBy?: string;
     updatedDate?: Date;
-    approvalBy?: String;
+    approvalBy?: string;
     approvalDate?: Date;
     assets: RequestAssetItem[];
 }
