@@ -13,7 +13,7 @@ export interface Spj{
     dateIn?: Date;
     actualDateIn?: Date;
     commission: number;
-    otherCommission?: number;
+    othersCommission?: number;
     remarksOperasional?: string;
     remarksSupervisor?: string;
     status: number;
@@ -40,7 +40,7 @@ export interface CreateSpjRequest {
     dateIn?: Date;
     actualDateIn?: Date;
 
-    otherCommission?: number;
+    othersCommission?: number;
     remarksOperasional?: string;
     remarksSupervisor?: string;
 }
