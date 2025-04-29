@@ -156,7 +156,7 @@ const goToDetail = () => {
 
 const goToEdit = () => {
   if (spjDetail.value?.id) {
-    router.push({ name: 'edit spj', query: { id: spjDetail.value.id } });
+    router.push({ name: 'edit spj', params: { spjId: spjDetail.value.id } });
   }
 };
 </script>
@@ -202,7 +202,7 @@ const goToEdit = () => {
                     class="bg-[#27AE60] text-white px-4 py-2 rounded shadow-md"
                     @click="handleOpenApproval"
                 />
-                <VButton v-if="userRole && ['Operasinoal', 'Supervisor', 'Manager', 'Admin'].includes(userRole) && [2].includes(spjDetail?.status)" title="Edit" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" @click="goToEdit" />
+                <VButton v-if="userRole && ['Operasinoal', 'Supervisor', 'Manager', 'Admin'].includes(userRole) && [1,2].includes(spjDetail?.status)" title="Edit" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" @click="goToEdit" />
             </div>
           </div>
 
@@ -220,7 +220,7 @@ const goToEdit = () => {
               <div class="detail-item alt"><span>Date In</span><strong>{{ formatDate(spjDetail.dateIn) }}</strong></div>
               <div class="detail-item"><span>Actual Date In</span><strong>{{ formatDate(spjDetail.actualDateIn) }}</strong></div>
               <div class="detail-item alt"><span>Commission</span><strong>{{ formatRupiah(spjDetail.commission) ?? '-' }}</strong></div>
-              <div class="detail-item"><span>Other Commission</span><strong>{{ formatRupiah(spjDetail.otherCommission) ?? '-' }}</strong></div>
+              <div class="detail-item"><span>Other Commission</span><strong>{{ formatRupiah(spjDetail.othersCommission) ?? '-' }}</strong></div>
             </div>
 
             <div class="space-y-3">

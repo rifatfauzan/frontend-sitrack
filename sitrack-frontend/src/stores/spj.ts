@@ -178,6 +178,38 @@ export const useSpjStore = defineStore('spj', {
       } finally {
         this.loading = false;
       }
+    },
+
+    async editSpj(spjId: string, payload: CreateSpjRequest) {
+      this.loading = true;
+      const authStore = useAuthStore();
+      const toast = useToast();
+
+      try {
+        const response = await fetch(`${API_URL}/api/spj/update/${spjId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authStore.token}`,
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Gagal mengedit SPJ');
+        }
+
+        const result = await response.json();
+        toast.success('SPJ berhasil diedit!');
+        return result.data;
+      } catch (err) {
+        this.error = (err as Error).message;
+        toast.error(this.error);
+        throw err;
+      } finally {
+        this.loading = false;
+      }
     }
   }
 });
