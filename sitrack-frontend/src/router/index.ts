@@ -259,6 +259,12 @@ const router = createRouter({
       meta: { requiresAuth: true , authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin']},
     },
     {
+      path: '/orders',
+      name: 'view all order',
+      component: OrderListView,
+      meta: { requiresAuth: true , authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin']},
+    },
+    {
       path: '/request-assets',
       name: 'request assets',
       component: RequestAssetListView,
