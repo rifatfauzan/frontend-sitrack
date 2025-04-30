@@ -73,7 +73,12 @@
               </thead>
                 <tbody>
                 <tr v-for="(tariff, index) in form.tariffs" :key="index">
-                  <td style="width: 7%;"><input v-model="tariff.chassisType" class="tariff-input" :style="{ color: tariff.chassisType ? '#000' : '#ccc' }" placeholder="Type" /></td>
+                  <td>
+                    <select v-model="tariff.chassisSize" class="tariff-input" :style="{ color: tariff.chassisSize ? '#000' : '#ccc' }">
+                      <option value="20">20</option>
+                      <option value="40">40</option>
+                    </select>
+                  </td>
                   <td style="width: 15%;">
                     <select v-model="tariff.moveType" class="tariff-input" :style="{ color: tariff.moveType ? '#000' : '#ccc' }">
                       <option value="NORMAL">NORMAL</option>
@@ -156,7 +161,7 @@ const form = reactive({
   commission: 0,
   tariffs: [
     {
-      chassisType: '',
+      chassisSize: 20,
       moveType: '',
       stdTariff: 0,
       insurance: 0,
@@ -180,7 +185,7 @@ onMounted(async () => {
 
 const addTariff = () => {
   form.tariffs.push({
-    chassisType: '',
+    chassisSize: 20,
     moveType: '',
     stdTariff: 0,
     insurance: 0,
