@@ -163,8 +163,14 @@ const submitForm = async () => {
                 </div>
   
                 <div class="form-group">
-                  <label for="moveType">Move Type</label>
-                  <input v-model="form.moveType" type="text" id="moveType" />
+                  <label for="moveType">Move Type<span class="text-red-500">*</span></label>
+                  <select v-model="form.moveType" id="moveType" required>
+                    <option value="" disabled selected>Pilih Move Type</option>
+                    <option value="Normal">Normal</option>
+                    <option value="Repo">Repo</option>
+                    <option value="Offhere">Offhere</option>
+                    <option value="Kade">Kade</option>
+                  </select>
                 </div>
   
                 <div class="form-group">
