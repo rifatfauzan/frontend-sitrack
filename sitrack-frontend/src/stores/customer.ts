@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { useAuthStore } from './auth';
 import { useToast } from 'vue-toastification';
-import type { Customer, CreateCustomerRequest, UpdateCustomerRequest, CustomersResponse, CustomerResponse } from '@/interfaces/customer.interfaces';
+import type { Customer, CreateCustomerRequest, UpdateCustomerRequest } from '@/interfaces/customer.interfaces';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -24,7 +24,7 @@ export const useCustomerStore = defineStore('customer', {
                     headers: { 'Authorization': `Bearer ${authStore.token}` },
                 });
 
-                const data: CustomersResponse = await response.json();
+                const data = await response.json();
                 this.customers = data.data || [];
             } catch (err) {
                 this.error = `Gagal mengambil data customer: ${(err as Error).message}`;
@@ -46,7 +46,7 @@ export const useCustomerStore = defineStore('customer', {
 
                 if (!response.ok) throw new Error('Customer tidak ditemukan');
 
-                const data: CustomerResponse = await response.json();
+                const data = await response.json();
                 return data.data;
             } catch (err) {
                 this.error = `Gagal mendapatkan data customer: ${(err as Error).message}`;
@@ -102,7 +102,7 @@ export const useCustomerStore = defineStore('customer', {
                     body: JSON.stringify(customer),
                 });
         
-                const updatedCustomer: CustomerResponse = await response.json();
+                const updatedCustomer = await response.json();
                 
                 if (!response.ok) throw new Error(updatedCustomer.message || 'Gagal memperbarui customer');
         
