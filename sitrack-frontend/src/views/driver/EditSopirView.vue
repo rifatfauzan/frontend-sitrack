@@ -72,7 +72,7 @@ console.log("Driver ID from route:", driverId);
         ? new Date(sopirData.driverJoinDate).toISOString().split('T')[0] 
         : '',
     });
-  } catch (error) {
+  } catch  {
     toast.error('Terjadi kesalahan dalam mengambil data!');
   } finally {
     loading.value = false;
@@ -82,6 +82,8 @@ console.log("Driver ID from route:", driverId);
 const goBack = () => {
   showSuccess.value = false;
   router.push({name: 'detail sopir', params: { driverId: form.driverId }});
+  showSuccess.value = false;
+  router.push({name: 'detail sopir', params: { driverId: form.driverId }});
 };
 
 const submitForm = () => {
@@ -89,6 +91,8 @@ const submitForm = () => {
 };
 // Fungsi submit form
 const onSubmitForm = async () => {
+  loading.value = true;
+  showConfirm.value = false;
   loading.value = true;
   showConfirm.value = false;
   try {
@@ -112,11 +116,14 @@ const onSubmitForm = async () => {
 
     if (response.success) {
       showSuccess.value = true;
+      showSuccess.value = true;
     } else {
       errorMessage.value = response.message || "Terjadi kesalahan!";
       showError.value = true;
+      errorMessage.value = response.message || "Terjadi kesalahan!";
+      showError.value = true;
     }
-  } catch (error) {
+  } catch  {
     errorMessage.value = "Terjadi kesalahan saat menyimpan data!";
     showError.value = true;
   } finally {
@@ -214,10 +221,11 @@ const onSubmitForm = async () => {
                 <input v-model="form.driverJoinDate" type="date" id="driverJoinDate"  />
               </div>
 
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <label for="rowStatus">Row Status</label>
                 <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1"  />
-              </div>
+                <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1"  />
+              </div> -->
 
               <div class="form-group">
                 <label for="siteId">Site ID</label>
