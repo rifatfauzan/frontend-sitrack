@@ -14,14 +14,22 @@
                 </li>
 
                 <li v-if="['Admin', 'Manager', 'Supervisor', 'Operasional'].includes(authStore.role)">
-                    <router-link to="/orders" class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item">
+                    <router-link
+                        to="/orders"
+                        class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item"
+                        :class="{ 'router-link-active': isOrdersActive }"
+                    >
                         <i class="pi pi-truck text-3xl"></i>
                         <span>Customer Booking</span>
                     </router-link>
                 </li>
 
                 <li v-if="['Admin', 'Manager', 'Supervisor', 'Operasional'].includes(authStore.role)">
-                    <router-link to="/vehicle-out" class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item">
+                    <router-link
+                        to="/vehicle-out"
+                        class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item"
+                        :class="{ 'router-link-active': isVehicleOutActive }"
+                    >
                         <i class="pi pi-arrow-right text-3xl"></i>
                         <span>Vehicle Out</span>
                     </router-link>
@@ -35,11 +43,17 @@
                 </li>
 
                 <li v-if="['Admin', 'Manager', 'Supervisor'].includes(authStore.role)" class="relative">
-                    <div class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item" @click="toggleReferenceMenu">
+                    <div
+                        class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item"
+                        :class="{ 'router-link-active': isReferenceMenuActive }"
+                        @click="toggleReferenceMenu"
+                    >
                         <i class="pi pi-list text-3xl"></i>
                         <span>Reference List</span>
-                        <i class="pi pi-chevron-down pr-8 transition-opacity duration-300 mb-6 text-2xl"
-                           :class="{ 'opacity-100': showReferenceMenu, 'opacity-0': !showReferenceMenu }"></i>
+                        <i
+                            class="pi pi-chevron-down pr-8 transition-opacity duration-300 mb-6 text-2xl"
+                            :class="{ 'opacity-100': showReferenceMenu, 'opacity-0': !showReferenceMenu }"
+                        ></i>
                     </div>
                     <ul v-if="showReferenceMenu" class="ml-6 mt-2 space-y-2">
                         <li>
@@ -70,11 +84,17 @@
                 </li>
 
                 <li v-if="['Admin', 'Manager', 'Supervisor', 'Mekanik'].includes(authStore.role)" class="relative">
-                    <div class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item" @click="toggleInventoryMenu">
+                    <div
+                        class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item"
+                        :class="{ 'router-link-active': isInventoryMenuActive }"
+                        @click="toggleInventoryMenu"
+                    >
                         <i class="pi pi-box text-3xl"></i>
                         <span>Inventory</span>
-                        <i class="pi pi-chevron-down pr-8 transition-opacity duration-300 mb-4 text-2xl"
-                           :class="{ 'opacity-100': showInventoryMenu, 'opacity-0': !showInventoryMenu }"></i>
+                        <i
+                            class="pi pi-chevron-down pr-8 transition-opacity duration-300 mb-4 text-2xl"
+                            :class="{ 'opacity-100': showInventoryMenu, 'opacity-0': !showInventoryMenu }"
+                        ></i>
                     </div>
                     <ul v-if="showInventoryMenu" class="ml-6 mt-2 space-y-2">
                         <li>
@@ -98,7 +118,7 @@
                         <span>Reporting</span>
                     </div>
                 </li>
-                
+
                 <li v-if="authStore.role === 'Admin'">
                     <router-link to="/users" class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item">
                         <i class="pi pi-user-edit text-3xl"></i>
@@ -121,14 +141,15 @@
     </div>
 </template>
 
-
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
 
 const authStore = useAuthStore();
 const showReferenceMenu = ref(false);
 const showInventoryMenu = ref(false);
+const route = useRoute();
 
 const toggleReferenceMenu = () => {
     showReferenceMenu.value = !showReferenceMenu.value;
@@ -137,6 +158,30 @@ const toggleReferenceMenu = () => {
 const toggleInventoryMenu = () => {
     showInventoryMenu.value = !showInventoryMenu.value;
 };
+
+const isOrdersActive = computed(() => {
+    return (
+        route.path.startsWith('/orders') ||
+        route.path.startsWith('/order')
+    );
+});
+
+const isVehicleOutActive = computed(() => {
+    return (
+        route.path.startsWith('/vehicle-out') ||
+        route.path.startsWith('/spj')
+    );
+});
+
+const referenceMenuRoutes = ['/trucks', '/customers', '/chassis', '/sopir'];
+const isReferenceMenuActive = computed(() => {
+    return referenceMenuRoutes.some((path) => route.path.startsWith(path));
+});
+
+const inventoryMenuRoutes = ['/assets', '/request-assets'];
+const isInventoryMenuActive = computed(() => {
+    return inventoryMenuRoutes.some((path) => route.path.startsWith(path));
+});
 
 onMounted(() => {
     authStore.initUser();

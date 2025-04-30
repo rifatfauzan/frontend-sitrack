@@ -246,7 +246,7 @@ onMounted(() => {
 
 <style scoped>
 .scrollable-table-wrapper {
-  max-height: 400px;
+  max-height: 550px;
   overflow-y: auto;
   position: relative;
 }
