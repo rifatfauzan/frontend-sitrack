@@ -3,18 +3,19 @@ import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useChassisStore } from '@/stores/chassis';
 import { storeToRefs } from 'pinia';
-import Sidebar from '@/components/Sidebar.vue';
-import HeaderComponent from '@/components/Header.vue';
-import FooterComponent from '@/components/Footer.vue';
+import Sidebar from '@/components/vSidebar.vue';
+import HeaderComponent from '@/components/vHeader.vue';
+import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
 import Skeleton from 'primevue/skeleton';
 import { computed } from 'vue';
+import type { Chassis } from '@/interfaces/chassis.interfaces';
 
 const route = useRoute();
 const router = useRouter();
 const chassisStore = useChassisStore();
 const { loading } = storeToRefs(chassisStore);
-const chassisDetail = ref<any>(null);
+const chassisDetail = ref<Chassis>();
 
 const chassisId = route.query.id as string;
 

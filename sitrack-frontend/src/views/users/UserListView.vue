@@ -74,9 +74,9 @@
 </template>
 
 <script setup lang="ts">
-import Sidebar from '@/components/Sidebar.vue';
-import HeaderComponent from '@/components/Header.vue';
-import FooterComponent from '@/components/Footer.vue';
+import Sidebar from '@/components/vSidebar.vue';
+import HeaderComponent from '@/components/vHeader.vue';
+import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
 import { useUserStore } from '@/stores/user';
 import { onMounted, ref } from 'vue';

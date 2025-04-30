@@ -2,10 +2,10 @@
 import { ref, reactive, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useChassisStore } from '@/stores/chassis';
-import { useToast } from 'vue-toastification';
-import Sidebar from '@/components/Sidebar.vue';
-import HeaderComponent from '@/components/Header.vue';
-import FooterComponent from '@/components/Footer.vue';
+// import { useToast } from 'vue-toastification';
+import Sidebar from '@/components/vSidebar.vue';
+import HeaderComponent from '@/components/vHeader.vue';
+import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
 import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
 import SuccessDialog from '@/components/SuccessDialog.vue';
@@ -65,7 +65,7 @@ onMounted(async () => {
         ? new Date(chassisData.chassisKIRDate).toISOString().split('T')[0]
         : ''
     });
-  } catch (error) {
+  } catch {
     errorMessage.value = 'Terjadi kesalahan saat mengambil data';
     showError.value = true;
   } finally {
@@ -101,7 +101,7 @@ const submitForm = async () => {
       errorMessage.value = response.message || 'Terjadi kesalahan!';
       showError.value = true;
     }
-  } catch (error) {
+  } catch {
     errorMessage.value = 'Terjadi kesalahan saat menyimpan data.';
     showError.value = true;
   } finally {

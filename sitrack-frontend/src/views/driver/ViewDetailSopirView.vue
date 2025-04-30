@@ -3,9 +3,9 @@ import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useSopirStore } from '@/stores/sopir';
 import { storeToRefs } from 'pinia';
-import Sidebar from '@/components/Sidebar.vue';
-import HeaderComponent from '@/components/Header.vue';
-import FooterComponent from '@/components/Footer.vue';
+import Sidebar from '@/components/vSidebar.vue';
+import HeaderComponent from '@/components/vHeader.vue';
+import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
 import Skeleton from 'primevue/skeleton';
 import type { Sopir } from '@/interfaces/sopir.interfaces';
@@ -18,7 +18,7 @@ const driverDetail = ref<Sopir | null>(null);
 
 // Ambil ID dari parameter
 const driverId = route.params.driverId as string;
-
+const isSIMExpired = ref(false);
 // Fetch data sopir saat komponen dimuat
 onMounted(async () => {
   if (driverId) {
