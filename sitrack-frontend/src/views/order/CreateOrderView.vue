@@ -136,12 +136,12 @@ const submitForm = async () => {
 
               <div class="form-group">
                 <label for="qtyChassis20">20' Chassis Quantity<span class="text-red-500">*</span></label>
-                <input v-model.number="form.qtyChassis20" type="number" id="qtyChassis20" min="1" required/>
+                <input v-model.number="form.qtyChassis20" type="number" id="qtyChassis20" min="0" required/>
             </div>
 
             <div class="form-group">
                 <label for="qtyChassis40">40' Chassis Quantity<span class="text-red-500">*</span></label>
-                <input v-model.number="form.qtyChassis40" type="number" id="qtyChassis40" min="1" required />
+                <input v-model.number="form.qtyChassis40" type="number" id="qtyChassis40" min="0" required />
             </div>
 
               
