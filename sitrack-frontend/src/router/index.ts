@@ -42,6 +42,7 @@ import SpjDetailView from '@/views/spj/SpjDetailView.vue'
 // import OrderDetailView from '@/views/order/OrderDetailView.vue'
 // import CreateOrderView from '@/views/order/CreateOrderView.vue'
 import EditOrderView from '@/views/order/EditOrderView.vue'
+import EditSpjView from '@/views/spj/EditSpjView.vue'
 
 const decodeTokenPayload = (token: string) => {
   try {
@@ -258,6 +259,12 @@ const router = createRouter({
       meta: { requiresAuth: true , authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin']},
     },
     {
+      path: '/orders',
+      name: 'view all order',
+      component: OrderListView,
+      meta: { requiresAuth: true , authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin']},
+    },
+    {
       path: '/request-assets',
       name: 'request assets',
       component: RequestAssetListView,
@@ -349,6 +356,13 @@ const router = createRouter({
       component: SpjDetailView,
       meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] },
       props: (route) => ({ id: route.query.id })
+    },
+    {
+      path: '/spj/edit/:spjId',
+      name: 'edit spj',
+      component: EditSpjView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] },
+      props: true,
     }
   ],
 })

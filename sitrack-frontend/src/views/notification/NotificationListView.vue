@@ -150,6 +150,8 @@ const filteredNotifications = computed(() => {
     filtered = userNotifications.filter(n => ['ORDER_UPDATE'].includes(n.category))
   } else if (activeTab.value === 'inventory') {
     filtered = userNotifications.filter(n => ['REQUEST_ASSET_UPDATE'].includes(n.category))
+  } else if (activeTab.value === 'spj') {
+    filtered = userNotifications.filter(n => ['SPJ_UPDATE'].includes(n.category))
   } else {
     filtered = userNotifications.filter(n => n.category === activeTab.value.toUpperCase())
   }
