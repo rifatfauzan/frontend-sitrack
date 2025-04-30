@@ -8,8 +8,7 @@ import { onMounted, ref } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
-import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
-import { useRouter } from 'vue-router';
+import { FilterMatchMode} from '@primevue/core/api';
 import router from '@/router';
 
 const sopirStore = useSopirStore();
@@ -37,7 +36,7 @@ const formatJoinDate = (joinDate: string) => {
   return `${year}-${month}-${day}`;
 };
 
-const goToDetail = (event: { data: any }) => {
+const goToDetail = (event: { data: { driverId: string } }) => {
   router.push({ name: 'detail sopir', params: { driverId: event.data.driverId } });
 };
 
@@ -100,7 +99,7 @@ onMounted(async () => {
                         stripedRows
                         tableStyle="min-width: 50rem"
                         paginatorTemplate="RowsPerPageDropdown PrevPageLink CurrentPageReport NextPageLink"
-                        currentPageReportTemplate="{first} to {last}"
+                        currentPageReportTemplate="{first} to {last} of {totalRecords} Drivers"
                         class="custom-datatable"
                         @row-click= "goToDetail"
                     >
