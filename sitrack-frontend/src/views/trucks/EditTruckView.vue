@@ -269,13 +269,7 @@ const errorMessage = ref("");
               <!-- Record Status -->
               <div class="form-group">
                 <label for="recordStatus">Record Status</label>
-                <input v-model="form.recordStatus" type="text" id="recordStatus" maxlength="1" pattern="[A-C]{1}" title="record status harus huruf kapital A-C" />
-              </div>
-
-              <!-- Row Status -->
-              <div class="form-group">
-                <label for="rowStatus">Row Status</label>
-                <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1" pattern="[A-C]{1}" title="row status harus huruf kapital A-C" />
+                <input v-model="form.recordStatus" type="text" id="recordStatus" maxlength="1" pattern="[A-Z]{1}" title="record status harus huruf kapital A-C" />
               </div>
 
               <!-- Vehicle Fuel Consumption -->
