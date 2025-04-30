@@ -12,6 +12,7 @@ import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
 import SuccessDialog from '@/components/SuccessDialog.vue';
 import ErrorDialog from '@/components/ErrorDialog.vue';
 import type { Spj } from '@/interfaces/spj.interfaces';
+import { useSopirStore } from '@/stores/sopir';
 
 const router = useRouter();
 const route = useRoute();
@@ -65,6 +66,22 @@ const formatRupiah = (angka: number | string | null | undefined) => {
   return "Rp" + rupiahFormatted;
 };
 
+const driverName = ref<string | null>(null);
+const sopirStore = useSopirStore();
+
+onMounted(async () => {
+  if (spjId) {
+    loading.value = true;
+    spjDetail.value = await spjStore.fetchSpjById(spjId);
+
+    if (spjDetail.value?.driverId) {
+      const driver = await sopirStore.getSopirById(spjDetail.value.driverId);
+      driverName.value = driver?.driverName || null;
+    }
+
+    loading.value = false;
+  }
+});
 
 const statusMap = {
   0: { label: 'Rejected', class: 'bg-[#EB5757] text-white' },
@@ -123,7 +140,6 @@ const showConfirmDone = ref(false);
 const showSuccessDone = ref(false);
 const showErrorDone = ref(false);
 const errorMessageDone = ref('');
-
 
 const confirmMarkAsDone = () => {
   showConfirmDone.value = true;
@@ -202,7 +218,7 @@ const goToEdit = () => {
                     class="bg-[#27AE60] text-white px-4 py-2 rounded shadow-md"
                     @click="handleOpenApproval"
                 />
-                <VButton v-if="userRole && ['Operasinoal', 'Supervisor', 'Manager', 'Admin'].includes(userRole) && [1,2].includes(spjDetail?.status)" title="Edit" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" @click="goToEdit" />
+                <VButton v-if="userRole && ['Operasional', 'Supervisor', 'Manager', 'Admin'].includes(userRole) && [1,2].includes(spjDetail?.status)" title="Edit" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" @click="goToEdit" />
             </div>
           </div>
 
@@ -210,26 +226,26 @@ const goToEdit = () => {
             <div class="space-y-3">
               <div class="detail-item"><span>Order ID</span><strong>{{ spjDetail.orderId || '-' }}</strong></div>
               <div class="detail-item alt"><span>Customer ID</span><strong>{{ spjDetail.customerId || '-' }}</strong></div>
-              <div class="detail-item"><span>Vehicle ID</span><strong>{{ spjDetail.vehicleId || '-' }}</strong></div>
-              <div class="detail-item alt"><span>Chassis ID</span><strong>{{ spjDetail.chassisId || '-' }}</strong></div>
-              <div class="detail-item"><span>Chassis Size</span><strong>{{ spjDetail.chassisSize || '-' }}</strong></div>
-              <div class="detail-item alt"><span>Container Type</span><strong>{{ spjDetail.containerType || '-' }}</strong></div>
-              <div class="detail-item"><span>Container Qty</span><strong>{{ spjDetail.containerQty ?? '-' }}</strong></div>
-              <div class="detail-item alt"><span>Driver ID</span><strong>{{ spjDetail.driverId || '-' }}</strong></div>
+              <div class="detail-item"><span>Driver</span><strong>{{ driverName }}</strong></div>
+              <div class="detail-item alt"><span>Vehicle ID</span><strong>{{ spjDetail.vehicleId || '-' }}</strong></div>
+              <div class="detail-item"><span>Chassis ID</span><strong>{{ spjDetail.chassisId || '-' }}</strong></div>
+              <div class="detail-item alt"><span>Chassis Size</span><strong>{{ spjDetail.chassisSize || '-' }}</strong></div>
+              <div class="detail-item"><span>Container Type</span><strong>{{ spjDetail.containerType || '-' }}</strong></div>
+              <div class="detail-item alt"><span>Container Qty</span><strong>{{ spjDetail.containerQty ?? '-' }}</strong></div>
+              <div class="detail-item"><span>Commission</span><strong>{{ formatRupiah(spjDetail.commission) ?? '-' }}</strong></div>
+              <div class="detail-item alt"><span>Other Commission</span><strong>{{ formatRupiah(spjDetail.othersCommission) ?? '-' }}</strong></div>
+            </div>
+            
+            <div class="space-y-3">
               <div class="detail-item"><span>Date Out</span><strong>{{ formatDate(spjDetail.dateOut) }}</strong></div>
               <div class="detail-item alt"><span>Date In</span><strong>{{ formatDate(spjDetail.dateIn) }}</strong></div>
               <div class="detail-item"><span>Actual Date In</span><strong>{{ formatDate(spjDetail.actualDateIn) }}</strong></div>
-              <div class="detail-item alt"><span>Commission</span><strong>{{ formatRupiah(spjDetail.commission) ?? '-' }}</strong></div>
-              <div class="detail-item"><span>Other Commission</span><strong>{{ formatRupiah(spjDetail.othersCommission) ?? '-' }}</strong></div>
-            </div>
-
-            <div class="space-y-3">
-              <div class="detail-item"><span>Created By</span><strong>{{ spjDetail.insertedBy || '-' }}</strong></div>
-              <div class="detail-item alt"><span>Created Date</span><strong>{{ formatDate(spjDetail.insertedDate) }}</strong></div>
-              <div class="detail-item"><span>Updated By</span><strong>{{ spjDetail.updatedBy || '-' }}</strong></div>
-              <div class="detail-item alt"><span>Updated Date</span><strong>{{ formatDate(spjDetail.updatedDate) }}</strong></div>
-              <div class="detail-item"><span>Approved By</span><strong>{{ spjDetail.approvedBy || '-' }}</strong></div>
-              <div class="detail-item alt"><span>Approved Date</span><strong>{{ formatDate(spjDetail.approvedDate) }}</strong></div>
+              <div class="detail-item alt"><span>Created By</span><strong>{{ spjDetail.insertedBy || '-' }}</strong></div>
+              <div class="detail-item"><span>Created Date</span><strong>{{ formatDate(spjDetail.insertedDate) }}</strong></div>
+              <div class="detail-item alt"><span>Updated By</span><strong>{{ spjDetail.updatedBy || '-' }}</strong></div>
+              <div class="detail-item"><span>Updated Date</span><strong>{{ formatDate(spjDetail.updatedDate) }}</strong></div>
+              <div class="detail-item alt"><span>Approved By</span><strong>{{ spjDetail.approvedBy || '-' }}</strong></div>
+              <div class="detail-item"><span>Approved Date</span><strong>{{ formatDate(spjDetail.approvedDate) }}</strong></div>
             </div>
           </div>
 

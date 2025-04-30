@@ -46,7 +46,11 @@
                 </Column>
                 <Column field="id" header="ID" sortable />
                 <Column field="orderId" header="Order ID" sortable />
-                <Column field="customerId" header="Customer" sortable />
+                <Column header="Customer" sortable>
+                  <template #body="{ data }">
+                  {{ getCustomerNameById(data.customerId) }}
+                  </template>
+                </Column>
                 <Column header="Status">
                     <template #body="{ data }">
                         <span
@@ -83,11 +87,14 @@
   import { storeToRefs } from 'pinia';
   import { FilterMatchMode } from '@primevue/core/api';
   import { useRouter } from 'vue-router';
-import type { Spj } from '@/interfaces/spj.interfaces';
+  import type { Spj } from '@/interfaces/spj.interfaces';
+  import { useCustomerStore } from '@/stores/customer';
   
   const router = useRouter();
   const spjStore = useSpjStore();
   const { spjList, loading } = storeToRefs(spjStore);
+  const customerStore = useCustomerStore();
+  const { customers } = storeToRefs(customerStore);
   
   const filters = ref({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -95,7 +102,13 @@ import type { Spj } from '@/interfaces/spj.interfaces';
   
   onMounted(() => {
     spjStore.fetchAllSpjVehicleOut();
+    customerStore.fetchCustomers();
   });
+
+  function getCustomerNameById(customerId: string): string {
+    const customer = customers.value.find(c => c.id === customerId);
+    return customer?.name || 'Unknown';
+  }
   
   const statusMap: Record<number, string> = {
     0: 'Rejected',
