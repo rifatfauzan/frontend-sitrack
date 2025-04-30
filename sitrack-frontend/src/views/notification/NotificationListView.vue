@@ -246,12 +246,11 @@ onMounted(() => {
 
 <style scoped>
 .scrollable-table-wrapper {
-  max-height: 400px;
+  max-height: 550px;
   overflow-y: auto;
   position: relative;
 }
 
-/* Sticky header */
 .sticky-header {
   position: sticky;
   top: 0;
@@ -260,11 +259,10 @@ onMounted(() => {
   z-index: 2;
 }
 
-/* Sticky footer */
 .sticky-footer {
   position: sticky;
   bottom: 0;
-  background: #f3f4f6;
+  background: #1C5D99;
   z-index: 1;
 }
 
