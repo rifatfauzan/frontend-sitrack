@@ -98,7 +98,7 @@ const submitForm = async () => {
           <form @submit.prevent="confirmSubmit">
             <div class="form-grid">
                 <div class="form-group">
-                <label for="customerId">Customer</label>
+                <label for="customerId">Customer<span class="text-red-500">*</span></label>
                 <select v-model="form.customerId" id="customerId" required>
                     <option value="" disabled>Pilih Customer</option>
                     <option
@@ -135,13 +135,13 @@ const submitForm = async () => {
               </div>
 
               <div class="form-group">
-                <label for="qtyChassis20">20' Chassis Quantity</label>
-                <input v-model.number="form.qtyChassis20" type="number" id="qtyChassis20" min="0" />
+                <label for="qtyChassis20">20' Chassis Quantity<span class="text-red-500">*</span></label>
+                <input v-model.number="form.qtyChassis20" type="number" id="qtyChassis20" min="0" required/>
             </div>
 
             <div class="form-group">
-                <label for="qtyChassis40">40' Chassis Quantity</label>
-                <input v-model.number="form.qtyChassis40" type="number" id="qtyChassis40" min="0" />
+                <label for="qtyChassis40">40' Chassis Quantity<span class="text-red-500">*</span></label>
+                <input v-model.number="form.qtyChassis40" type="number" id="qtyChassis40" min="0" required />
             </div>
 
               
