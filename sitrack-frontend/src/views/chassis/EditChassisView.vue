@@ -197,7 +197,7 @@ const submitForm = async () => {
               <!-- Row Status -->
               <div class="form-group">
                 <label for="rowStatus">Row Status</label>
-                <input v-model="form.rowStatus" type="text" id="rowStatus" minlength="1"  maxlength="1"/>
+                <input v-model="form.rowStatus" type="text" id="rowStatus" minlength="1"  maxlength="1" readonly/>
               </div>
 
               <!-- Site ID -->
