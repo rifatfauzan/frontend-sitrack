@@ -99,7 +99,7 @@ onMounted(async () => {
                         stripedRows
                         tableStyle="min-width: 50rem"
                         paginatorTemplate="RowsPerPageDropdown PrevPageLink CurrentPageReport NextPageLink"
-                        currentPageReportTemplate="{first} to {last}"
+                        currentPageReportTemplate="{first} to {last} of {totalRecords} Drivers"
                         class="custom-datatable"
                         @row-click= "goToDetail"
                     >

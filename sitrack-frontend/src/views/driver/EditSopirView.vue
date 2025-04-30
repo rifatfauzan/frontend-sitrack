@@ -123,9 +123,6 @@ const onSubmitForm = async () => {
       errorMessage.value = response.message || "Terjadi kesalahan!";
       showError.value = true;
     }
-  } catch (error) {
-    errorMessage.value = "Terjadi kesalahan saat menyimpan data!";
-    showError.value = true;
   } catch  {
     errorMessage.value = "Terjadi kesalahan saat menyimpan data!";
     showError.value = true;
@@ -202,38 +199,33 @@ const onSubmitForm = async () => {
               <div class="form-group">
                 <label for="driverContact">Driver Contact</label>
                 <input v-model="form.driverContact" type="text" id="driverContact" maxlength="20"  />
-                <input v-model="form.driverContact" type="text" id="driverContact" maxlength="20"  />
               </div>
 
               <div class="form-group">
                 <label for="driverNumber">Driver Number</label>
-                <input v-model="form.driverNumber" type="text" id="driverNumber" maxlength="20"  />
                 <input v-model="form.driverNumber" type="text" id="driverNumber" maxlength="20"  />
               </div>
 
               <div class="form-group">
                 <label for="driverType">Driver Type</label>
                 <input v-model="form.driverType" type="text" id="driverType" maxlength="1"  />
-                <input v-model="form.driverType" type="text" id="driverType" maxlength="1"  />
               </div>
 
               <div class="form-group">
                 <label for="recordStatus">Record Status</label>
-                <input v-model="form.recordStatus" type="text" id="recordStatus" maxlength="1"  />
                 <input v-model="form.recordStatus" type="text" id="recordStatus" maxlength="1"  />
               </div>
 
               <div class="form-group">
                 <label for="driverJoinDate">Driver Join Date</label>
                 <input v-model="form.driverJoinDate" type="date" id="driverJoinDate"  />
-                <input v-model="form.driverJoinDate" type="date" id="driverJoinDate"  />
               </div>
 
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <label for="rowStatus">Row Status</label>
                 <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1"  />
                 <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1"  />
-              </div>
+              </div> -->
 
               <div class="form-group">
                 <label for="siteId">Site ID</label>
@@ -265,7 +257,6 @@ const onSubmitForm = async () => {
         @close="goBack" 
         :message="'Berhasil Memperbarui Data Sopir!'" 
         redirectTo="/sopir/viewall"
-        buttonText="Kembali ke Detail Sopir" />
         buttonText="Kembali ke Detail Sopir" />
 
       <ErrorDialog
