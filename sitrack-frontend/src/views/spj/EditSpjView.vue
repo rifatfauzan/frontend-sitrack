@@ -147,7 +147,7 @@
   import { useSopirStore } from '@/stores/sopir';
   import { useSpjStore } from '@/stores/spj';
   import router from '@/router';
-  import type { Order } from '@/interfaces/order.interfaces';
+
 import { useRoute } from 'vue-router';
   
   const truckStore = useTruckStore();
@@ -156,7 +156,7 @@ import { useRoute } from 'vue-router';
   const spjStore = useSpjStore();
   const route = useRoute();
   
-  const availableOrders = ref<Order[]>([]);
+
   const availableChassisSizes = ref<number[]>([]);
   const availableContainerTypes = ref<string[]>([]);
   const availableChassis = ref<Map<number, number>>(new Map());
@@ -275,7 +275,7 @@ const originalContainerQty   = ref<number>(0);
                 availableChassisSizes.value.push(form.chassisSize);
             }
         }
-  } catch (error) {
+  } catch  {
   } finally {
       loading.value = false;
   }

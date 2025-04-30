@@ -18,7 +18,7 @@ const driverDetail = ref<Sopir | null>(null);
 
 // Ambil ID dari parameter
 const driverId = route.params.driverId as string;
-const isSIMExpired = ref(false);
+
 // Fetch data sopir saat komponen dimuat
 onMounted(async () => {
   if (driverId) {
