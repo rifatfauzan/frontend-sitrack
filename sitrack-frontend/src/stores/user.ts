@@ -1,7 +1,5 @@
 import { defineStore } from 'pinia';
 import { useAuthStore } from './auth';
-import { useRouter } from 'vue-router';
-import { useToast } from 'vue-toastification';
 import type { User, UserRequestInterface, UserResponse, UsersResponse } from '@/interfaces/user.interfaces';
 
 const API_URL = import.meta.env.VITE_API_URL;

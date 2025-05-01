@@ -2,9 +2,9 @@
 import { ref, reactive } from 'vue';
 import { useSopirStore } from '@/stores/sopir';
 import { useToast } from 'vue-toastification';
-import Sidebar from '@/components/Sidebar.vue';
-import HeaderComponent from '@/components/Header.vue';
-import FooterComponent from '@/components/Footer.vue';
+import Sidebar from '@/components/vSidebar.vue';
+import HeaderComponent from '@/components/vHeader.vue';
+import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
 import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
 import SuccessDialog from '@/components/SuccessDialog.vue';
@@ -40,6 +40,7 @@ const form = reactive({
 
 
 const goBack = () => {
+  showSuccess.value = false;
   router.push('/sopir/viewall');
 };
 
@@ -48,7 +49,9 @@ const submitForm = () => {
 };
 // Fungsi submit form
 const onSubmitForm = async () => {
-  loading.value = true, showConfirm.value = true;
+  loading.value = true; 
+  showConfirm.value = false;
+
   try {
 
     const response = await sopirStore.addSopir({
@@ -59,6 +62,7 @@ const onSubmitForm = async () => {
         driver_SIM_Date: new Date(form.driver_SIM_Date) ,
         driverCo: form.driverCo,
         driverCoContact: form.driverCoContact,
+        driverContact : form.driverContact,
         driverNumber: form.driverNumber,
         driverRemarks: form.driverRemarks,
         recordStatus: form.recordStatus,
@@ -66,19 +70,21 @@ const onSubmitForm = async () => {
         rowStatus: form.rowStatus,
         siteId: form.siteId,
         driverType: form.driverType,
+
     });
 
     if (response.success) {
       showSuccess.value = true;
-      toast.success(response.message);
       resetForm();
-      router.push('/sopir/viewall'); 
     } else {
       toast.error(response.message);
+      errorMessage.value = response.message;
       showError.value = true;
     }
-  } catch (error) {
+  } catch {
     toast.error('Terjadi kesalahan!');
+    errorMessage.value ="Terjadi kesalahan!";
+    showError.value = true;
   } finally {
     loading.value = false;
   }
@@ -88,7 +94,6 @@ const onSubmitForm = async () => {
 // Fungsi reset form
 const resetForm = () => {
   Object.assign(form, {
-    // driverId: '',
     driverName: '',
     driver_KTP_No: '',
     driver_KTP_Date: '',
@@ -130,13 +135,15 @@ const resetForm = () => {
           <form @submit.prevent="submitForm">
             <div class="form-grid">
               <div class="form-group">
-                <label for="driverName"> Driver Name</label>
+                <label for="driverName"> Driver Name <span class="required">*</span>
+                </label>
                 <input v-model="form.driverName" type="text" id="driverName" maxlength="50" required />
               </div>
 
               <!-- Size -->
               <div class="form-group">
-                <label for="driver_KTP_No">Driver KTP Number</label>
+                <label for="driver_KTP_No">Driver KTP Number<span class="required">*</span>
+                </label>
                 <input v-model="form.driver_KTP_No" type="text" id="driver_KTP_No" maxlength="16" minlength="16" required />
               </div>
 
@@ -147,57 +154,60 @@ const resetForm = () => {
               </div> -->
 
               <div class="form-group">
-                <label for="driver_SIM_No">Driver SIM Number</label>
+                <label for="driver_SIM_No">Driver SIM Number <span class="required">*</span>
+                </label>
                 <input v-model="form.driver_SIM_No" type="text" id="driver_SIM_No" maxlength="13" minlength="13"  required />
               </div>
 
               <div class="form-group">
-                <label for="driver_SIM_Date">Driver SIM Date</label>
+                <label for="driver_SIM_Date">Driver SIM Date <span class="required">*</span>
+                </label>
                 <input v-model="form.driver_SIM_Date" type="date" id="driver_SIM_Date" required />
               </div>
 
               <div class="form-group">
-                <label for="driverCo">Driver Company</label>
+                <label for="driverCo">Co Driver</label>
                 <input v-model="form.driverCo" type="text" id="driverCo" maxlength="50" />
               </div>
 
               <div class="form-group">
-                <label for="driverCoContact">Driver Company Contact</label>
+                <label for="driverCoContact">Co Driver Contact</label>
                 <input v-model="form.driverCoContact" type="text" id="driverCoContact" />
               </div>
 
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <label for="driverNumber">Driver Number</label>
-                <input v-model="form.driverNumber" type="text" id="driverNumber" maxlength="6" required />
-              </div>
+                <input v-model="form.driverNumber" type="text" id="driverNumber" maxlength="6" />
+              </div> -->
 
               <div class="form-group">
                 <label for="driverContact">Driver Contact</label>
-                <input v-model="form.driverContact" type="text" id="driverContact" maxlength="20" required />
+                <input v-model="form.driverContact" type="text" id="driverContact" maxlength="20" />
               </div>
 
               <div class="form-group">
-                <label for="siteId">Site ID</label>
+                <label for="siteId">Site ID<span class="required">*</span>
+                </label>
                 <input v-model="form.siteId" type="text" id="siteId" maxlength="3" required />
               </div>
 
               <div class="form-group">
                 <label for="driverType">Driver Type</label>
-                <input v-model="form.driverType" type="text" id="driverType" maxlength="1" required />
+                <input v-model="form.driverType" type="text" id="driverType" maxlength="1"  />
               </div>
 
               <div class="form-group">
                 <label for="recordStatus">Record Status</label>
-                <input v-model="form.recordStatus" type="text" id="recordStatus" maxlength="1" required />
+                <input v-model="form.recordStatus" type="text" id="recordStatus" maxlength="1"  />
               </div>
 
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <label for="rowStatus">Row Status</label>
-                <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1" required />
-              </div>
+                <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1" />
+              </div> -->
 
               <div class="form-group">
-                <label for="driverJoinDate">Driver Join Date</label>
+                <label for="driverJoinDate">Driver Join Date <span class="required">*</span> </label>
                 <input v-model="form.driverJoinDate" type="date" id="driverJoinDate" required />
               </div>
 
@@ -225,7 +235,7 @@ const resetForm = () => {
 
       <SuccessDialog 
         :visible="showSuccess" 
-        @close="goBack" 
+        @close="goBack"  
         :message="'Sopir baru berhasil terdaftar!'" 
         redirectTo="/sopir/viewall"
         buttonText="Kembali ke List Sopir" />
@@ -306,6 +316,11 @@ textarea {
 
 .header-title {
   font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.required {
+  color: red;
   font-weight: bold;
 }
 

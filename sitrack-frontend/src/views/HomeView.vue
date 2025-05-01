@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import SiTrack from '../components/SiTrack.vue'
-import Sidebar from '@/components/Sidebar.vue';
-import FooterComponent from '@/components/Footer.vue';
-import HeaderComponent from '@/components/Header.vue';
+import Sidebar from '@/components/vSidebar.vue';
+import FooterComponent from '@/components/vFooter.vue';
+import HeaderComponent from '@/components/vHeader.vue';
 </script>
 
 <template>

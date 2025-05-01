@@ -2,9 +2,9 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import { useChassisStore } from '@/stores/chassis';
-import Sidebar from '@/components/Sidebar.vue';
-import HeaderComponent from '@/components/Header.vue';
-import FooterComponent from '@/components/Footer.vue';
+import Sidebar from '@/components/vSidebar.vue';
+import HeaderComponent from '@/components/vHeader.vue';
+import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
 import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
 import SuccessDialog from '@/components/SuccessDialog.vue';
@@ -61,7 +61,7 @@ const submitForm = async () => {
       errorMessage.value = response.message || 'Terjadi kesalahan!';
       showError.value = true;
     }
-  } catch (error) {
+  } catch {
     errorMessage.value = 'Terjadi kesalahan saat menyimpan data.';
     showError.value = true;
   } finally {
@@ -89,10 +89,7 @@ const submitForm = async () => {
 
           <form @submit.prevent="confirmSubmit">
             <div class="form-grid">
-              <!-- <div class="form-group">
-                <label for="chassisId">Chassis ID</label>
-                <input v-model="form.chassisId" type="text" id="chassisId" maxlength="8" required />
-              </div> -->
+
               <div class="form-group">
                 <label for="chassisSize">Size</label>
                 <select v-model="form.chassisSize" id="chassisSize" required>
@@ -101,19 +98,19 @@ const submitForm = async () => {
                 </select>
               </div>
               <div class="form-group">
-                <label for="chassisYear">Year</label>
-                <input v-model="form.chassisYear" type="text" id="chassisYear" minlength="4" maxlength="4" required />
+                <label for="chassisYear">Year <span class="text-red-500">*</span></label>
+                <input v-model="form.chassisYear" type="text" id="chassisYear" minlength="4" maxlength="4" required pattern="\d{4}"/>
               </div>
               <div class="form-group">
                 <label for="chassisNumber">Chassis Number</label>
-                <input v-model="form.chassisNumber" type="text" id="chassisNumber" minlength="6" maxlength="6" />
+                <input v-model="form.chassisNumber" type="text" id="chassisNumber" minlength="6" maxlength="6" pattern="\d{6}" />
               </div>
               <div class="form-group">
-                <label for="chassisKIRNo">KIR No.</label>
-                <input v-model="form.chassisKIRNo" type="text" id="chassisKIRNo" minlength="20" maxlength="20" required />
+                <label for="chassisKIRNo">KIR No. <span class="text-red-500">*</span></label>
+                <input v-model="form.chassisKIRNo" type="text" id="chassisKIRNo" minlength="20" maxlength="20" required pattern="\d{20}" />
               </div>
               <div class="form-group">
-                <label for="chassisKIRDate">KIR Expiration Date</label>
+                <label for="chassisKIRDate">KIR Expiration Date <span class="text-red-500">*</span></label>
                 <input v-model="form.chassisKIRDate" type="date" id="chassisKIRDate" required />
               </div>
               <div class="form-group">
@@ -135,10 +132,10 @@ const submitForm = async () => {
                 <label for="chassisAxle">Axle</label>
                 <input v-model="form.chassisAxle" type="text" id="chassisAxle" minlength="2"  maxlength="2" />
               </div>
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <label for="rowStatus">Row Status</label>
                 <input v-model="form.rowStatus" type="text" id="rowStatus" minlength="1"  maxlength="1" />
-              </div>
+              </div> -->
               <div class="form-group">
                 <label for="siteId">Site ID</label>
                 <input v-model="form.siteId" type="text" id="siteId" minlength="3"   maxlength="3" />

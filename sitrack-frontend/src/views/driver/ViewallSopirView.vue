@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import Sidebar from '@/components/Sidebar.vue';
-import HeaderComponent from '@/components/Header.vue';
-import FooterComponent from '@/components/Footer.vue';
+import Sidebar from '@/components/vSidebar.vue';
+import HeaderComponent from '@/components/vHeader.vue';
+import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
 import { useSopirStore } from '@/stores/sopir';
 import { onMounted, ref } from 'vue';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import InputText from 'primevue/inputtext';
-import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
-import { useRouter } from 'vue-router';
+import { FilterMatchMode} from '@primevue/core/api';
 import router from '@/router';
 
 const sopirStore = useSopirStore();
@@ -26,7 +25,7 @@ const columns = ref([
 ]);
 
 const formatDriverId = (driverId: string) => {
-  return (driverId.slice(0, 8)+"...");
+  return (driverId);
 };
 
 const formatJoinDate = (joinDate: string) => {
@@ -37,7 +36,7 @@ const formatJoinDate = (joinDate: string) => {
   return `${year}-${month}-${day}`;
 };
 
-const goToDetail = (event: { data: any }) => {
+const goToDetail = (event: { data: { driverId: string } }) => {
   router.push({ name: 'detail sopir', params: { driverId: event.data.driverId } });
 };
 
@@ -72,12 +71,12 @@ onMounted(async () => {
         <Sidebar />
 
         <div class="flex-1 flex flex-col min-h-screen">
-            <HeaderComponent title="List Sopir" />
+            <HeaderComponent title="List Driver" />
             <div class="flex-1 p-4 main-content overflow-auto">
                 <div class="container mx-auto max-w-4xl">
                     <div class="flex justify-between items-center mb-4">
                         <span class="p-input-icon-left">
-                            <InputText v-model="filters['global'].value" placeholder="Search Sopir" />
+                            <InputText v-model="filters.global.value" placeholder="Search Driver" />
                         </span>
                         <VButton 
                             title="+ Buat" 
@@ -92,14 +91,15 @@ onMounted(async () => {
                         paginator 
                         :rows="10" 
                         datakey="driverId"
+                        filterDisplay="row"
+                        :loading="sopirStore.loading"
                         :rowsPerPageOptions="[5, 10, 20]" 
-                        dataKey="driverId"
                         :globalFilterFields="['driverName', 'driverId', 'driverJoinDate', 'driver_SIM_No', 'driver_KTP_No']"
 
                         stripedRows
                         tableStyle="min-width: 50rem"
                         paginatorTemplate="RowsPerPageDropdown PrevPageLink CurrentPageReport NextPageLink"
-                        currentPageReportTemplate="{first} to {last}"
+                        currentPageReportTemplate="{first} to {last} of {totalRecords} Drivers"
                         class="custom-datatable"
                         @row-click= "goToDetail"
                     >
@@ -112,16 +112,16 @@ onMounted(async () => {
                             </template>
                         </Column>
                         
-                        <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header">
-                            <template #body="{ data, field }">
-                                <div v-if="field === 'driverId'" sortable>
+                        <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header" sortable>
+                            <template #body="{ data }">
+                                <div v-if="col.field === 'driverId'" sortable>
                                     {{ formatDriverId(data.driverId) }}
                                 </div>
-                                <div v-else-if="field === 'driverJoinDate'" sortable>
+                                <div v-else-if="col.field === 'driverJoinDate'" sortable>
                                     {{ formatJoinDate(data.driverJoinDate) }}
                                 </div>
                                 <div v-else sortable>
-                                    {{ data[field] }}
+                                    {{ data[col.field] }}
                                 </div>
                             </template>
                         </Column>

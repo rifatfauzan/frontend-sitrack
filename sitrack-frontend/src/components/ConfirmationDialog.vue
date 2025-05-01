@@ -12,11 +12,11 @@
 </template>
   
 <script setup lang="ts">
-    import Dialog from "@/components/Dialog.vue";
+    import Dialog from "@/components/vDialog.vue";
     import { defineProps, defineEmits } from "vue";
     import VButton from "@/components/VButton.vue";
     
-    const props = defineProps({
+    defineProps({
         visible: Boolean,
         message: String,
     });
@@ -69,8 +69,6 @@
     .confirm-button:hover {
         background-color: #174d7a;
     }
+
 </style>
-<<<<<<< HEAD
-=======
-  
->>>>>>> e5ffae67cfe7348b7467f1d072047f6c154d1e2a
+

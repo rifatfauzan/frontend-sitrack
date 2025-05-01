@@ -3,18 +3,19 @@ import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useChassisStore } from '@/stores/chassis';
 import { storeToRefs } from 'pinia';
-import Sidebar from '@/components/Sidebar.vue';
-import HeaderComponent from '@/components/Header.vue';
-import FooterComponent from '@/components/Footer.vue';
+import Sidebar from '@/components/vSidebar.vue';
+import HeaderComponent from '@/components/vHeader.vue';
+import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
 import Skeleton from 'primevue/skeleton';
 import { computed } from 'vue';
+import type { Chassis } from '@/interfaces/chassis.interfaces';
 
 const route = useRoute();
 const router = useRouter();
 const chassisStore = useChassisStore();
 const { loading } = storeToRefs(chassisStore);
-const chassisDetail = ref<any>(null);
+const chassisDetail = ref<Chassis>();
 
 const chassisId = route.query.id as string;
 
@@ -58,8 +59,27 @@ const formatDate = (date) => {
   return formattedDate;
 };
 
+const getExpirationClass = (expirationDate: string | null): string => {
+  if (!expirationDate) return '';
 
-//};
+  const expDate = new Date(expirationDate);
+  const currentDate = new Date();
+
+  currentDate.setHours(0, 0, 0, 0);
+  expDate.setHours(0, 0, 0, 0);
+
+  const timeDifference = expDate.getTime() - currentDate.getTime();
+  const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+  if (daysRemaining < 0 || daysRemaining === 0) {
+    return 'bg-red-100';
+  } else if (daysRemaining <= 30) {
+    return 'bg-yellow-100';
+  } else {
+    return '';
+  }
+};
+
 
 </script>
 
@@ -94,7 +114,12 @@ const formatDate = (date) => {
               <div class="space-y-3">
                 <div class="detail-item"><span>Year</span><strong>{{ chassisDetail.chassisYear || '-' }}</strong></div>
                 <div class="detail-item alt"><span>KIR No.</span><strong>{{ chassisDetail.chassisKIRNo || '-' }}</strong></div>
-                <div class="detail-item"><span>KIR Expiration</span><strong>{{ formatDate(chassisDetail.chassisKIRDate) || '-' }}</strong></div>
+                
+                <div :class="['detail-item', getExpirationClass(chassisDetail.chassisKIRDate)]">
+                  <span>KIR Expiration</span>
+                  <strong>{{ formatDate(chassisDetail.chassisKIRDate) || '-' }}</strong>
+                </div>
+                
                 <div class="detail-item alt"><span>Chassis No.</span><strong>{{ chassisDetail.chassisNumber || '-' }}</strong></div>
                 <div class="detail-item"><span>Type</span><strong>{{ chassisTypeLabel }}</strong></div>
                 <div class="detail-item alt"><span>Division</span><strong>{{ chassisDetail.division || '-' }}</strong></div>
@@ -200,6 +225,16 @@ const formatDate = (date) => {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    }
+
+    .bg-red-100 {
+      background-color: #EB5757;
+      color: #222222;
+    }
+
+    .bg-yellow-100 {
+      background-color: #F7B500;
+      color: #222222;
     }
 
   </style>

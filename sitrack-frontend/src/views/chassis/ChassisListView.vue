@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import Sidebar from '@/components/Sidebar.vue';
-import HeaderComponent from '@/components/Header.vue';
-import FooterComponent from '@/components/Footer.vue';
+import Sidebar from '@/components/vSidebar.vue';
+import HeaderComponent from '@/components/vHeader.vue';
+import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
 import { useRouter } from 'vue-router';
 import { useChassisStore } from '@/stores/chassis';
@@ -11,6 +11,7 @@ import InputText from 'primevue/inputtext';
 import { storeToRefs } from 'pinia';
 import { FilterMatchMode } from '@primevue/core/api';
 import { ref, onMounted } from 'vue';
+import type { Chassis } from '@/interfaces/chassis.interfaces';
 
 const router = useRouter();
 const chassisStore = useChassisStore();
@@ -25,7 +26,7 @@ onMounted(async () => {
   await chassisStore.fetchChassis();
 });
 
-const goToDetail = (event: { data: any }) => {
+const goToDetail = (event: { data: Chassis }) => {
   router.push({ name: 'detail chassis', query: { id: event.data.chassisId } });
 };
 </script>
@@ -72,14 +73,16 @@ const goToDetail = (event: { data: any }) => {
               :value="chassisList"
               paginator
               :rows="10"
-              dataKey="chassisId"
+              datakey="chassisId"
+              :rowsPerPageOptions="[5, 10, 20]"
               filterDisplay="menu"
               :loading="loading"
               selectionMode="single"
               :globalFilterFields="['chassisId', 'chassisSize', 'chassisYear', 'chassisAxle', 'chassisKIRNo']"
+              
               stripedRows
               tableStyle="min-width: 60rem"
-              paginatorTemplate="PrevPageLink CurrentPageReport NextPageLink"
+              paginatorTemplate="RowsPerPageDropdown PrevPageLink CurrentPageReport NextPageLink"
               currentPageReportTemplate="{first} to {last} of {totalRecords} chassis"
               class="custom-datatable"
               @rowSelect="goToDetail"

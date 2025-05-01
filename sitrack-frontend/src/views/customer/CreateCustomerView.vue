@@ -46,13 +46,8 @@
                   <input class="placeholder-gray-400" v-model="form.commodity" type="text" id="commodity" maxlength="50" placeholder="Komoditas"/>
                 </div>
                 <div class="form-group">
-                  <label for="moveType">Tipe Perpindahan</label>
-                  <select v-model="form.moveType" id="moveType">
-                    <option value="NORMAL">NORMAL</option>
-                    <option value="REPO">REPO</option>
-                    <option value="OFFHERE">OFFHERE</option>
-                    <option value="KADE">KADE</option>
-                  </select> 
+                  <label for="commission">Komisi<span class="required">*</span></label>
+                  <input class="placeholder-gray-400" v-model="form.commission" type="number" id="commission" min="0" step="0.01" placeholder="Rp0,00" required/>
                 </div>
               </div>
               <VButton type="submit" class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full mt-4" :disabled="loading">
@@ -89,9 +84,9 @@
   <script setup lang="ts">
   import { ref, reactive } from 'vue';
   import { useCustomerStore } from '@/stores/customer';
-  import Sidebar from '@/components/Sidebar.vue';
-  import HeaderComponent from '@/components/Header.vue';
-  import FooterComponent from '@/components/Footer.vue';
+  import Sidebar from '@/components/vSidebar.vue';
+  import HeaderComponent from '@/components/vHeader.vue';
+  import FooterComponent from '@/components/vFooter.vue';
   import VButton from '@/components/VButton.vue';
   import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
   import SuccessDialog from '@/components/SuccessDialog.vue';
@@ -113,7 +108,8 @@
     contractNo: '',
     cityOrigin: '',
     commodity: '',
-    moveType: ''
+    // moveType: ''
+    commission: 0,
   });
   
   const goToList = () => {
@@ -139,7 +135,7 @@
         errorMessage.value = response.message || "Terjadi kesalahan!";
         showError.value = true;
       }
-    } catch (error) {
+    } catch {
       errorMessage.value = "Terjadi kesalahan saat menyimpan data.";
       showError.value = true;
     }
@@ -214,12 +210,6 @@
 
   .back-button i {
     font-size: 1.2rem;
-  }
-
-  .error-text {
-    color: #EB5757;
-    font-size: 0.8rem;
-    margin-top: 5px;
   }
   </style>
   
