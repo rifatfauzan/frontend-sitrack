@@ -71,6 +71,7 @@ const goToCreateTruck = () => {
               <DataTable
                 v-model:filters="filters"
                 v-model:selection="selectedRow"
+                v-model:selection="selectedRow"
                 :value="truckList"
                 :paginator="true"
                 :rows="10"
@@ -84,6 +85,7 @@ const goToCreateTruck = () => {
                 paginatorTemplate="RowsPerPageDropdown PrevPageLink CurrentPageReport NextPageLink"
                 currentPageReportTemplate="{first} to {last} of {totalRecords} vehicles"
                 class="custom-datatable"
+                selectionMode="single"
                 selectionMode="single"
                 @rowSelect="goToDetail"
                 :rowClass="() => 'clickable-row'"

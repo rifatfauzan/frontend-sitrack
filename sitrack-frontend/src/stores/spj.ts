@@ -101,7 +101,7 @@ export const useSpjStore = defineStore('spj', {
         return result.data;
       } catch (err) {
         this.error = (err as Error).message;
-        return null;
+        throw err;
       } finally {
         this.loading = false;
       }
