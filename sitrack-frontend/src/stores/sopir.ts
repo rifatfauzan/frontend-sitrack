@@ -1,7 +1,5 @@
 import { defineStore } from 'pinia';
 import { useAuthStore } from './auth';
-import { useRouter } from 'vue-router';
-import { useToast } from 'vue-toastification';
 import type { Sopir, SopirRequestInterface, SopirResponse, SopirResponses } from '@/interfaces/sopir.interfaces';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -61,8 +59,6 @@ export const useSopirStore = defineStore('sopir', {
             this.loading = true;
             this.error = null;
             const authStore = useAuthStore();
-            const router = useRouter();
-            const toast = useToast();
 
             try {
                 const response = await fetch(`${API_URL}/api/sopir/add`, {
@@ -95,8 +91,6 @@ export const useSopirStore = defineStore('sopir', {
             this.loading = true;
             this.error = null;
             const authStore = useAuthStore();
-            const router = useRouter();
-            const toast = useToast();
 
             try {
                 const response = await fetch(`${API_URL}/api/sopir/update/${driverId}`, {
