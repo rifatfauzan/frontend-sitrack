@@ -107,6 +107,20 @@ const addReqAsset = async () => {
 const goToEdit = () => {
   router.push({ name: 'update asset', params: { assetId } });
 };
+
+const getCurrentUserRole = (): string | null => {
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.role || null;
+  } catch {
+    return null;
+  }
+};
+
+const userRole = ref(getCurrentUserRole());
 </script>
 
 <template>
@@ -135,7 +149,12 @@ const goToEdit = () => {
               </div>
               <div class="flex space-x-4">
                 <VButton title="Add Requested Assets" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" @click="clickAddReqAsset" />
-                <VButton title="Edit" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" @click="goToEdit" />
+                <VButton
+                  v-if="['Admin', 'Supervisor', 'Manager'].includes(userRole)"
+                  title="Edit"
+                  class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md"
+                  @click="goToEdit"
+                />
               </div>
             </div>
   

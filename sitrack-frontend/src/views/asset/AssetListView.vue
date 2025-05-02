@@ -33,6 +33,20 @@ const goToCreateAsset = () => {
   router.push('/assets/create');
 };
 
+const getCurrentUserRole = (): string | null => {
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.role || null;
+  } catch {
+    return null;
+  }
+};
+
+const userRole = ref(getCurrentUserRole());
+
 </script>
 
 <template>
@@ -44,7 +58,12 @@ const goToCreateAsset = () => {
         <div class="container mx-auto max-w-7xl p-6 rounded shadow bg-white">
           <div class="flex justify-between items-center mb-4">
             <InputText v-model="filters.global.value" placeholder="Search Assets" class="w-64" />
-            <VButton title="+ Buat" class="bg-[#1C5D99] text-white px-4 py-2 rounded" @click="goToCreateAsset" />
+            <VButton
+              v-if="['Admin', 'Supervisor', 'Manager'].includes(userRole)"
+              title="+ Buat"
+              class="bg-[#1C5D99] text-white px-4 py-2 rounded"
+              @click="goToCreateAsset"
+            />
           </div>
 
           <DataTable
