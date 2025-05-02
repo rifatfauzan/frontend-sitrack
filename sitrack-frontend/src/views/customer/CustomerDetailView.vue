@@ -51,7 +51,7 @@
                 <table v-if="customer.tariffs.length > 0" class="min-w-full">
                 <thead>
                   <tr class="tariff-table text-left">
-                    <th class="p-3 border">Chassis Type</th>
+                    <th class="p-3 border">Chassis Size</th>
                     <th class="p-3 border">Move Type</th>
                     <th class="p-3 border">Std Tariff</th>
                     <th class="p-3 border">Insurance</th>
@@ -64,7 +64,7 @@
                 </thead>
                 <tbody>
                   <tr v-for="tariff in customer.tariffs" :key="tariff.tariffId" class="tariff-table">
-                    <td class="p-3 border text-left font-bold">{{ tariff.chassisType }}</td>
+                    <td class="p-3 border text-left font-bold">{{ tariff.chassisSize }}</td>
                     <td class="p-3 border text-left font-bold">{{ tariff.moveType }}</td>
                     <td class="p-3 border text-left">{{ formatRupiah(tariff.stdTariff) }}</td>
                     <td class="p-3 border text-left">{{ formatRupiah(tariff.insurance) }}</td>
