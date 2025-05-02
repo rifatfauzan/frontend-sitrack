@@ -31,7 +31,7 @@ const loading = ref(false);
 const form = reactive({
   remark: '',
   selectedAssetId: '',
-  requestedQty: 1,
+  requestedQty: 0,
   assets: [] as { assetId: string; requestedQuantity: number; assetPrice: number }[],
 });
 
@@ -88,7 +88,7 @@ const addAsset = () => {
   });
 
   form.selectedAssetId = '';
-  form.requestedQty = 1;
+  form.requestedQty = 0;
 };
 
 const removeAsset = (index: number) => {
