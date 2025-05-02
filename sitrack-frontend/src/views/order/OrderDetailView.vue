@@ -95,6 +95,7 @@ const showConfirmation = ref(false);
 const showSuccess = ref(false);
 const showError = ref(false);
 const errorMessage = ref('');
+const showDoneConfirmation = ref(false);
 
 const getCurrentUserRole = (): string | null => {
   const token = localStorage.getItem('token');
@@ -155,9 +156,11 @@ const goToDetail = () => {
 const canMarkAsDone = computed(() => {
   const order = orderDetail.value;
   if (!order) return false;
+
   const orderOngoing = order.orderStatus == 3;
   const totalChassis = (order.qtyChassis20 || 0) + (order.qtyChassis40 || 0);
   const allSpjDone = order.spjList.every(spj => spj.status === 4); 
+  
   return totalChassis === order.spjList.length && allSpjDone && orderOngoing;
 });
 
@@ -223,11 +226,18 @@ const markOrderAsDone = async () => {
                 @click="goToEdit" 
                 />
 
-                <VButton
+                <!-- <VButton
                 v-if="canMarkAsDone"
                 title="Mark as Done"
                 class="bg-[#639FAB] text-white px-4 py-2 rounded shadow-md"
                 @click="markOrderAsDone"
+              /> -->
+
+              <VButton
+                v-if="canMarkAsDone"
+                title="Mark as Done"
+                class="bg-[#639FAB] text-white px-4 py-2 rounded shadow-md"
+                @click="showDoneConfirmation = true"
               />
               </div>
             </div>
@@ -364,6 +374,13 @@ const markOrderAsDone = async () => {
       @close="goToDetail"
       :message="'Approval berhasil!'"
       buttonText="Kembali ke Detail Order"
+    />
+
+    <ConfirmationDialog
+      :visible="showDoneConfirmation"
+      @close="showDoneConfirmation = false"
+      @confirm="() => { showDoneConfirmation = false; markOrderAsDone(); }"
+      :message="'Apakah Anda yakin ingin menandai order ini sebagai selesai?'"
     />
 
     <ErrorDialog

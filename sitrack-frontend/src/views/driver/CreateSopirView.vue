@@ -70,7 +70,7 @@ const onSubmitForm = async () => {
         rowStatus: form.rowStatus,
         siteId: form.siteId,
         driverType: form.driverType,
-        driverContact: form.driverContact,
+
     });
 
     if (response.success) {
@@ -81,7 +81,7 @@ const onSubmitForm = async () => {
       errorMessage.value = response.message;
       showError.value = true;
     }
-  } catch (error) {
+  } catch {
     toast.error('Terjadi kesalahan!');
     errorMessage.value ="Terjadi kesalahan!";
     showError.value = true;
@@ -94,7 +94,6 @@ const onSubmitForm = async () => {
 // Fungsi reset form
 const resetForm = () => {
   Object.assign(form, {
-    // driverId: '',
     driverName: '',
     driver_KTP_No: '',
     driver_KTP_Date: '',
@@ -202,10 +201,10 @@ const resetForm = () => {
                 <input v-model="form.recordStatus" type="text" id="recordStatus" maxlength="1"  />
               </div>
 
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <label for="rowStatus">Row Status</label>
                 <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1" />
-              </div>
+              </div> -->
 
               <div class="form-group">
                 <label for="driverJoinDate">Driver Join Date <span class="required">*</span> </label>

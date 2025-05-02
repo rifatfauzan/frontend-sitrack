@@ -132,10 +132,10 @@ const submitForm = async () => {
                 <label for="chassisAxle">Axle</label>
                 <input v-model="form.chassisAxle" type="text" id="chassisAxle" minlength="2"  maxlength="2" />
               </div>
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <label for="rowStatus">Row Status</label>
                 <input v-model="form.rowStatus" type="text" id="rowStatus" minlength="1"  maxlength="1" />
-              </div>
+              </div> -->
               <div class="form-group">
                 <label for="siteId">Site ID</label>
                 <input v-model="form.siteId" type="text" id="siteId" minlength="3"   maxlength="3" />

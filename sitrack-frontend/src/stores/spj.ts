@@ -1,7 +1,5 @@
-// stores/spj.ts
 import { defineStore } from 'pinia';
 import { useAuthStore } from './auth';
-import { useToast } from 'vue-toastification';
 import type { Spj, CreateSpjRequest } from '@/interfaces/spj.interfaces';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -18,7 +16,6 @@ export const useSpjStore = defineStore('spj', {
     async fetchAllSpjVehicleOut() {
       this.loading = true;
       const authStore = useAuthStore();
-      const toast = useToast();
 
       try {
         const response = await fetch(`${API_URL}/api/spj/vehicle-out`, {
@@ -32,7 +29,6 @@ export const useSpjStore = defineStore('spj', {
         this.spjList = data.data || [];
       } catch {
         this.error = 'Gagal mengambil data SPJ (Vehicle Out)';
-        toast.error(this.error);
       } finally {
         this.loading = false;
       }
@@ -41,7 +37,6 @@ export const useSpjStore = defineStore('spj', {
     async fetchAllSpjVehicleIn() {
       this.loading = true;
       const authStore = useAuthStore();
-      const toast = useToast();
 
       try {
         const response = await fetch(`${API_URL}/api/spj/vehicle-in`, {
@@ -55,7 +50,6 @@ export const useSpjStore = defineStore('spj', {
         this.spjList = data.data || [];
       } catch {
         this.error = 'Gagal mengambil data SPJ (Vehicle In)';
-        toast.error(this.error);
       } finally {
         this.loading = false;
       }
@@ -64,7 +58,6 @@ export const useSpjStore = defineStore('spj', {
     async fetchSpjById(id: string) {
       this.loading = true;
       const authStore = useAuthStore();
-      const toast = useToast();
 
       try {
         const response = await fetch(`${API_URL}/api/spj/detail/${id}`, {
@@ -79,7 +72,6 @@ export const useSpjStore = defineStore('spj', {
         return this.selectedSpj;
       } catch {
         this.error = 'Gagal mengambil detail SPJ';
-        toast.error(this.error);
         return null;
       } finally {
         this.loading = false;
@@ -89,7 +81,6 @@ export const useSpjStore = defineStore('spj', {
     async createSpj(payload: CreateSpjRequest) {
       this.loading = true;
       const authStore = useAuthStore();
-      const toast = useToast();
 
       try {
         const response = await fetch(`${API_URL}/api/spj/add`, {
@@ -107,12 +98,10 @@ export const useSpjStore = defineStore('spj', {
         }
 
         const result = await response.json();
-        toast.success('SPJ berhasil dibuat!');
         return result.data;
       } catch (err) {
         this.error = (err as Error).message;
-        toast.error(this.error);
-        return null;
+        throw err;
       } finally {
         this.loading = false;
       }
@@ -121,7 +110,6 @@ export const useSpjStore = defineStore('spj', {
     async approveSpj(payload: { spjId: string; status: number; remarksSupervisor: string }) {
       this.loading = true;
       const authStore = useAuthStore();
-      const toast = useToast();
 
       try {
         const response = await fetch(`${API_URL}/api/spj/approve`, {
@@ -139,11 +127,9 @@ export const useSpjStore = defineStore('spj', {
         }
 
         const result = await response.json();
-        toast.success('Approval SPJ berhasil!');
         return result.data;
       } catch (err) {
         this.error = (err as Error).message;
-        toast.error(this.error);
         throw err;
       } finally {
         this.loading = false;
@@ -153,7 +139,6 @@ export const useSpjStore = defineStore('spj', {
     async markSpjAsDone(spjId: string) {
       this.loading = true;
       const authStore = useAuthStore();
-      const toast = useToast();
 
       try {
         const response = await fetch(`${API_URL}/api/spj/done/${spjId}`, {
@@ -169,11 +154,9 @@ export const useSpjStore = defineStore('spj', {
         }
 
         const result = await response.json();
-        toast.success('SPJ berhasil diselesaikan!');
         return result.data;
       } catch (err) {
         this.error = (err as Error).message;
-        toast.error(this.error);
         throw err;
       } finally {
         this.loading = false;
@@ -183,7 +166,6 @@ export const useSpjStore = defineStore('spj', {
     async editSpj(spjId: string, payload: CreateSpjRequest) {
       this.loading = true;
       const authStore = useAuthStore();
-      const toast = useToast();
 
       try {
         const response = await fetch(`${API_URL}/api/spj/update/${spjId}`, {
@@ -201,11 +183,9 @@ export const useSpjStore = defineStore('spj', {
         }
 
         const result = await response.json();
-        toast.success('SPJ berhasil diedit!');
         return result.data;
       } catch (err) {
         this.error = (err as Error).message;
-        toast.error(this.error);
         throw err;
       } finally {
         this.loading = false;

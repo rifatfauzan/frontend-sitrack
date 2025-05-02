@@ -164,7 +164,7 @@ const userRole = ref(getCurrentUserRole());
                 <div class="detail-item alt"><span>Jumlah Stok</span><strong>{{ assetDetail.jumlahStok || '-' }}</strong></div>
                 <div class="detail-item"><span>Brand</span><strong>{{ assetDetail.brand || '-' }}</strong></div>
                 <div class="detail-item alt"><span> Requested Stok</span><strong>{{ assetDetail.requestedStok }}</strong></div>
-                <div class="detail-item alt"><span> Asset Price (Satuan) </span><strong>Rp. {{ assetDetail.assetPrice.toLocaleString('id-ID') }}</strong></div>
+                <div class="detail-item"><span> Asset Price (Satuan) </span><strong>Rp. {{ assetDetail.assetPrice.toLocaleString('id-ID') }}</strong></div>
               </div>
 
               <div class="space-y-3">
@@ -230,7 +230,7 @@ const userRole = ref(getCurrentUserRole());
     }
 
     .detail-remarks {
-    background-color: #FAFAFF;
+    background-color: #BBCDE5;
     font-weight: 500;
     padding: 12px;
     margin-top: 12px;
