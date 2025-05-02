@@ -107,6 +107,20 @@ const addReqAsset = async () => {
 const goToEdit = () => {
   router.push({ name: 'update asset', params: { assetId } });
 };
+
+const getCurrentUserRole = (): string | null => {
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.role || null;
+  } catch {
+    return null;
+  }
+};
+
+const userRole = ref(getCurrentUserRole());
 </script>
 
 <template>
@@ -135,7 +149,12 @@ const goToEdit = () => {
               </div>
               <div class="flex space-x-4">
                 <VButton title="Add Requested Assets" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" @click="clickAddReqAsset" />
-                <VButton title="Edit" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" @click="goToEdit" />
+                <VButton
+                  v-if="['Admin', 'Supervisor', 'Manager'].includes(userRole)"
+                  title="Edit"
+                  class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md"
+                  @click="goToEdit"
+                />
               </div>
             </div>
   
@@ -145,7 +164,7 @@ const goToEdit = () => {
                 <div class="detail-item alt"><span>Jumlah Stok</span><strong>{{ assetDetail.jumlahStok || '-' }}</strong></div>
                 <div class="detail-item"><span>Brand</span><strong>{{ assetDetail.brand || '-' }}</strong></div>
                 <div class="detail-item alt"><span> Requested Stok</span><strong>{{ assetDetail.requestedStok }}</strong></div>
-                <div class="detail-item alt"><span> Asset Price (Satuan) </span><strong>Rp. {{ assetDetail.assetPrice.toLocaleString('id-ID') }}</strong></div>
+                <div class="detail-item"><span> Asset Price (Satuan) </span><strong>Rp. {{ assetDetail.assetPrice.toLocaleString('id-ID') }}</strong></div>
               </div>
 
               <div class="space-y-3">
@@ -211,7 +230,7 @@ const goToEdit = () => {
     }
 
     .detail-remarks {
-    background-color: #FAFAFF;
+    background-color: #BBCDE5;
     font-weight: 500;
     padding: 12px;
     margin-top: 12px;
