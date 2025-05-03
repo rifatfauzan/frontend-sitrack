@@ -14,6 +14,7 @@ import { FilterMatchMode } from '@primevue/core/api';
 import { format } from 'date-fns';
 import { useCustomerStore } from '@/stores/customer';
 import type { Order } from '@/interfaces/order.interfaces';
+import Dropdown from 'primevue/dropdown'
 
 const router = useRouter();
 const orderStore = useOrderStore();
@@ -21,6 +22,9 @@ const { orderList: orders, loading } = storeToRefs(orderStore);
 
 const customerStore = useCustomerStore();
 const { customers } = storeToRefs(customerStore);
+
+const selectedStatus = ref<null | number>(null)
+
 
 onMounted(() => {
   orderStore.fetchOrders();
@@ -51,6 +55,22 @@ const statusMap = {
   3: { label: 'Ongoing' },
   4: { label: 'Done' },
 };
+
+const statusOptions = [
+  { label: 'All Status', value: null },
+  { label: 'Rejected', value: 0 },
+  { label: 'Pending Approval', value: 1 },
+  { label: 'Needs Revision', value: 2 },
+  { label: 'Ongoing', value: 3 },
+  { label: 'Done', value: 4 }
+]
+
+const filteredData = () => {
+  if (selectedStatus.value === null) return orders.value;
+  return orders.value.filter(item => item.orderStatus === selectedStatus.value);
+};
+
+
 </script>
 
 <template>
@@ -65,6 +85,16 @@ const statusMap = {
               <span class="p-input-icon-left">
                 <InputText v-model="filters.global.value" placeholder="Search Order..." />
               </span>
+
+              <Dropdown
+                v-model="selectedStatus"
+                :options="statusOptions"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Filter Status"
+                class="w-60"
+              />
+
               <VButton
                 title="+ Buat"
                 class="bg-[#1C5D99] text-white px-4 py-2 rounded"
@@ -74,7 +104,7 @@ const statusMap = {
 
             <DataTable
               v-model:filters="filters"
-              :value="orders"
+              :value="filteredData()"
               :loading="loading"
               datakey="orderId"
               filterDisplay="menu"
