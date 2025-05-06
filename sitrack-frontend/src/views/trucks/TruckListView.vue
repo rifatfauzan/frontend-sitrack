@@ -71,7 +71,6 @@ const goToCreateTruck = () => {
               <DataTable
                 v-model:filters="filters"
                 v-model:selection="selectedRow"
-                v-model:selection="selectedRow"
                 :value="truckList"
                 :paginator="true"
                 :rows="10"
