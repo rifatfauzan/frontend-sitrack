@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useToast } from 'vue-toastification';
 import { storeToRefs } from 'pinia';
 import Sidebar from '@/components/vSidebar.vue';
 import HeaderComponent from '@/components/vHeader.vue';
@@ -15,7 +14,6 @@ import ErrorDialog from '@/components/ErrorDialog.vue';
 import type { Asset } from '@/interfaces/asset.interface';
 
 const route = useRoute();
-const toast = useToast();
 const router = useRouter();
 const assetStore = useAssetStore();
 const { loading } = storeToRefs(assetStore);
@@ -33,8 +31,13 @@ const fetchAssetData = async () => {
   loading.value = true;
   try {
     assetDetail.value = await assetStore.getAssetById(assetId);
-  } catch  {
-    toast.error('Gagal memuat data asset');
+    if (!assetDetail.value) {
+      errorMessage.value = 'Data asset tidak ditemukan!';
+      showError.value = true;
+    }
+  } catch {
+    errorMessage.value = 'Gagal memuat data asset!';
+    showError.value = true;
   } finally {
     loading.value = false;
   }
@@ -107,6 +110,20 @@ const addReqAsset = async () => {
 const goToEdit = () => {
   router.push({ name: 'update asset', params: { assetId } });
 };
+
+const getCurrentUserRole = (): string | null => {
+  const token = localStorage.getItem('token');
+  if (!token) return null;
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.role || null;
+  } catch {
+    return null;
+  }
+};
+
+const userRole = ref(getCurrentUserRole());
 </script>
 
 <template>
@@ -135,7 +152,12 @@ const goToEdit = () => {
               </div>
               <div class="flex space-x-4">
                 <VButton title="Add Requested Assets" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" @click="clickAddReqAsset" />
-                <VButton title="Edit" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" @click="goToEdit" />
+                <VButton
+                  v-if="['Admin', 'Supervisor', 'Manager'].includes(userRole)"
+                  title="Edit"
+                  class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md"
+                  @click="goToEdit"
+                />
               </div>
             </div>
   
@@ -145,7 +167,7 @@ const goToEdit = () => {
                 <div class="detail-item alt"><span>Jumlah Stok</span><strong>{{ assetDetail.jumlahStok || '-' }}</strong></div>
                 <div class="detail-item"><span>Brand</span><strong>{{ assetDetail.brand || '-' }}</strong></div>
                 <div class="detail-item alt"><span> Requested Stok</span><strong>{{ assetDetail.requestedStok }}</strong></div>
-                <div class="detail-item alt"><span> Asset Price (Satuan) </span><strong>Rp. {{ assetDetail.assetPrice.toLocaleString('id-ID') }}</strong></div>
+                <div class="detail-item"><span> Asset Price (Satuan) </span><strong>Rp. {{ assetDetail.assetPrice.toLocaleString('id-ID') }}</strong></div>
               </div>
 
               <div class="space-y-3">
@@ -211,7 +233,7 @@ const goToEdit = () => {
     }
 
     .detail-remarks {
-    background-color: #FAFAFF;
+    background-color: #BBCDE5;
     font-weight: 500;
     padding: 12px;
     margin-top: 12px;
