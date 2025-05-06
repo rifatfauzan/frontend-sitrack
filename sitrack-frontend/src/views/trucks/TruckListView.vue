@@ -85,7 +85,6 @@ const goToCreateTruck = () => {
                 currentPageReportTemplate="{first} to {last} of {totalRecords} vehicles"
                 class="custom-datatable"
                 selectionMode="single"
-                selectionMode="single"
                 @rowSelect="goToDetail"
                 :rowClass="() => 'clickable-row'"
               >
