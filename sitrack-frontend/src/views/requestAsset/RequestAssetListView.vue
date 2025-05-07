@@ -73,21 +73,18 @@ const filteredData = () => {
       <div class="flex-1 p-4 overflow-auto">
         <div class="container mx-auto max-w-7xl">
           <div class="card">
-            <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
-              <div class="flex gap-3 items-center flex-wrap">
-                <span class="p-input-icon-left">
-                  <InputText v-model="filters.global.value" placeholder="Search Request Asset..." class="w-64" />
-                </span>
-
-                <Dropdown
-                  v-model="selectedStatus"
-                  :options="statusOptions"
-                  optionLabel="label"
-                  optionValue="value"
-                  placeholder="Filter Status"
-                  class="w-60"
-                />
-              </div>
+            <div class="flex justify-between items-center mb-4">
+              <div class="flex items-center gap-4">
+                  <InputText v-model="filters.global.value" placeholder="Search Request Asset..." />
+                  <Dropdown
+                    v-model="selectedStatus"
+                    :options="statusOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Filter Status"
+                    class="w-60"
+                  />
+                </div>
 
               <VButton title="+ Buat" class="bg-[#1C5D99] text-white px-4 py-2 rounded" @click="() => router.push('/request-assets/create')" />
             </div>

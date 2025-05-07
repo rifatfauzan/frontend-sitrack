@@ -34,12 +34,12 @@
   
                 <div class="form-group">
                   <label>Date Out<span class="text-red-500">*</span></label>
-                  <input v-model="form.dateOut" type="date" :disabled="!selectedOrderId" />
+                  <input v-model="form.dateOut" type="date" required :disabled="!selectedOrderId" />
                 </div>
   
                 <div class="form-group">
                   <label>Date In<span class="text-red-500">*</span></label>
-                  <input v-model="form.dateIn" type="date" :disabled="!selectedOrderId" />
+                  <input v-model="form.dateIn" type="date" required :disabled="!selectedOrderId" />
                 </div>
   
                 <div class="form-group">
