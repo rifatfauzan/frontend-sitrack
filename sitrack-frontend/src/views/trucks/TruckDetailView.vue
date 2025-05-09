@@ -120,13 +120,9 @@ const getExpirationClass = (expirationDate: string | null): string => {
               <div class="detail-item alt"><span>Engine No.</span><strong>{{ truckDetail.vehicleEngineNo || '-' }}</strong></div>              
               <div class="detail-item"><span>Division</span><strong>{{ truckDetail.division || '-' }}</strong></div>
               <div class="detail-item alt"><span>Business License Number</span><strong>{{ truckDetail.vehicleBizLicenseNo|| '-' }}</strong></div>
-              <div :class="['detail-item', getExpirationClass(truckDetail.vehicleBizLicenseDate)]">
-                <span>Business License Date</span><strong>{{ formatDate(truckDetail.vehicleBizLicenseDate) || '-' }}</strong>
-              </div>
+              <div :class="['detail-item']"><span>Business License Date</span><strong>{{ formatDate(truckDetail.vehicleBizLicenseDate) || '-' }}</strong></div>
               <div class="detail-item alt"><span>Dispensation Number</span><strong>{{ truckDetail.vehicleDispensationNo|| '-' }}</strong></div>
-              <div :class="['detail-item', getExpirationClass(truckDetail.vehicleDispensationDate)]">
-                <span>Dispensation Date</span><strong>{{ formatDate(truckDetail.vehicleDispensationDate) || '-' }}</strong>
-              </div>
+              <div :class="['detail-item']"><span>Dispensation Date</span><strong>{{ formatDate(truckDetail.vehicleDispensationDate) || '-' }}</strong></div>
             </div>
 
             <div class="space-y-3">

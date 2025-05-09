@@ -130,7 +130,7 @@ const confirmSubmit = () => {
 
 const goToDetail = () => {
   showSuccess.value = false;
-  router.push({ name: 'detail truck', query: { id: form.vehicleId } });
+  router.push({ name: 'truck detail', query: { id: form.vehicleId } });
 };
 
 const showConfirm = ref(false);
