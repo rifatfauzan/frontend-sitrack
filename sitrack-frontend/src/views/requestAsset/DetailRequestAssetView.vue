@@ -21,7 +21,7 @@ const id = route.query.id as string;
 const requestAsset = ref<RequestAsset | null>(null);
 const showApprovalDialog = ref(false);
 const approvalRemark = ref('');
-const loading = ref(false);
+// const loading = ref(false);
 
 const selectedApprovalAction = ref('');
 const showConfirmation = ref(false);
@@ -43,13 +43,13 @@ const getStatusLabel = (status: number) => {
   }
 };
 
-const updateStatus = async (status: number) => {
-  loading.value = true;
-  await requestAssetStore.updateRequestAssetStatus(id, status, approvalRemark.value);
-  loading.value = false;
-  showApprovalDialog.value = false;
-  router.go(0);
-};
+// const updateStatus = async (status: number) => {
+//   loading.value = true;
+//   await requestAssetStore.updateRequestAssetStatus(id, status, approvalRemark.value);
+//   loading.value = false;
+//   showApprovalDialog.value = false;
+//   router.go(0);
+// };
 
 const goToEdit = () => {
   router.push({ path: '/request-assets/edit', query: { id } });
