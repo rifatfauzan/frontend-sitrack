@@ -127,6 +127,12 @@ const goToList = () => {
 const confirmSubmit = () => {
   showConfirm.value = true;
 };
+
+const goToDetail = () => {
+  showSuccess.value = false;
+  router.push({ name: 'detail truck', query: { id: form.vehicleId } });
+};
+
 const showConfirm = ref(false);
 const showSuccess = ref(false);
 const showError = ref(false);
@@ -326,9 +332,9 @@ const errorMessage = ref("");
 
     <SuccessDialog 
       :visible="showSuccess" 
-      @close="goToList" 
+      @close="goToDetail" 
       :message="'Truck berhasil diupdate'" 
-      buttonText="Kembali ke List Truck" 
+      buttonText="Kembali ke Detail Truck" 
     />
 
     <ErrorDialog
