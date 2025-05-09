@@ -330,12 +330,59 @@ const markOrderAsDone = async () => {
             </div>
             </div>
 
-            <div class="detail-remarks">
+            <div class="mt-4">
+              <h2 class="text-base font-semibold mb-2">Tariff Details</h2>
+              <div class="overflow-x-auto bg-[#FAFAFF] rounded-lg shadow-sm">
+                <table class="min-w-full text-sm text-left">
+                  <thead class="bg-[#1C5D99] text-white text-center">
+                    <tr>
+                      <th class="px-4 py-3">Chassis Size</th>
+                      <th class="px-4 py-3">Move Type</th>
+                      <th class="px-4 py-3">Tariff</th>
+                      <th class="px-4 py-3">Quantity</th>
+                      <th class="px-4 py-3">Total Tariff</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    <tr v-if="(orderDetail?.qtyChassis20 ?? 0) > 0" class="border-t">
+                      <td class="px-4 py-2">{{ 20 }}</td>
+                      <td class="px-4 py-2">{{ orderDetail.moveType || '-' }}</td>
+                      <td class="px-4 py-2">{{ formatRupiah(orderDetail.tariffChassis20 || 0) }}</td>
+                      <td class="px-4 py-2">{{ orderDetail.qtyChassis20 }}</td>
+                      <td class="px-4 py-2 font-bold">{{ formatRupiah((orderDetail.tariffChassis20 || 0) * (orderDetail.qtyChassis20 || 0)) }}</td>
+                    </tr>
+                    <tr v-if="(orderDetail.qtyChassis40 ?? 0) > 0" class="border-t">
+                      <td class="px-4 py-2">{{ 40 }}</td>
+                      <td class="px-4 py-2">{{ orderDetail.moveType || '-' }}</td>
+                      <td class="px-4 py-2">{{ formatRupiah(orderDetail.tariffChassis40 || 0) }}</td>
+                      <td class="px-4 py-2">{{ orderDetail.qtyChassis40 }}</td>
+                      <td class="px-4 py-2 font-bold">{{ formatRupiah((orderDetail.tariffChassis40 || 0) * (orderDetail.qtyChassis40 || 0)) }}</td>
+                    </tr>
+                    <tr v-if="(orderDetail?.qtyChassis20 ?? 0) > 0 || (orderDetail?.qtyChassis40 ?? 0) > 0" class="border-t">
+                      <td colspan="4"></td>
+                      <td class="px-4 py-2 font-bold text-[#1C5D99]">
+                        {{ formatRupiah(
+                          ((orderDetail.tariffChassis20 || 0) * (orderDetail.qtyChassis20 || 0)) +
+                          ((orderDetail.tariffChassis40 || 0) * (orderDetail.qtyChassis40 || 0))
+                        ) }}
+                      </td>
+                    </tr>
+                    <tr v-if="(orderDetail?.qtyChassis20 ?? 0) === 0 && (orderDetail?.qtyChassis40 ?? 0) === 0">
+                      <td colspan="5" class="text-center py-4 text-gray-500">Tidak ada Tariff yang dapat ditampilkan.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="mt-4"></div>
+
+            <div class="detail-remarks alt">
             <span class="label">Remarks (Operasional)</span>
             <p class="text">{{ orderDetail.remarksOperasional || '-' }}</p>
             </div>
 
-            <div class="detail-remarks alt">
+            <div class="detail-remarks">
             <span class="label">Remarks (Supervisor)</span>
             <p class="text">{{ orderDetail.remarksSupervisor || '-' }}</p>
             </div>
