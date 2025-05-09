@@ -28,6 +28,9 @@ export interface Order {
     qtyCh120fl?: number;
     qtyCh220fl?: number;
     qtyCh140fl?: number;
+
+    tariffChassis20?: number;
+    tariffChassis40?: number;
   
     createdBy?: string;
     createdDate?: Date;
