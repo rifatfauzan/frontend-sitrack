@@ -2,7 +2,7 @@
 import { ref, reactive, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useChassisStore } from '@/stores/chassis';
-import { useToast } from 'vue-toastification';
+// import { useToast } from 'vue-toastification';
 import Sidebar from '@/components/vSidebar.vue';
 import HeaderComponent from '@/components/vHeader.vue';
 import FooterComponent from '@/components/vFooter.vue';
@@ -197,7 +197,7 @@ const submitForm = async () => {
               <!-- Row Status -->
               <div class="form-group">
                 <label for="rowStatus">Row Status</label>
-                <input v-model="form.rowStatus" type="text" id="rowStatus" minlength="1"  maxlength="1"/>
+                <input v-model="form.rowStatus" type="text" id="rowStatus" minlength="1"  maxlength="1" readonly/>
               </div>
 
               <!-- Site ID -->

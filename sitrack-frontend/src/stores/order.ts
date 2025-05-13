@@ -173,6 +173,36 @@ export const useOrderStore = defineStore('order', {
       finally {
         this.loading = false;
       }
+    },
+
+  async markOrderAsDone(orderId: string) {
+    this.loading = true;
+    this.error = null;
+    const authStore = useAuthStore();
+
+    try {
+      const response = await fetch(`${API_URL}/api/order/done/${orderId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authStore.token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Gagal menandai order sebagai selesai');
+      }
+
+      // const data = await response.json();
+      return { success: true, message: 'Order berhasil ditandai sebagai selesai' };
+    } catch (err) {
+      this.error = `Gagal menandai order: ${(err as Error).message}`;
+      return { success: false, message: this.error };
+    } finally {
+      this.loading = false;
     }
+  },
+
   },
 })

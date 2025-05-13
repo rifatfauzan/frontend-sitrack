@@ -47,13 +47,13 @@ const getStatusLabel = (status: number) => {
 
 const getStatusColorClass = (status: number) => {
   switch (status) {
-    case 0: return 'bg-gray-400'
-    case 1: return 'bg-green-500'
-    case 2: return 'bg-orange-400'
-    case 3: return 'bg-red-500'
-    default: return 'bg-blue-400'
+    case 0: return 'bg-[#639FAB] text-white';      
+    case 1: return 'bg-[#27AE60] text-white';      
+    case 2: return 'bg-[#F7B500] text-black';      
+    case 3: return 'bg-[#EB5757] text-white';      
+    default: return 'bg-[#27AE60] text-white';    
   }
-}
+};
 
 const goToDetail = (event: DataTableRowSelectEvent) => {
   router.push({ path: '/request-assets/detail', query: { id: event.data.requestAssetId } })
@@ -74,18 +74,17 @@ const filteredData = () => {
         <div class="container mx-auto max-w-7xl">
           <div class="card">
             <div class="flex justify-between items-center mb-4">
-              <span class="p-input-icon-left">
-                <InputText v-model="filters.global.value" placeholder="Search Request Asset..." class="w-64" />
-              </span>
-
-              <Dropdown
-                v-model="selectedStatus"
-                :options="statusOptions"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="Filter Status"
-                class="w-60"
-              />
+              <div class="flex items-center gap-4">
+                  <InputText v-model="filters.global.value" placeholder="Search Request Asset..." />
+                  <Dropdown
+                    v-model="selectedStatus"
+                    :options="statusOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Filter Status"
+                    class="w-60"
+                  />
+                </div>
 
               <VButton title="+ Buat" class="bg-[#1C5D99] text-white px-4 py-2 rounded" @click="() => router.push('/request-assets/create')" />
             </div>
@@ -121,8 +120,11 @@ const filteredData = () => {
               <Column field="requestAssetId" header="ID" sortable></Column>
               <Column field="status" header="Status" sortable>
                 <template #body="{ data }">
-                  <span :class="['px-2 py-1 rounded text-white text-sm', getStatusColorClass(data.status)]">
-                    {{ getStatusLabel(data.status) }}
+                  <span
+                      class="status-pill px-3 py-1 rounded font-semibold text-sm"
+                      :class="getStatusColorClass(data.status)"
+                    >
+                      {{ getStatusLabel(data.status) }}
                   </span>
                 </template>
               </Column>

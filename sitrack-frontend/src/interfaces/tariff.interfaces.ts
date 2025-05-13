@@ -1,7 +1,7 @@
 export interface Tariff {
     tariffId: string;
     customerId: string;
-    chassisType: string;
+    chassisSize: number;
     moveType: string;
     stdTariff: number;
     insurance: number;
@@ -14,7 +14,7 @@ export interface Tariff {
 
 export interface TariffRequest {
     tariffId?: string;
-    chassisType: string;
+    chassisSize: number;
     moveType: string;
     stdTariff: number;
     insurance: number;
@@ -27,7 +27,7 @@ export interface TariffRequest {
 export interface TariffResponse {
     tariffId: string;
     customerId: string;
-    chassisType: string;
+    chassisSize: number;
     moveType: string;
     stdTariff: number;
     insurance: number;

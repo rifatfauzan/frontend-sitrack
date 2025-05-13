@@ -65,7 +65,7 @@ export const useChassisStore = defineStore('chassis', {
                 // toast.success("Chassis berhasil ditambahkan!");
                 return { success: true, message: "Chassis berhasil ditambahkan!" };
             } catch (err) {
-                this.error = `Gagal menambah chassis: ${(err as Error).message}`;
+                this.error = `${(err as Error).message}`;
                 // toast.error(this.error);
                 return { success: false, message: this.error };
             } finally {

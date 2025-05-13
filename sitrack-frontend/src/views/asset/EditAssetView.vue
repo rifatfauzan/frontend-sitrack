@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
-import { useToast } from 'vue-toastification';
+// import { useToast } from 'vue-toastification';
 import Sidebar from '@/components/vSidebar.vue';
 import HeaderComponent from '@/components/vHeader.vue';
 import FooterComponent from '@/components/vFooter.vue';
@@ -13,7 +13,6 @@ import { useRoute } from 'vue-router';
 import { useAssetStore } from '@/stores/asset';
 
 const assetStore = useAssetStore();
-const toast = useToast();
 const loading = ref(false);
 const route = useRoute();
 const showConfirm = ref(false);
@@ -36,11 +35,10 @@ const goToDetail = () => {
 };
 
 onMounted(async () => {
-const assetId = route.params.assetId as string;
-console.log("Asset ID from route:", assetId);
+  const assetId = route.params.assetId as string;
   if (!assetId) {
-    toast.error('Asset ID tidak ditemukan');
-    router.push('/assets');
+    errorMessage.value = 'Asset ID tidak ditemukan';
+    showError.value = true;
     return;
   }
 
@@ -48,8 +46,8 @@ console.log("Asset ID from route:", assetId);
   try {
     const assetData = await assetStore.getAssetById(assetId);
     if (!assetData) {
-      toast.error('Data asset tidak ditemukan');
-      router.push('/assets');
+      errorMessage.value = 'Data asset tidak ditemukan';
+      showError.value = true;
       return;
     }
     Object.assign(form, {
@@ -62,7 +60,8 @@ console.log("Asset ID from route:", assetId);
       assetPrice: assetData.assetPrice,
     });
   } catch {
-    toast.error('Terjadi kesalahan dalam mengambil data!');
+    errorMessage.value = 'Terjadi kesalahan dalam mengambil data!';
+    showError.value = true;
   } finally {
     loading.value = false;
   }

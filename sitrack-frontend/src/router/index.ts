@@ -248,10 +248,16 @@ const router = createRouter({
     { path: '/assets/create', 
       name: 'create asset', 
       component: CreateAssetView, 
-      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager', 'Mekanik'] }
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] }
     },
     
 
+    {
+      path: '/orders',
+      name: 'view all order',
+      component: OrderListView,
+      meta: { requiresAuth: true , authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin']},
+    },
     {
       path: '/orders',
       name: 'view all order',

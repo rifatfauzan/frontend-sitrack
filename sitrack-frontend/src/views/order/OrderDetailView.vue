@@ -51,6 +51,22 @@ function getCustomerNameById(customerId: string) {
   return name.length > 30 ? name.slice(0, 30) + '...' : name;
 }
 
+const formatRupiah = (angka: number | string) => {
+  if (!angka) return "Rp0,00";
+  const rupiah = angka.toString().replace(/[^,\d]/g, "");
+  const split = rupiah.split(",");
+  const sisa = split[0].length % 3;
+  let rupiahFormatted = split[0].substr(0, sisa);
+  const ribuan = split[0].substr(sisa).match(/\d{3}/g);
+
+  if (ribuan) {
+    const separator = sisa ? "." : "";
+    rupiahFormatted += separator + ribuan.join(".");
+  }
+
+  rupiahFormatted = split[1] ? rupiahFormatted + "," + split[1] : rupiahFormatted;
+  return "Rp" + rupiahFormatted;
+};
 
 const formatDate = (date) => {
   if (!date) return '-';
@@ -79,6 +95,7 @@ const showConfirmation = ref(false);
 const showSuccess = ref(false);
 const showError = ref(false);
 const errorMessage = ref('');
+const showDoneConfirmation = ref(false);
 
 const getCurrentUserRole = (): string | null => {
   const token = localStorage.getItem('token');
@@ -136,6 +153,28 @@ const goToDetail = () => {
   router.go(0);
 };
 
+const canMarkAsDone = computed(() => {
+  const order = orderDetail.value;
+  if (!order) return false;
+
+  const orderOngoing = order.orderStatus == 3;
+  const totalChassis = (order.qtyChassis20 || 0) + (order.qtyChassis40 || 0);
+  const allSpjDone = order.spjList.every(spj => spj.status === 4); 
+  
+  return totalChassis === order.spjList.length && allSpjDone && orderOngoing;
+});
+
+const markOrderAsDone = async () => {
+  if (orderDetail.value?.orderId) {
+    const result = await orderStore.markOrderAsDone(orderDetail.value.orderId);
+    if (result.success) {
+      showSuccess.value = true;
+    } else {
+      errorMessage.value = result.message;
+      showError.value = true;
+    }
+  }
+};
 
 </script>
 
@@ -186,34 +225,82 @@ const goToDetail = () => {
                 title="Edit" class="bg-[#639FAB] text-black px-4 py-2 rounded shadow-md" 
                 @click="goToEdit" 
                 />
+
+                <!-- <VButton
+                v-if="canMarkAsDone"
+                title="Mark as Done"
+                class="bg-[#639FAB] text-white px-4 py-2 rounded shadow-md"
+                @click="markOrderAsDone"
+              /> -->
+
+              <VButton
+                v-if="canMarkAsDone"
+                title="Mark as Done"
+                class="bg-[#639FAB] text-white px-4 py-2 rounded shadow-md"
+                @click="showDoneConfirmation = true"
+              />
               </div>
             </div>
 
+            <div class="mt-2">
+              <h2 class="text-base font-semibold mb-2">Vehicle Expedition</h2>
+              <div class="overflow-x-auto bg-[#FAFAFF] rounded-lg shadow-sm">
+                <table class="min-w-full text-sm text-left">
+                  <thead class="bg-[#1C5D99] text-white">
+                    <tr>
+                      <th class="px-4 py-3">SPJ ID</th>
+                      <th class="px-4 py-3">Chassis Size</th>
+                      <th class="px-4 py-3">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="spj in orderDetail.spjList" :key="spj.id" class="border-t">
+                      <td class="px-4 py-2">{{ spj.id }}</td>
+                      <td class="px-4 py-2">{{ spj.chassisSize }}</td>
+                      <td class="px-4 py-2">
+                        <span
+                          class="status-pill"
+                          :class="statusMap[spj.status]?.class || 'bg-gray-200 text-black'"
+                        >
+                          {{ statusMap[spj.status]?.label || 'Unknown' }}
+                        </span>
+                      </td>
+                    </tr>
+                    <tr v-if="!orderDetail.spjList || orderDetail.spjList.length === 0">
+                      <td colspan="2" class="text-center py-4 text-gray-500">Tidak ada SPJ terkait</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <br>
+
             <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-3">
-                  <div class="detail-item"><span>Customer ID</span><strong>{{ orderDetail.customerId || '-' }}</strong></div>
+                  <div class="detail-item alt"><span>Customer ID</span><strong>{{ orderDetail.customerId || '-' }}</strong></div>
 
-                    <div class="detail-item alt"><span>Order Date</span><strong>{{ formatDate(orderDetail.orderDate) || '-' }}</strong></div>                    
-                    <div class="detail-item"><span>Move Type</span><strong>{{ orderDetail.moveType || '-' }}</strong></div>
-                    <div class="detail-item alt"><span>Down Payment</span><strong>{{ orderDetail.downPayment ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Site ID</span><strong>{{ orderDetail.siteId || '-' }}</strong></div>
-                    <div class="detail-item alt"><span>20' Chassis Quantity</span><strong>{{ orderDetail.qtyChassis20 ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>40' Chassis Quantity</span><strong>{{ orderDetail.qtyChassis40 ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Order Date</span><strong>{{ formatDate(orderDetail.orderDate) || '-' }}</strong></div>                    
+                    <div class="detail-item alt"><span>Move Type</span><strong>{{ orderDetail.moveType || '-' }}</strong></div>
+                    <div class="detail-item"><span>Down Payment</span><strong>{{ formatRupiah(orderDetail.downPayment) ?? '-' }}</strong></div>
+                    <div class="detail-item alt"><span>Site ID</span><strong>{{ orderDetail.siteId || '-' }}</strong></div>
+                    <div class="detail-item"><span>20' Chassis Quantity</span><strong>{{ orderDetail.qtyChassis20 ?? '-' }}</strong></div>
+                    <div class="detail-item alt"><span>40' Chassis Quantity</span><strong>{{ orderDetail.qtyChassis40 ?? '-' }}</strong></div>
                 </div>
 
                 <div class="space-y-3">
                     <!-- <div class="detail-item"><span>Status</span><strong>{{ statusLabel.label }}</strong></div> -->
-                    <div class="detail-item">
+                    <div class="detail-item alt">
                     <span>Customer Name</span>
                     <strong>{{ getCustomerNameById(orderDetail.customerId) }}</strong>
                   </div>
 
-                    <div class="detail-item alt"><span>Created By</span><strong>{{ orderDetail.createdBy || '-' }}</strong></div>
-                    <div class="detail-item"><span>Created Date</span><strong>{{ formatDate(orderDetail.createdDate) || '-' }}</strong></div>
-                    <div class="detail-item alt"><span>Updated By</span><strong>{{ orderDetail.updatedBy || '-' }}</strong></div>
-                    <div class="detail-item"><span>Updated Date</span><strong>{{ formatDate(orderDetail.updatedDate) || '-' }}</strong></div>
-                    <div class="detail-item alt"><span>Approved By</span><strong>{{ orderDetail.approvedBy || '-' }}</strong></div>
-                    <div class="detail-item"><span>Approved Date</span><strong>{{ formatDate(orderDetail.approvedDate) || '-' }}</strong></div>
+                    <div class="detail-item"><span>Created By</span><strong>{{ orderDetail.createdBy || '-' }}</strong></div>
+                    <div class="detail-item alt"><span>Created Date</span><strong>{{ formatDate(orderDetail.createdDate) || '-' }}</strong></div>
+                    <div class="detail-item"><span>Updated By</span><strong>{{ orderDetail.updatedBy || '-' }}</strong></div>
+                    <div class="detail-item alt"><span>Updated Date</span><strong>{{ formatDate(orderDetail.updatedDate) || '-' }}</strong></div>
+                    <div class="detail-item"><span>Approved By</span><strong>{{ orderDetail.approvedBy || '-' }}</strong></div>
+                    <div class="detail-item alt"><span>Approved Date</span><strong>{{ formatDate(orderDetail.approvedDate) || '-' }}</strong></div>
                 </div>
             </div>
 
@@ -243,12 +330,59 @@ const goToDetail = () => {
             </div>
             </div>
 
-            <div class="detail-remarks">
+            <div class="mt-4">
+              <h2 class="text-base font-semibold mb-2">Tariff Details</h2>
+              <div class="overflow-x-auto bg-[#FAFAFF] rounded-lg shadow-sm">
+                <table class="min-w-full text-sm text-left">
+                  <thead class="bg-[#1C5D99] text-white text-center">
+                    <tr>
+                      <th class="px-4 py-3">Chassis Size</th>
+                      <th class="px-4 py-3">Move Type</th>
+                      <th class="px-4 py-3">Tariff</th>
+                      <th class="px-4 py-3">Quantity</th>
+                      <th class="px-4 py-3">Total Tariff</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    <tr v-if="(orderDetail?.qtyChassis20 ?? 0) > 0" class="border-t">
+                      <td class="px-4 py-2">{{ 20 }}</td>
+                      <td class="px-4 py-2">{{ orderDetail.moveType || '-' }}</td>
+                      <td class="px-4 py-2">{{ formatRupiah(orderDetail.tariffChassis20 || 0) }}</td>
+                      <td class="px-4 py-2">{{ orderDetail.qtyChassis20 }}</td>
+                      <td class="px-4 py-2 font-bold">{{ formatRupiah((orderDetail.tariffChassis20 || 0) * (orderDetail.qtyChassis20 || 0)) }}</td>
+                    </tr>
+                    <tr v-if="(orderDetail.qtyChassis40 ?? 0) > 0" class="border-t">
+                      <td class="px-4 py-2">{{ 40 }}</td>
+                      <td class="px-4 py-2">{{ orderDetail.moveType || '-' }}</td>
+                      <td class="px-4 py-2">{{ formatRupiah(orderDetail.tariffChassis40 || 0) }}</td>
+                      <td class="px-4 py-2">{{ orderDetail.qtyChassis40 }}</td>
+                      <td class="px-4 py-2 font-bold">{{ formatRupiah((orderDetail.tariffChassis40 || 0) * (orderDetail.qtyChassis40 || 0)) }}</td>
+                    </tr>
+                    <tr v-if="(orderDetail?.qtyChassis20 ?? 0) > 0 || (orderDetail?.qtyChassis40 ?? 0) > 0" class="border-t">
+                      <td colspan="4"></td>
+                      <td class="px-4 py-2 font-bold text-[#1C5D99]">
+                        {{ formatRupiah(
+                          ((orderDetail.tariffChassis20 || 0) * (orderDetail.qtyChassis20 || 0)) +
+                          ((orderDetail.tariffChassis40 || 0) * (orderDetail.qtyChassis40 || 0))
+                        ) }}
+                      </td>
+                    </tr>
+                    <tr v-if="(orderDetail?.qtyChassis20 ?? 0) === 0 && (orderDetail?.qtyChassis40 ?? 0) === 0">
+                      <td colspan="5" class="text-center py-4 text-gray-500">Tidak ada Tariff yang dapat ditampilkan.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="mt-4"></div>
+
+            <div class="detail-remarks alt">
             <span class="label">Remarks (Operasional)</span>
             <p class="text">{{ orderDetail.remarksOperasional || '-' }}</p>
             </div>
 
-            <div class="detail-remarks alt">
+            <div class="detail-remarks">
             <span class="label">Remarks (Supervisor)</span>
             <p class="text">{{ orderDetail.remarksSupervisor || '-' }}</p>
             </div>
@@ -287,6 +421,13 @@ const goToDetail = () => {
       @close="goToDetail"
       :message="'Approval berhasil!'"
       buttonText="Kembali ke Detail Order"
+    />
+
+    <ConfirmationDialog
+      :visible="showDoneConfirmation"
+      @close="showDoneConfirmation = false"
+      @confirm="() => { showDoneConfirmation = false; markOrderAsDone(); }"
+      :message="'Apakah Anda yakin ingin menandai order ini sebagai selesai?'"
     />
 
     <ErrorDialog

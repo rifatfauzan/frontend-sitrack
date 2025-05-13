@@ -1,3 +1,5 @@
+import type { Spj } from './spj.interfaces';
+
 export interface Order {
     orderId: string;
     orderDate: Date;
@@ -26,6 +28,9 @@ export interface Order {
     qtyCh120fl?: number;
     qtyCh220fl?: number;
     qtyCh140fl?: number;
+
+    tariffChassis20?: number;
+    tariffChassis40?: number;
   
     createdBy?: string;
     createdDate?: Date;
@@ -33,6 +38,8 @@ export interface Order {
     updatedDate?: Date;
     approvedBy?: string;
     approvedDate?: Date;
+
+    spjList?: Spj[];
   }
   
   export interface CreateOrderRequest {
