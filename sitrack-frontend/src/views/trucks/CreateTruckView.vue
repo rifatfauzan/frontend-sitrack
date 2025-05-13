@@ -131,7 +131,7 @@ const errorMessage = ref("");
               <VButton title="Kembali" class="back-button" @click="goBack">
                         <i class="pi pi-arrow-left"></i>
               </VButton>
-              <h1 class="header-title">Buat Truck</h1>
+              <h1 class="header-title">Buat Vehicle</h1>
             </div>
           </div>
 
