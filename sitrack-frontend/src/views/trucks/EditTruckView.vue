@@ -214,8 +214,8 @@ const errorMessage = ref("");
 
               <!-- Vehicle Type -->
               <div class="form-group">
-                <label for="vehicleType">Vehicle Type</label>
-                <input v-model="form.vehicleType" type="text" id="vehicleType" maxlength="20"/>
+                <label for="vehicleType">Vehicle Type <span class="required">*</span></label>
+                <input v-model="form.vehicleType" type="text" id="vehicleType" maxlength="20" required/>
               </div>
 
               <!-- Cylinder -->
