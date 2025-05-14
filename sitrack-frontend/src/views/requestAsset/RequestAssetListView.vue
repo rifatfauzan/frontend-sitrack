@@ -162,4 +162,14 @@ td, th {
 .bg-c8d9ed {
   background-color: #C8D9ED;
 }
+
+.status-pill {
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  text-align: center;
+  white-space: nowrap;
+}
 </style>

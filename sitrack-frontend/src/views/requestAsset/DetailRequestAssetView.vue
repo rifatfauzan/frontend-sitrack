@@ -120,7 +120,7 @@ const confirmApproval = async () => {
                     <i class="pi pi-arrow-left"></i>
                     </VButton>
                     <h1 class="header-title">{{ requestAsset?.requestAssetId }}</h1>
-                    <span :class="['px-2 py-1 rounded text-sm font-semibold text-white', getStatusColor(requestAsset?.status)]">
+                    <span class="status-pill px-3 py-1 rounded font-semibold text-sm":class="['px-2 py-1 rounded text-sm font-semibold text-white', getStatusColor(requestAsset?.status)]">
                     {{ getStatusLabel(requestAsset?.status) }}
                     </span>
                 </div>
@@ -282,6 +282,16 @@ th, td {
 
 .detail-item.alt {
   background-color: #BBCDE5;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  text-align: center;
+  white-space: nowrap;
 }
 
 </style>
