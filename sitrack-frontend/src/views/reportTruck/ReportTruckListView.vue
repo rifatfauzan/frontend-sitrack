@@ -104,10 +104,10 @@ const formattedReportList = computed(() =>
             <Column header="Actions">
               <template #body>
                 <div class="flex justify-center gap-2">
-                  <button class="bg-red-500 hover:bg-green-600 text-white px-2 py-1 rounded">
+                  <button class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded">
                     <i class="pi pi-file"></i>
                   </button>
-                  <button class="bg-green-500 hover:bg-red-600 text-white px-2 py-1 rounded">
+                  <button class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded">
                     <i class="pi pi-file-edit"></i>
                   </button>
                 </div>
