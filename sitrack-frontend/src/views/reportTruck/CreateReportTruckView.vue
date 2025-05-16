@@ -49,6 +49,11 @@ const selectedVehicleType = computed(() => {
   return selectedTruck?.vehicleType || '-'
 })
 
+const selectedVehicleBrand = computed(() => {
+  const selectedTruck = truckList.value.find(t => t.vehicleId === form.vehicleId)
+  return selectedTruck?.vehicleBrand|| '-'
+})
+
 const truckOptions = computed(() =>
   truckList.value.map((t) => ({
     label: `${t.vehicleId} - ${t.vehiclePlateNo}`,
@@ -159,6 +164,15 @@ const goToList = () => router.push('/report-truck');
                 optionValue="value"
                 placeholder="-- Pilih Vehicle --"
                 class="w-full"
+              />
+            </div>
+            <div>
+              <label class="block font-bold">Vehicle Brand</label>
+              <input
+                type="text"
+                :value="selectedVehicleBrand"
+                class="w-full border rounded px-3 py-2 bg-gray-100"
+                readonly
               />
             </div>
             <div>
