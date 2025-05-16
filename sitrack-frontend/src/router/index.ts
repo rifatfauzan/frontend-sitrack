@@ -46,6 +46,10 @@ import EditOrderView from '@/views/order/EditOrderView.vue'
 import EditSpjView from '@/views/spj/EditSpjView.vue'
 import CreateReportTruckView from '@/views/reportTruck/CreateReportTruckView.vue'
 import ReportTruckListView from '@/views/reportTruck/ReportTruckListView.vue'
+import KomisiListView from '@/views/komisi/KomisiListView.vue'
+import CreateKomisiView from '@/views/komisi/CreateKomisiView.vue'
+import DetailKomisiView from '@/views/komisi/DetailKomisiView.vue'
+import EditKomisiView from '@/views/komisi/EditKomisiView.vue'
 
 const decodeTokenPayload = (token: string) => {
   try {
@@ -382,7 +386,41 @@ const router = createRouter({
       name: 'report truck list',
       component: ReportTruckListView,
       meta: { requiresAuth: true, authorize: ['Admin', 'Mekanik', 'Supervisor', 'Manager'] }
-    }
+    },
+    {
+      path:'/komisi',
+      name: 'view all komisi',
+      component: KomisiListView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] },
+      props: true,
+
+    },
+    {
+      path:'/komisi/create',
+      name: 'create komisi',
+      component: CreateKomisiView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] },
+      props: true,
+
+    },
+
+    {
+      path:'/komisi/detail/:komisiId',
+      name: 'detail komisi',
+      component: DetailKomisiView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] },
+      props: true,
+
+    },
+
+    {
+      path:'/komisi/edit/:komisiId',
+      name: 'edit komisi',
+      component: EditKomisiView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] },
+      props: true,
+    },
+
   ],
 })
 
