@@ -103,6 +103,15 @@
                 <span>Driver</span>
               </router-link>
             </li>
+            <li>
+              <router-link
+                to="/komisi"
+                class="flex items-center gap-4 cursor-pointer text-lg sidebar-item"
+              >
+                <i class="pi pi-money-bill text-2xl"></i>
+                <span>Commission</span>
+              </router-link>
+            </li>
           </ul>
         </li>
 
