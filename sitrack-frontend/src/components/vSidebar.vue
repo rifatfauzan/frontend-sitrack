@@ -167,6 +167,18 @@
           </router-link>
         </li>
 
+        <li
+          v-if="['Admin', 'Manager', 'Supervisor', 'Mekanik'].includes(authStore.role)"
+        >
+          <router-link
+            to="/report-truck"
+            class="flex items-center gap-4 cursor-pointer text-2xl sidebar-item"
+          >
+            <i class="pi pi-wrench text-3xl"></i>
+            <span>Vehicle Maintenance</span>
+          </router-link>
+        </li>
+
         <li v-if="authStore.role === 'Admin'">
           <router-link
             to="/users"

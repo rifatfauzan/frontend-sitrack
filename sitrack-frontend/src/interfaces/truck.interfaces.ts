@@ -22,6 +22,7 @@ export interface Truck {
     recordStatus: string; 
     vehicleNumber?: string;
     vehicleFuelConsumption: number;
+    vehicleCommission?: number;
     insertedBy?: string; 
     insertedDate?: Date; 
     updatedBy?: string; 
@@ -51,6 +52,7 @@ export interface CreateTruckRequest {
     recordStatus: string;   
     vehicleNumber?: string;
     vehicleFuelConsumption: number;
+    vehicleCommission?: number;
     insertedBy?: string;
     insertedDate?: Date;
     updatedBy?: string;
@@ -88,6 +90,7 @@ export interface UpdateTruckRequest {
     recordStatus: string;   
     vehicleNumber?: string;
     vehicleFuelConsumption: number;
+    vehicleCommission?: number;
     insertedBy?: string;
     insertedDate?: Date;
     updatedBy?: string;
