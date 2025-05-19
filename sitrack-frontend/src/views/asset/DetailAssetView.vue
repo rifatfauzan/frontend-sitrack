@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { useToast } from 'vue-toastification';
 import { storeToRefs } from 'pinia';
 import Sidebar from '@/components/vSidebar.vue';
 import HeaderComponent from '@/components/vHeader.vue';
@@ -15,7 +14,6 @@ import ErrorDialog from '@/components/ErrorDialog.vue';
 import type { Asset } from '@/interfaces/asset.interface';
 
 const route = useRoute();
-const toast = useToast();
 const router = useRouter();
 const assetStore = useAssetStore();
 const { loading } = storeToRefs(assetStore);
@@ -33,8 +31,13 @@ const fetchAssetData = async () => {
   loading.value = true;
   try {
     assetDetail.value = await assetStore.getAssetById(assetId);
-  } catch  {
-    toast.error('Gagal memuat data asset');
+    if (!assetDetail.value) {
+      errorMessage.value = 'Data asset tidak ditemukan!';
+      showError.value = true;
+    }
+  } catch {
+    errorMessage.value = 'Gagal memuat data asset!';
+    showError.value = true;
   } finally {
     loading.value = false;
   }

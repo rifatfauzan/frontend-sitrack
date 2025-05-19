@@ -307,35 +307,125 @@ const markOrderAsDone = async () => {
             <div class="mt-4">
             <h2 class="text-base font-semibold mb-1">Container Data</h2>
             <div class="bg-[#BBCDE5] rounded-2xl p-4 shadow-sm">
-                <div class="grid grid-cols-2 gap-2 text-sm">
+              <div class="grid grid-cols-2 gap-2 text-sm">
                 <div class="space-y-1.5">
-                    <div class="detail-item"><span>Qty 120 MTFL</span><strong>{{ orderDetail.qty120mtfl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 120 MT</span><strong>{{ orderDetail.qty120mt ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 220 MTFL</span><strong>{{ orderDetail.qty220mtfl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 220 MT</span><strong>{{ orderDetail.qty220mt ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 140 MTFL</span><strong>{{ orderDetail.qty140mtfl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 140 MT</span><strong>{{ orderDetail.qty140mt ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty CH 140FL</span><strong>{{ orderDetail.qtyCh140fl ?? '-' }}</strong></div>
+                  <div class="detail-item" title='1x20” Empty Out, Full In'>
+                    <span>1x20” Empty Out, Full In</span>
+                    <strong>{{ orderDetail.qty120mtfl ?? '-' }}</strong>
+                  </div>
+                  <div class="detail-item" title='1x20” Full Out, Empty In'>
+                    <span>1x20” Full Out, Empty In</span>
+                    <strong>{{ orderDetail.qty120mt ?? '-' }}</strong>
+                  </div>
+                  <div class="detail-item" title='2x20” Empty Out, Full In'>
+                    <span>2x20” Empty Out, Full In</span>
+                    <strong>{{ orderDetail.qty220mtfl ?? '-' }}</strong>
+                  </div>
+                  <div class="detail-item" title='2x20” Full Out, Empty In'>
+                    <span>2x20” Full Out, Empty In</span>
+                    <strong>{{ orderDetail.qty220mt ?? '-' }}</strong>
+                  </div>
+                  <div class="detail-item" title='1x40” Empty Out, Full In'>
+                    <span>1x40” Empty Out, Full In</span>
+                    <strong>{{ orderDetail.qty140mtfl ?? '-' }}</strong>
+                  </div>
+                  <div class="detail-item" title='1x40” Full Out, Empty In'>
+                    <span>1x40” Full Out, Empty In</span>
+                    <strong>{{ orderDetail.qty140mt ?? '-' }}</strong>
+                  </div>
+                  <div class="detail-item" title='Chassis Only Out, 1x40” Full In'>
+                    <span>Chassis Only Out, 1x40” Full In</span>
+                    <strong>{{ orderDetail.qtyCh140fl ?? '-' }}</strong>
+                  </div>
                 </div>
 
                 <div class="space-y-1.5">
-                    <div class="detail-item"><span>Qty 120MT 120FL</span><strong>{{ orderDetail.qty120mt120fl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 120MT 220FL</span><strong>{{ orderDetail.qty120mt220fl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 220MT 120FL</span><strong>{{ orderDetail.qty220mt120fl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 220MT 220FL</span><strong>{{ orderDetail.qty220mt220fl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty CH 120FL</span><strong>{{ orderDetail.qtyCh120fl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty CH 220FL</span><strong>{{ orderDetail.qtyCh220fl ?? '-' }}</strong></div>
+                  <div class="detail-item" title='Chassis 40: 1x20” Full Out & 1x20” Full In'>
+                    <span>1x20” Full Out & In</span>
+                    <strong>{{ orderDetail.qty120mt120fl ?? '-' }}</strong>
+                  </div>
+                  <div class="detail-item" title='Chassis 40: 1x20” Full Out & 1x40” Full In'>
+                    <span>1x20” Full Out & 1x40” Full In</span>
+                    <strong>{{ orderDetail.qty120mt140fl ?? '-' }}</strong>
+                  </div>
+                  <div class="detail-item" title='1x20” Empty Out, 2x20” Full In'>
+                    <span>1x20” Empty Out, 2x20” Full In</span>
+                    <strong>{{ orderDetail.qty120mt220fl ?? '-' }}</strong>
+                  </div>
+                  <div class="detail-item" title='2x20” Empty Out, 1x20” Full In'>
+                    <span>2x20” Empty Out, 1x20” Full In</span>
+                    <strong>{{ orderDetail.qty220mt120fl ?? '-' }}</strong>
+                  </div>
+                  <div class="detail-item" title='2x20” Empty Out, 2x20” Full In'>
+                    <span>2x20” Empty Out, 2x20” Full In</span>
+                    <strong>{{ orderDetail.qty220mt220fl ?? '-' }}</strong>
+                  </div>
+                  <div class="detail-item" title='Chassis Only Out, 1x20” Full In'>
+                    <span>Chassis Only Out, 1x20” Full In</span>
+                    <strong>{{ orderDetail.qtyCh120fl ?? '-' }}</strong>
+                  </div>
+                  <div class="detail-item" title='Chassis Only Out, 2x20” Full In'>
+                    <span>Chassis Only Out, 2x20” Full In</span>
+                    <strong>{{ orderDetail.qtyCh220fl ?? '-' }}</strong>
+                  </div>
                 </div>
-                </div>
+              </div>
             </div>
+          </div>
+
+            <div class="mt-4">
+              <h2 class="text-base font-semibold mb-2">Tariff Details</h2>
+              <div class="overflow-x-auto bg-[#FAFAFF] rounded-lg shadow-sm">
+                <table class="min-w-full text-sm text-left">
+                  <thead class="bg-[#1C5D99] text-white text-center">
+                    <tr>
+                      <th class="px-4 py-3">Chassis Size</th>
+                      <th class="px-4 py-3">Move Type</th>
+                      <th class="px-4 py-3">Tariff</th>
+                      <th class="px-4 py-3">Quantity</th>
+                      <th class="px-4 py-3">Total Tariff</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    <tr v-if="(orderDetail?.qtyChassis20 ?? 0) > 0" class="border-t">
+                      <td class="px-4 py-2">{{ 20 }}</td>
+                      <td class="px-4 py-2">{{ orderDetail.moveType || '-' }}</td>
+                      <td class="px-4 py-2">{{ formatRupiah(orderDetail.tariffChassis20 || 0) }}</td>
+                      <td class="px-4 py-2">{{ orderDetail.qtyChassis20 }}</td>
+                      <td class="px-4 py-2 font-bold">{{ formatRupiah((orderDetail.tariffChassis20 || 0) * (orderDetail.qtyChassis20 || 0)) }}</td>
+                    </tr>
+                    <tr v-if="(orderDetail.qtyChassis40 ?? 0) > 0" class="border-t">
+                      <td class="px-4 py-2">{{ 40 }}</td>
+                      <td class="px-4 py-2">{{ orderDetail.moveType || '-' }}</td>
+                      <td class="px-4 py-2">{{ formatRupiah(orderDetail.tariffChassis40 || 0) }}</td>
+                      <td class="px-4 py-2">{{ orderDetail.qtyChassis40 }}</td>
+                      <td class="px-4 py-2 font-bold">{{ formatRupiah((orderDetail.tariffChassis40 || 0) * (orderDetail.qtyChassis40 || 0)) }}</td>
+                    </tr>
+                    <tr v-if="(orderDetail?.qtyChassis20 ?? 0) > 0 || (orderDetail?.qtyChassis40 ?? 0) > 0" class="border-t">
+                      <td colspan="4"></td>
+                      <td class="px-4 py-2 font-bold text-[#1C5D99]">
+                        {{ formatRupiah(
+                          ((orderDetail.tariffChassis20 || 0) * (orderDetail.qtyChassis20 || 0)) +
+                          ((orderDetail.tariffChassis40 || 0) * (orderDetail.qtyChassis40 || 0))
+                        ) }}
+                      </td>
+                    </tr>
+                    <tr v-if="(orderDetail?.qtyChassis20 ?? 0) === 0 && (orderDetail?.qtyChassis40 ?? 0) === 0">
+                      <td colspan="5" class="text-center py-4 text-gray-500">Tidak ada Tariff yang dapat ditampilkan.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
 
-            <div class="detail-remarks">
+            <div class="mt-4"></div>
+
+            <div class="detail-remarks alt">
             <span class="label">Remarks (Operasional)</span>
             <p class="text">{{ orderDetail.remarksOperasional || '-' }}</p>
             </div>
 
-            <div class="detail-remarks alt">
+            <div class="detail-remarks">
             <span class="label">Remarks (Supervisor)</span>
             <p class="text">{{ orderDetail.remarksSupervisor || '-' }}</p>
             </div>

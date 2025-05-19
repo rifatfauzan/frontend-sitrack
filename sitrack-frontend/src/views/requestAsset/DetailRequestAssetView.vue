@@ -6,8 +6,11 @@ import Sidebar from '@/components/vSidebar.vue';
 import HeaderComponent from '@/components/vHeader.vue';
 import FooterComponent from '@/components/vFooter.vue';
 import VButton from '@/components/VButton.vue';
-import Dialog from 'primevue/dialog';
+import ApprovalDialog from '@/components/ApprovalDialog.vue';
 import type { RequestAsset } from '@/interfaces/requestAsset.interfaces';
+import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
+import SuccessDialog from '@/components/SuccessDialog.vue';
+import ErrorDialog from '@/components/ErrorDialog.vue';
 
 
 const route = useRoute();
@@ -18,7 +21,13 @@ const id = route.query.id as string;
 const requestAsset = ref<RequestAsset | null>(null);
 const showApprovalDialog = ref(false);
 const approvalRemark = ref('');
-const loading = ref(false);
+// const loading = ref(false);
+
+const selectedApprovalAction = ref('');
+const showConfirmation = ref(false);
+const showSuccess = ref(false);
+const showError = ref(false);
+const errorMessage = ref('');
 
 onMounted(async () => {
   requestAsset.value = await requestAssetStore.fetchRequestAssetById(id);
@@ -32,14 +41,6 @@ const getStatusLabel = (status: number) => {
     case 3: return 'Rejected';
     default: return 'Unknown';
   }
-};
-
-const updateStatus = async (status: number) => {
-  loading.value = true;
-  await requestAssetStore.updateRequestAssetStatus(id, status, approvalRemark.value);
-  loading.value = false;
-  showApprovalDialog.value = false;
-  router.go(0);
 };
 
 const goToEdit = () => {
@@ -80,6 +81,30 @@ const formatDate = (date) => {
   const formattedDate = new Date(date).toLocaleDateString('id-ID', options);
   return formattedDate;
 };
+
+const handleApprovalAction = (action: string, remarks: string) => {
+  selectedApprovalAction.value = action;
+  approvalRemark.value = remarks;
+  showApprovalDialog.value = false;
+  showConfirmation.value = true;
+};
+
+const confirmApproval = async () => {
+  showConfirmation.value = false;
+  try {
+    let status: number;
+    if (selectedApprovalAction.value === 'approve') status = 1;
+    else if (selectedApprovalAction.value === 'revision') status = 2;
+    else if (selectedApprovalAction.value === 'reject') status = 3;
+    else throw new Error('Aksi tidak dikenali');
+
+    await requestAssetStore.updateRequestAssetStatus(id, status, approvalRemark.value);
+    showSuccess.value = true;
+  } catch (err) {
+    errorMessage.value = (err as Error).message || 'Gagal melakukan approval.';
+    showError.value = true;
+  }
+};
 </script>
 
 <template>
@@ -95,13 +120,13 @@ const formatDate = (date) => {
                     <i class="pi pi-arrow-left"></i>
                     </VButton>
                     <h1 class="header-title">{{ requestAsset?.requestAssetId }}</h1>
-                    <span :class="['px-2 py-1 rounded text-sm font-semibold text-white', getStatusColor(requestAsset?.status)]">
+                    <span class="status-pill px-3 py-1 rounded font-semibold text-sm":class="['px-2 py-1 rounded text-sm font-semibold text-white', getStatusColor(requestAsset?.status)]">
                     {{ getStatusLabel(requestAsset?.status) }}
                     </span>
                 </div>
                 <div class="flex items-center gap-3">
-                    <VButton v-if="['Admin','Mekanik','Supervisor'].includes(userRole) && ![1, 3].includes(requestAsset?.status)" class="custom-button px-4 py-2 rounded" @click="goToEdit">Edit</VButton>
                     <VButton v-if="['Admin','Supervisor', 'Manager'].includes(userRole) && ![1, 2, 3].includes(requestAsset?.status)" class="custom-button px-4 py-2 rounded" @click="showApprovalDialog = true">Approval</VButton>
+                    <VButton v-if="['Admin','Mekanik','Supervisor'].includes(userRole) && ![1, 3].includes(requestAsset?.status)" class="custom-button px-4 py-2 rounded" @click="goToEdit">Edit</VButton>
                 </div>
             </div>
 
@@ -160,17 +185,35 @@ const formatDate = (date) => {
       <FooterComponent />
     </div>
 
-    <Dialog v-model:visible="showApprovalDialog" modal header="Approval" class="w-[30rem] rounded bg-[#C8D9ED]">
-      <div class="space-y-3">
-        <label class="font-semibold text-sm">Remarks</label>
-        <textarea v-model="approvalRemark" class="w-full p-2 rounded border min-h-[100px]"></textarea>
-        <div class="flex justify-between mt-4">
-          <VButton class="bg-red-500 text-white px-4 py-2 rounded" @click="updateStatus(3)">Reject</VButton>
-          <VButton class="bg-yellow-400 text-white px-4 py-2 rounded" @click="updateStatus(2)">Need Revision</VButton>
-          <VButton class="bg-green-500 text-white px-4 py-2 rounded" @click="updateStatus(1)">Approve</VButton>
-        </div>
-      </div>
-    </Dialog>
+    <ApprovalDialog
+      :visible="showApprovalDialog"
+      title="Approval Request Asset"
+      label="Remarks:"
+      @close="showApprovalDialog = false"
+      @approve="(remarks) => handleApprovalAction('approve', remarks)"
+      @revision="(remarks) => handleApprovalAction('revision', remarks)"
+      @reject="(remarks) => handleApprovalAction('reject', remarks)"
+    />
+
+    <ConfirmationDialog
+      :visible="showConfirmation"
+      @close="showConfirmation = false"
+      @confirm="confirmApproval"
+      :message="'Apakah Anda yakin dengan keputusan ini?'"
+    />
+
+    <SuccessDialog
+      :visible="showSuccess"
+      @close="router.go(0)"
+      :message="'Approval berhasil!'"
+      buttonText="Kembali ke Detail Request"
+    />
+
+    <ErrorDialog
+      :visible="showError"
+      @close="showError = false"
+      :message="errorMessage"
+    />
   </div>
 </template>
 
@@ -239,6 +282,16 @@ th, td {
 
 .detail-item.alt {
   background-color: #BBCDE5;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border-radius: 9999px;
+  text-align: center;
+  white-space: nowrap;
 }
 
 </style>

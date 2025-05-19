@@ -22,12 +22,16 @@ export interface Order {
     qty140mtfl?: number;
     qty140mt?: number;
     qty120mt120fl?: number;
+    qty120mt140fl?: number;
     qty120mt220fl?: number;
     qty220mt120fl?: number;
     qty220mt220fl?: number;
     qtyCh120fl?: number;
     qtyCh220fl?: number;
     qtyCh140fl?: number;
+
+    tariffChassis20?: number;
+    tariffChassis40?: number;
   
     createdBy?: string;
     createdDate?: Date;

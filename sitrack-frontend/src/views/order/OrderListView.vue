@@ -82,18 +82,17 @@ const filteredData = () => {
         <div class="container mx-auto max-w-6xl">
           <div class="card">
             <div class="flex justify-between items-center mb-4">
-              <span class="p-input-icon-left">
-                <InputText v-model="filters.global.value" placeholder="Search Order..." />
-              </span>
-
-              <Dropdown
-                v-model="selectedStatus"
-                :options="statusOptions"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="Filter Status"
-                class="w-60"
-              />
+              <div class="flex items-center gap-4">
+                  <InputText v-model="filters.global.value" placeholder="Search Order..." />
+                  <Dropdown
+                    v-model="selectedStatus"
+                    :options="statusOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Filter Status"
+                    class="w-60"
+                  />
+                </div>
 
               <VButton
                 title="+ Buat"

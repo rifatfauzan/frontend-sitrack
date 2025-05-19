@@ -7,9 +7,18 @@
           <div class="container mx-auto max-w-6xl">
             <div class="card">
               <div class="flex justify-between items-center mb-4">
-                <span class="p-input-icon-left">
+                <div class="flex items-center gap-4">
                   <InputText v-model="filters.global.value" placeholder="Search SPJ..." />
-                </span>
+                  <Dropdown
+                    v-model="selectedStatus"
+                    :options="statusOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="Filter Status"
+                    class="w-60"
+                  />
+                </div>
+
                 <VButton
                   title="+ Buat"
                   class="bg-[#1C5D99] text-white px-4 py-2 rounded"
@@ -89,6 +98,7 @@
   import { useRouter } from 'vue-router';
   import type { Spj } from '@/interfaces/spj.interfaces';
   import { useCustomerStore } from '@/stores/customer';
+  import Dropdown from 'primevue/dropdown';
   
   const router = useRouter();
   const spjStore = useSpjStore();
@@ -116,9 +126,26 @@
     2: 'Needs Revision',
   };
   
+  // const filteredSpjOut = computed(() =>
+  //   spjList.value.filter(spj => [0, 1, 2].includes(spj.status))
+  // );
+
+  const selectedStatus = ref<number | null>(null);
+
+  const statusOptions = [
+    { label: 'All Status', value: null },
+    { label: 'Rejected', value: 0 },
+    { label: 'Pending Approval', value: 1 },
+    { label: 'Needs Revision', value: 2 },
+  ];
+
   const filteredSpjOut = computed(() =>
-    spjList.value.filter(spj => [0, 1, 2].includes(spj.status))
+    spjList.value.filter(spj =>
+      (selectedStatus.value === null || spj.status === selectedStatus.value) &&
+      [0, 1, 2].includes(spj.status)
+    )
   );
+
   
   const onRowClick = (event: { data: Spj }) => {
     router.push({ name: 'detail spj', query: { id: event.data.id } });
