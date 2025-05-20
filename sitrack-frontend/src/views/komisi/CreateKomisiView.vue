@@ -85,7 +85,7 @@ const submitForm = async () => {
   <div class="flex h-screen">
     <Sidebar />
     <div class="flex-1 flex flex-col min-h-screen">
-      <HeaderComponent title="Buat Order" />
+      <HeaderComponent title="Buat Komisi" />
       <div class="flex-1 p-4 main-content overflow-auto">
         <div class="container mx-auto max-w-4xl bg-white p-6 rounded shadow">
           <div class="header-container">
