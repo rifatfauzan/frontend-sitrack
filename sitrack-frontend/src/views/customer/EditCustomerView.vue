@@ -31,10 +31,13 @@
               </div>
               <div class="form-group">
                 <label for="cityDestination">Kota Tujuan<span class="required">*</span></label>
-                <input class="placeholder-gray-400" v-model="form.cityDestination" type="text" id="cityDestination" maxlength="100" placeholder="Kota Tujuan" required />
+                <select v-model="form.cityDestination" id="cityDestination" required>
+                  <option value="" disabled>Pilih Kota Tujuan</option>
+                  <option v-for="loc in availableLocations" :key="loc" :value="loc">{{ loc }}</option>
+                </select>
               </div>
               <div class="form-group">
-                <label for="address">Alamat</label>
+                <label for="address">Alamat<span class="required">*</span></label>
                 <input class="placeholder-gray-400" v-model="form.address" id="address" maxlength="100" placeholder="Alamat">
               </div>
               <div class="form-group">
@@ -49,17 +52,14 @@
                 <label for="commodity">Komoditas</label>
                 <input class="placeholder-gray-400" v-model="form.commodity" type="text" id="commodity" maxlength="50" placeholder="Komoditas"/>
               </div>
-              <div class="form-group">
-                <label for="commission">Komisi<span class="required">*</span></label>
-                <input class="placeholder-gray-400" v-model.number="form.commission" type="number" id="commission" min="0" step="0.01" placeholder="Rp0,00" required/>
-              </div>
             </div>
 
             <h2 class="text-xl font-bold text-[#1C5D99] mt-6 mb-4">Tariff</h2>
             <table v-if="form.tariffs.length" class="tariff-table">
               <thead>
                 <tr>
-                  <th>Chassis Type</th>
+                  <th>Chassis Size</th>
+                  <th>Container Type</th>
                   <th>Move Type</th>
                   <th>Std Tariff</th>
                   <th>Insurance</th>
@@ -73,13 +73,18 @@
               </thead>
                 <tbody>
                 <tr v-for="(tariff, index) in form.tariffs" :key="index">
-                  <td>
-                    <select v-model="tariff.chassisSize" class="tariff-input" :style="{ color: tariff.chassisSize ? '#000' : '#ccc' }">
+                  <td style="width: 8%;">
+                    <select v-model="tariff.chassisSize" @change="tariff.containerType = ''" class="tariff-input" :style="{ color: tariff.chassisSize ? '#000' : '#ccc' }">
                       <option value="20">20</option>
                       <option value="40">40</option>
                     </select>
                   </td>
-                  <td style="width: 15%;">
+                  <td style="width: 13%;">
+                    <select v-model="tariff.containerType" class="tariff-input" :style="{ color: tariff.containerType ? '#000' : '#ccc' }">
+                      <option v-for="type in getContainerTypes(tariff.chassisSize)" :key="type" :value="type">{{ type }}</option>
+                    </select>
+                  </td>
+                  <td style="width: 11%;">
                     <select v-model="tariff.moveType" class="tariff-input" :style="{ color: tariff.moveType ? '#000' : '#ccc' }">
                       <option value="NORMAL">NORMAL</option>
                       <option value="REPO">REPO</option>
@@ -130,9 +135,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive } from 'vue';
+import { ref, onMounted, reactive, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useCustomerStore } from '@/stores/customer';
+import { useKomisiStore } from '@/stores/komisi';
 import Sidebar from '@/components/vSidebar.vue';
 import HeaderComponent from '@/components/vHeader.vue';
 import FooterComponent from '@/components/vFooter.vue';
@@ -144,6 +150,7 @@ import ErrorDialog from '@/components/ErrorDialog.vue';
 const route = useRoute();
 const router = useRouter();
 const customerStore = useCustomerStore();
+const komisiStore = useKomisiStore();
 const loading = ref(false);
 const showConfirm = ref(false);
 const showSuccess = ref(false);
@@ -158,10 +165,10 @@ const form = reactive({
   contractNo: '',
   cityOrigin: '',
   commodity: '',
-  commission: 0,
   tariffs: [
     {
       chassisSize: 20,
+      containerType: '',
       moveType: '',
       stdTariff: 0,
       insurance: 0,
@@ -174,6 +181,7 @@ const form = reactive({
 });
 
 onMounted(async () => {
+  await komisiStore.fetchKomisi();
   const customerId = route.query.id as string;
   if (customerId) {
     const data = await customerStore.getCustomerById(customerId);
@@ -183,9 +191,14 @@ onMounted(async () => {
   }
 });
 
+const availableLocations = computed<string[]>(() => {
+    return [...new Set(komisiStore.komisiList.map((k: { location: string }) => k.location))] as string[];
+});
+
 const addTariff = () => {
   form.tariffs.push({
     chassisSize: 20,
+    containerType: '',
     moveType: '',
     stdTariff: 0,
     insurance: 0,
@@ -195,6 +208,17 @@ const addTariff = () => {
     others: 0,
   });
 };
+
+const containerTypes20 = ['120MTFL', '120MT', 'CH120FL'];
+const containerTypes40 = [
+  '120MTFL', '120MT', '220MTFL', '220MT', '140MTFL', '140MT',
+  '120MT120FL', '120MT140FL', '120MT220FL', '220MT120FL', '220MT220FL',
+  'CH120FL', 'CH140FL', 'CH220FL',
+  '145MT', '145FL', '145MTFL'
+];
+function getContainerTypes(size: number) {
+  return size == 20 ? containerTypes20 : containerTypes40;
+}
 
 const removeTariff = (index: number) => {
   form.tariffs.splice(index, 1);
