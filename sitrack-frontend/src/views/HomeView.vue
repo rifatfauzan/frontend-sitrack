@@ -55,13 +55,31 @@ const fetchCustomerStats = async () => {
   }
 };
 
+const selectedYearDest     = ref(currentYear)
+const destinationStats     = ref<{ name: string; value: number }[]>([])
+
+const fetchDestinationStats = async () => {
+  try {
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/order/destination?year=${selectedYearDest.value}`,
+      { headers: { Authorization: `Bearer ${authStore.token}` } }
+    )
+    const json = await res.json()
+    destinationStats.value = json.data
+  } catch (e) {
+    console.error('Gagal fetch destination stats', e)
+  }
+};
+
 onMounted(() => {
   fetchOrderStats();
   fetchCustomerStats();
+  fetchDestinationStats();
 });
 
 watch(selectedYearOrders, fetchOrderStats);
 watch(selectedYearTransactions, fetchCustomerStats);
+watch (selectedYearDest, fetchDestinationStats);
 </script>
 
 <template>
@@ -85,7 +103,7 @@ watch(selectedYearTransactions, fetchCustomerStats);
 
           <div class="bg-white rounded-lg shadow p-6 min-h-[300px]">
             <h3 class="font-semibold text-base mb-2">Reference Data</h3>
-            <div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">[ isi sini der ]</div>
+            <div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">[ isi sini dhem ]</div>
           </div>
 
           <!-- Customer Transactions Pie Chart -->
@@ -135,10 +153,57 @@ watch(selectedYearTransactions, fetchCustomerStats);
             </div>
           </div>
 
+          <!-- Destination Distribution Pie Chart -->
           <div class="bg-white rounded-lg shadow p-6 min-h-[300px]">
-            <h3 class="font-semibold text-base mb-2">Destination Distribution</h3>
-            <div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">[ ini juga ye ]</div>
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-semibold text-base">Destination Distribution</h3>
+              <select v-model="selectedYearDest" class="border rounded px-2 py-1 text-xs">
+                <option :value="currentYear - 1">{{ currentYear - 1 }}</option>
+                <option :value="currentYear">{{ currentYear }}</option>
+              </select>
+            </div>
+
+            <div class="flex justify-center items-center gap-4">
+              <div class="w-[45%] h-64">
+                <Pie
+                  :data="{
+                    labels: destinationStats.map(ds => ds.name),
+                    datasets: [{
+                      data: destinationStats.map(ds => ds.value),
+                      backgroundColor: ['#1C5D99','#EF4444','#10B981','#F59E0B','#6366F1','#EC4899']
+                    }]
+                  }"
+                  :options="{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      tooltip: {
+                        callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}` }
+                      },
+                      legend: { display: false }
+                    }
+                  }"
+                />
+              </div>
+
+              <div class="text-xs">
+                <ul class="space-y-2">
+                  <li
+                    v-for="(item, index) in destinationStats"
+                    :key="index"
+                    class="flex items-center"
+                  >
+                    <span
+                      class="inline-block w-3 h-3 rounded-full mr-2"
+                      :style="{ backgroundColor: ['#1C5D99','#EF4444','#10B981','#F59E0B','#6366F1','#EC4899'][index % 6] }"
+                    ></span>
+                    {{ item.name }}
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
+
 
           <!-- Order Chart -->
           <div class="bg-white rounded-lg shadow p-6 min-h-[300px]">
