@@ -45,6 +45,22 @@ const goToDetail = (event: { data: Chassis }) => {
 .clickable-row:hover {
   background-color: #f3f4f6 !important;
 }
+
+:deep(.p-datatable .p-datatable-thead > tr > th),
+:deep(.p-datatable .p-datatable-tbody > tr > td) {
+  white-space: normal !important;
+  word-break: break-word !important;
+  max-width: 120px;
+}
+
+@media (max-width: 768px) {
+  :deep(.p-datatable .p-datatable-thead > tr > th),
+  :deep(.p-datatable .p-datatable-tbody > tr > td) {
+    font-size: 0.9rem;
+    max-width: 80px;
+    padding: 6px 4px;
+  }
+}
 </style>
 
 <template>
@@ -55,15 +71,13 @@ const goToDetail = (event: { data: Chassis }) => {
       <div class="flex-1 p-4 main-content overflow-auto">
         <div class="container mx-auto max-w-6xl">
           <div class="card">
-            <div class="flex justify-between items-center mb-4">
-              <span class="p-input-icon-left">
-                <!-- <i class="pi pi-search"></i> -->
-                <InputText v-model="filters.global.value" placeholder="Search Chassis..." />
+            <div class="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+              <span class="p-input-icon-left w-full lg:w-auto">
+                <InputText v-model="filters.global.value" placeholder="Search Chassis..." class="w-full" />
               </span>
-
               <VButton
                 title="+ Buat"
-                class="bg-[#1C5D99] text-white px-4 py-2 rounded"
+                class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full lg:w-auto"
                 @click="() => $router.push('/chassis/create')"
               />
             </div>
@@ -79,19 +93,18 @@ const goToDetail = (event: { data: Chassis }) => {
               :loading="loading"
               selectionMode="single"
               :globalFilterFields="['chassisId', 'chassisSize', 'chassisYear', 'chassisAxle', 'chassisKIRNo']"
-              
               stripedRows
-              tableStyle="min-width: 60rem"
+              tableStyle="width: 100%"
               paginatorTemplate="RowsPerPageDropdown PrevPageLink CurrentPageReport NextPageLink"
               currentPageReportTemplate="{first} to {last} of {totalRecords} chassis"
-              class="custom-datatable"
+              class="custom-datatable w-full"
               @rowSelect="goToDetail"
               :rowClass="() => 'clickable-row'"
             >
               <template #empty> No chassis found. </template>
               <template #loading> Loading chassis data. Please wait. </template>
 
-              <Column header="No." style="width: 5%">
+              <Column header="No." style="width: 10%">
                 <template #body="{ index }">
                   <div class="text-center">{{ index + 1 }}</div>
                 </template>

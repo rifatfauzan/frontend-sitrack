@@ -52,8 +52,26 @@
   .dialog-box {
     box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
     width: 500px;
+    max-width: 90vw;
     text-align: center;
     position: fixed;
+    background: white;
+    border-radius: 12px;
+  }
+  
+  @media (max-width: 900px) {
+    .dialog-box {
+      width: 400px;
+      max-width: 95vw;
+    }
+  }
+  @media (max-width: 600px) {
+    .dialog-box {
+      width: 95vw;
+      max-width: 98vw;
+      min-width: 0;
+      padding: 0 8px;
+    }
   }
   
   .close-button {

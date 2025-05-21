@@ -5,76 +5,77 @@
       <HeaderComponent title="Notifikasi" />
       <div class="flex-1 p-4 main-content overflow-auto pt-20">
         <div class="container mx-auto max-w-5xl">
-          <div class="flex justify-between items-center mb-4">
-            <div class="flex gap-2">
-              <button
-                v-for="tab in tabs"
-                :key="tab.value"
-                @click="activeTab = tab.value"
-                :class="[
-                  'tab-btn px-4 py-2 rounded font-medium font-semibold min-h-[48px] text-lg',
-                  activeTab === tab.value ? 'active bg-[#1C5D99] text-white' : 'bg-gray-100 text-gray-700'
-                ]"
-              >
-                {{ tab.label }}
-              </button>
+          <div class="card">
+            <div class="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+              <div class="flex flex-wrap gap-2 w-full lg:w-auto justify-start">
+                <button
+                  v-for="tab in tabs"
+                  :key="tab.value"
+                  @click="activeTab = tab.value"
+                  :class="[
+                    'tab-btn px-4 py-2 rounded font-medium font-semibold min-h-[48px] text-lg',
+                    activeTab === tab.value ? 'active bg-[#1C5D99] text-white' : 'bg-gray-100 text-gray-700'
+                  ]"
+                >
+                  {{ tab.label }}
+                </button>
+              </div>
+              <VButton
+                title="Hapus"
+                icon="pi pi-trash"
+                class="bg-[#EB5757] hover:bg-[#C64646] text-white px-4 py-2 rounded flex items-center gap-2 min-h-[48px] w-full lg:w-auto"
+                @click="bulkDelete"
+              />
             </div>
-            <VButton
-              title="Hapus"
-              icon="pi pi-trash"
-              class="bg-[#EB5757] hover:bg-[#C64646] text-white px-4 py-2 rounded flex items-center gap-2 min-h-[48px]"
-              @click="bulkDelete"
-            />
-          </div>
-
-          <div v-if="store.loading" class="flex justify-center py-8">
-            <i class="pi pi-spin pi-spinner text-3xl text-primary"></i>
-          </div>
-
-          <div v-else-if="filteredNotifications.length === 0" class="bg-white rounded-lg p-6 text-center text-gray-500">
-            Tidak ada notifikasi
-          </div>
-
-          <div v-else>
-            <div class="card">
-              <div class="scrollable-table-wrapper">
-                <table class="min-w-full divide-y divide-gray-200 bg-white rounded-lg shadow">
-                  <thead>
-                    <tr>
-                      <th class="py-3 px-4 text-center text-xl w-16 sticky-header">No.</th>
-                      <th class="py-3 px-4 text-left text-xl w-full sticky-header">Notifikasi</th>
-                      <th class="py-3 px-4 text-center w-12 sticky-header"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr
-                      v-for="(notif, idx) in filteredNotifications"
-                      :key="notif.id"
-                      :class="[
-                        'cursor-pointer transition',
-                        idx % 2 === 0
-                          ? 'bg-[#FAFAFF] hover:bg-[#E0E0E0] rounded-lg'
-                          : 'bg-[#BBCDE5] hover:bg-[#A4BEE0] rounded-lg',
-                        !notif.isRead ? 'unread-row' : ''
-                      ]"
-                      @click="handleNotificationClick(notif)"
-                    >
-                      <td class="py-3 px-4 text-center text-lg font-semibold">{{ idx + 1 }}</td>
-                      <td class="py-3 px-4 text-lg flex items-center gap-2">
-                        <span class="text-xl" v-html="formatMessage(notif)"></span>
-                        <span v-if="!notif.isRead" class="ml-2 px-2 py-1 bg-blue-500 text-white text-xs rounded-full font-bold">New</span>
-                      </td>
-                      <td class="py-3 px-4 text-center" @click.stop>
-                        <input
-                          type="checkbox"
-                          v-model="selectedIds"
-                          :value="notif.id"
-                          class="outline-checkbox"
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+            <div class="table-container">
+              <div v-if="store.loading" class="flex justify-center py-8">
+                <i class="pi pi-spin pi-spinner text-3xl text-primary"></i>
+              </div>
+              <div v-else-if="filteredNotifications.length === 0" class="bg-white rounded-lg p-6 text-center text-gray-500">
+                Tidak ada notifikasi
+              </div>
+              <div v-else>
+                <div class="card">
+                  <div class="scrollable-table-wrapper">
+                    <table class="min-w-full divide-y divide-gray-200 bg-white rounded-lg shadow">
+                      <thead>
+                        <tr>
+                          <th class="py-3 px-4 text-center text-xl w-16 sticky-header">No.</th>
+                          <th class="py-3 px-4 text-left text-xl w-full sticky-header">Notifikasi</th>
+                          <th class="py-3 px-4 text-center w-12 sticky-header"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          v-for="(notif, idx) in filteredNotifications"
+                          :key="notif.id"
+                          :class="[
+                            'cursor-pointer transition',
+                            idx % 2 === 0
+                              ? 'bg-[#FAFAFF] hover:bg-[#E0E0E0] rounded-lg'
+                              : 'bg-[#BBCDE5] hover:bg-[#A4BEE0] rounded-lg',
+                            !notif.isRead ? 'unread-row' : ''
+                          ]"
+                          @click="handleNotificationClick(notif)"
+                        >
+                          <td class="py-3 px-4 text-center text-lg font-semibold">{{ idx + 1 }}</td>
+                          <td class="py-3 px-4 text-lg flex items-center gap-2">
+                            <span class="text-xl" v-html="formatMessage(notif)"></span>
+                            <span v-if="!notif.isRead" class="ml-2 px-2 py-1 bg-blue-500 text-white text-xs rounded-full font-bold">New</span>
+                          </td>
+                          <td class="py-3 px-4 text-center" @click.stop>
+                            <input
+                              type="checkbox"
+                              v-model="selectedIds"
+                              :value="notif.id"
+                              class="outline-checkbox"
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -171,6 +172,7 @@ const filteredNotifications = computed(() => {
 const handleNotificationClick = async (notif: Notification) => {
   if (!notif.isRead) {
     await store.markAsRead(notif.id)
+    notif.isRead = true
   }
   router.push(notif.redirectEndpoint)
 }
@@ -289,5 +291,69 @@ onMounted(() => {
   padding: 1.5rem;
   border-radius: 0.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover {
+  background-color: #f3f4f6 !important;
+}
+
+:deep(.p-datatable .p-datatable-thead > tr > th),
+:deep(.p-datatable .p-datatable-tbody > tr > td) {
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+
+@media screen and (max-width: 768px) {
+  .table-container {
+    margin: 0 -1rem;
+    padding: 0 1rem;
+  }
+  .card {
+    padding: 1rem;
+  }
+  :deep(.p-datatable) {
+    font-size: 0.9rem;
+  }
+  :deep(.p-datatable .p-datatable-thead > tr > th),
+  :deep(.p-datatable .p-datatable-tbody > tr > td) {
+    padding: 0.5rem;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+  .flex.flex-wrap.gap-2.w-full {
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
+    row-gap: 0.5rem;
+  }
+  .flex.flex-col.lg\:flex-row.justify-between.items-center.mb-4.gap-4 > .w-full {
+    width: 100% !important;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .table-container {
+    margin: 0 -0.5rem;
+    padding: 0 0.5rem;
+  }
+  .card {
+    padding: 0.5rem;
+  }
+  :deep(.p-datatable) {
+    font-size: 0.8rem;
+  }
+  :deep(.p-datatable .p-datatable-thead > tr > th),
+  :deep(.p-datatable .p-datatable-tbody > tr > td) {
+    padding: 0.4rem;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
 }
 </style>

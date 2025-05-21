@@ -6,22 +6,23 @@
         <div class="flex-1 p-4 main-content overflow-auto">
           <div class="container mx-auto max-w-6xl">
             <div class="card">
-              <div class="flex justify-between items-center mb-4">
-                <div class="flex items-center gap-4">
-                  <InputText v-model="filters.global.value" placeholder="Search SPJ..." />
+              <div class="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+                <div class="flex flex-col lg:flex-row gap-3 items-center w-full lg:w-auto">
+                  <span class="p-input-icon-left w-full lg:w-auto">
+                    <InputText v-model="filters.global.value" placeholder="Search SPJ..." class="w-full" />
+                  </span>
                   <Dropdown
                     v-model="selectedStatus"
                     :options="statusOptions"
                     optionLabel="label"
                     optionValue="value"
                     placeholder="Filter Status"
-                    class="w-60"
+                    class="w-full lg:w-60"
                   />
                 </div>
-
                 <VButton
                   title="+ Buat"
-                  class="bg-[#1C5D99] text-white px-4 py-2 rounded"
+                  class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full lg:w-auto"
                   @click="() => router.push({ name: 'create spj' })"
                 />
               </div>
@@ -39,16 +40,16 @@
                 selectionMode="single"
                 @rowSelect="onRowClick"
                 :rowClass="() => 'clickable-row'"
-                tableStyle="min-width: 60rem"
+                tableStyle="width: 100%"
                 paginatorTemplate="RowsPerPageDropdown PrevPageLink CurrentPageReport NextPageLink"
                 currentPageReportTemplate="{first} to {last} of {totalRecords} SPJ"
                 stripedRows
-                class="custom-datatable"
+                class="custom-datatable w-full"
               >
                 <template #empty> Tidak ada SPJ Vehicle Out yang ditemukan. </template>
                 <template #loading> Memuat data SPJ... </template>
   
-                <Column header="No." style="width: 5%">
+                <Column header="No." style="width: 10%">
                   <template #body="{ index }">
                     <div class="text-center">{{ index + 1 }}</div>
                   </template>
@@ -168,6 +169,21 @@
     border-radius: 9999px;
     text-align: center;
     white-space: nowrap;
+  }
+  :deep(.p-datatable .p-datatable-thead > tr > th),
+  :deep(.p-datatable .p-datatable-tbody > tr > td) {
+    white-space: normal !important;
+    word-break: break-word !important;
+    max-width: 120px;
+  }
+
+  @media (max-width: 768px) {
+    :deep(.p-datatable .p-datatable-thead > tr > th),
+    :deep(.p-datatable .p-datatable-tbody > tr > td) {
+      font-size: 0.9rem;
+      max-width: 80px;
+      padding: 6px 4px;
+    }
   }
   </style>
   

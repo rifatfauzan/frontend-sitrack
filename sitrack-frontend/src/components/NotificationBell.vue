@@ -59,3 +59,25 @@ function goToNotifications() {
     router.push('/notifications')
 }
 </script>
+
+<style scoped>
+@media (max-width: 768px) {
+    .relative {
+        padding-right: 0.5rem;
+    }
+
+    button {
+        padding: 0.375rem;
+    }
+
+    i {
+        font-size: 1.25rem !important;
+    }
+
+    span {
+        width: 1rem !important;
+        height: 1rem !important;
+        font-size: 0.625rem !important;
+    }
+}
+</style>

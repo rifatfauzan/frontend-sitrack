@@ -63,6 +63,22 @@ onMounted(async () => {
 .p-input-icon-left > .p-inputtext {
     padding-left: 2rem;
 }
+
+:deep(.p-datatable .p-datatable-thead > tr > th),
+:deep(.p-datatable .p-datatable-tbody > tr > td) {
+  white-space: normal !important;
+  word-break: break-word !important;
+  max-width: 120px;
+}
+
+@media (max-width: 768px) {
+  :deep(.p-datatable .p-datatable-thead > tr > th),
+  :deep(.p-datatable .p-datatable-tbody > tr > td) {
+    font-size: 0.9rem;
+    max-width: 80px;
+    padding: 6px 4px;
+  }
+}
 </style>
 
 
@@ -74,13 +90,13 @@ onMounted(async () => {
             <HeaderComponent title="List Driver" />
             <div class="flex-1 p-4 main-content overflow-auto">
                 <div class="container mx-auto max-w-4xl">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="p-input-icon-left">
-                            <InputText v-model="filters.global.value" placeholder="Search Driver" />
+                    <div class="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+                        <span class="p-input-icon-left w-full lg:w-auto">
+                            <InputText v-model="filters.global.value" placeholder="Search Driver" class="w-full" />
                         </span>
                         <VButton 
                             title="+ Buat" 
-                            class="bg-[#1C5D99] text-white px-4 py-2 rounded" 
+                            class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full lg:w-auto" 
                             @click="() => $router.push('/sopir/add')" 
                         />
                     </div>
@@ -95,24 +111,25 @@ onMounted(async () => {
                         :loading="sopirStore.loading"
                         :rowsPerPageOptions="[5, 10, 20]" 
                         :globalFilterFields="['driverName', 'driverId', 'driverJoinDate', 'driver_SIM_No', 'driver_KTP_No']"
-
                         stripedRows
-                        tableStyle="min-width: 50rem"
+                        tableStyle="width: 100%"
                         paginatorTemplate="RowsPerPageDropdown PrevPageLink CurrentPageReport NextPageLink"
                         currentPageReportTemplate="{first} to {last} of {totalRecords} Drivers"
-                        class="custom-datatable"
+                        class="custom-datatable w-full"
                         @row-click= "goToDetail"
                     >
                         <template #empty>No driver found.</template>
                         <template #loading>Loading driver data. Please wait.</template>
                         
-                        <Column header="No." style="width: 5%">
+                        <Column header="No." style="width: 10%">
                             <template #body="{ index }">
                                 <div class="text-center">{{ index + 1 }}</div>
                             </template>
                         </Column>
                         
-                        <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header" sortable>
+                        <Column v-for="col of columns" :key="col.field" :field="col.field" :header="col.header" sortable
+                          :style="col.field === 'driverName' ? 'min-width: 140px; width: 140px;' : ''"
+                        >
                             <template #body="{ data }">
                                 <div v-if="col.field === 'driverId'" sortable>
                                     {{ formatDriverId(data.driverId) }}

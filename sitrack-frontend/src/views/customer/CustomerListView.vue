@@ -6,50 +6,49 @@
       <div class="flex-1 p-4 main-content overflow-auto">
         <div class="container mx-auto max-w-6xl">
           <div class="card">
-            <div class="flex justify-between items-center mb-4">
-              <span class="p-input-icon-left">
-                <InputText v-model="filters['global'].value" placeholder="Search Customer..." />
+            <div class="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+              <span class="p-input-icon-left w-full lg:w-auto">
+                <InputText v-model="filters['global'].value" placeholder="Search Customer..." class="w-full" />
               </span>
               <VButton
                 title="+ Buat"
-                class="bg-[#1C5D99] text-white px-4 py-2 rounded"
+                class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full lg:w-auto"
                 @click="() => $router.push('/customers/create')"
               />
             </div>
-
-            <DataTable
-              v-model:filters="filters"
-              :value="sortedCustomers"
-              paginator
-              :rows="10"
-              dataKey="id"
-              :rowsPerPageOptions="[5, 10, 20]"
-              filterDisplay="menu"
-              :loading="loading"
-              :globalFilterFields="['name', 'id', 'address', 'siteId']"
-              stripedRows
-              tableStyle="min-width: 60rem"
-              paginatorTemplate="RowsPerPageDropdown PrevPageLink CurrentPageReport NextPageLink"
-              currentPageReportTemplate="{first} to {last} of {totalRecords} customers"
-              class="custom-datatable"
-              selectionMode="single"
-              @rowSelect="goToDetail"
-              :rowClass="() => 'clickable-row'"
-            >
-              <template #empty> Tidak ada customer yang ditemukan. </template>
-              <template #loading> Loading data customer. Harap tunggu... </template>
-
-              <Column header="No." style="width: 5%">
-                <template #body="{ index }">
-                  <div class="text-center">{{ index + 1 }}</div>
-                </template>
-              </Column>
-              <Column field="id" header="ID" sortable></Column>
-              <Column field="name" header="Name" sortable></Column>
-              <Column field="address" header="Address" sortable></Column>
-              <Column field="siteId" header="Site ID" sortable></Column>
-
-            </DataTable>
+            <div class="overflow-x-auto">
+              <DataTable
+                v-model:filters="filters"
+                :value="sortedCustomers"
+                paginator
+                :rows="10"
+                dataKey="id"
+                :rowsPerPageOptions="[5, 10, 20]"
+                filterDisplay="menu"
+                :loading="loading"
+                :globalFilterFields="['name', 'id', 'address', 'siteId']"
+                stripedRows
+                tableStyle="width: 100%"
+                paginatorTemplate="RowsPerPageDropdown PrevPageLink CurrentPageReport NextPageLink"
+                currentPageReportTemplate="{first} to {last} of {totalRecords} customers"
+                class="custom-datatable w-full"
+                selectionMode="single"
+                @rowSelect="goToDetail"
+                :rowClass="() => 'clickable-row'"
+              >
+                <template #empty> Tidak ada customer yang ditemukan. </template>
+                <template #loading> Loading data customer. Harap tunggu... </template>
+                <Column header="No.">
+                  <template #body="{ index }">
+                    <div class="text-center">{{ index + 1 }}</div>
+                  </template>
+                </Column>
+                <Column field="id" header="ID" sortable></Column>
+                <Column field="name" header="Name" sortable></Column>
+                <Column field="address" header="Address" sortable></Column>
+                <Column field="siteId" header="Site ID" sortable></Column>
+              </DataTable>
+            </div>
           </div>
         </div>
       </div>

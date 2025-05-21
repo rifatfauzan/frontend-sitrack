@@ -77,4 +77,22 @@
     .success-button:hover {
         background-color: #e2e1e1;
     }
+
+    @media (max-width: 600px) {
+        .success {
+            padding: 16px 6px;
+        }
+        .popup-title {
+            font-size: 1.2rem;
+        }
+        .popup-actions {
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .success-icon {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+    }
 </style>

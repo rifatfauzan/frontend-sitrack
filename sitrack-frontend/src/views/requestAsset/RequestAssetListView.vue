@@ -73,23 +73,21 @@ const filteredData = () => {
       <div class="flex-1 p-4 overflow-auto">
         <div class="container mx-auto max-w-7xl">
           <div class="card">
-            <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
-              <div class="flex gap-3 items-center flex-wrap">
-                <span class="p-input-icon-left">
-                  <InputText v-model="filters.global.value" placeholder="Search Request Asset..." class="w-64" />
+            <div class="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+              <div class="flex flex-col lg:flex-row gap-3 items-center w-full lg:w-auto">
+                <span class="p-input-icon-left w-full lg:w-auto">
+                  <InputText v-model="filters.global.value" placeholder="Search Request Asset..." class="w-full" />
                 </span>
-
                 <Dropdown
                   v-model="selectedStatus"
                   :options="statusOptions"
                   optionLabel="label"
                   optionValue="value"
                   placeholder="Filter Status"
-                  class="w-60"
+                  class="w-full lg:w-60"
                 />
               </div>
-
-              <VButton title="+ Buat" class="bg-[#1C5D99] text-white px-4 py-2 rounded" @click="() => router.push('/request-assets/create')" />
+              <VButton title="+ Buat" class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full lg:w-auto" @click="() => router.push('/request-assets/create')" />
             </div>
 
             <DataTable
@@ -104,17 +102,17 @@ const filteredData = () => {
               selectionMode="single"
               :globalFilterFields="['requestAssetId']"
               stripedRows
-              tableStyle="min-width: 100%"
+              tableStyle="width: 100%"
               paginatorTemplate="RowsPerPageDropdown PrevPageLink CurrentPageReport NextPageLink"
               currentPageReportTemplate="{first} to {last} of {totalRecords} requests"
-              class="custom-datatable"
+              class="custom-datatable w-full"
               @rowSelect="goToDetail"
               :rowClass="() => 'clickable-row'"
             >
               <template #empty>No request asset found.</template>
               <template #loading>Loading request assets. Please wait.</template>
 
-              <Column header="No." style="width: 5%">
+              <Column header="No." style="width: 10%">
                 <template #body="{ index }">
                   <div class="text-center">{{ index + 1 }}</div>
                 </template>
@@ -141,6 +139,22 @@ const filteredData = () => {
 </template>
 
 <style scoped>
+:deep(.p-datatable .p-datatable-thead > tr > th),
+:deep(.p-datatable .p-datatable-tbody > tr > td) {
+  white-space: normal !important;
+  word-break: break-word !important;
+  max-width: 120px;
+}
+
+@media (max-width: 768px) {
+  :deep(.p-datatable .p-datatable-thead > tr > th),
+  :deep(.p-datatable .p-datatable-tbody > tr > td) {
+    font-size: 0.9rem;
+    max-width: 80px;
+    padding: 6px 4px;
+  }
+}
+
 table {
   border-collapse: collapse;
   width: 100%;

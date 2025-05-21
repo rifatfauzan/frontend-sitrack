@@ -56,12 +56,14 @@ const userRole = ref(getCurrentUserRole());
       <HeaderComponent title="List Inventory Asset" />
       <div class="flex-1 p-4 overflow-auto bg-[#C8D9ED]">
         <div class="container mx-auto max-w-7xl p-6 rounded shadow bg-white">
-          <div class="flex justify-between items-center mb-4">
-            <InputText v-model="filters.global.value" placeholder="Search Assets" class="w-64" />
+          <div class="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+            <span class="p-input-icon-left w-full lg:w-auto">
+              <InputText v-model="filters.global.value" placeholder="Search Assets" class="w-full" />
+            </span>
             <VButton
               v-if="['Admin', 'Supervisor', 'Manager'].includes(userRole)"
               title="+ Buat"
-              class="bg-[#1C5D99] text-white px-4 py-2 rounded"
+              class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full lg:w-auto"
               @click="goToCreateAsset"
             />
           </div>
@@ -76,16 +78,16 @@ const userRole = ref(getCurrentUserRole());
             :rowsPerPageOptions="[5, 10, 20]"
             :filters="filters"            
             stripedRows
-            tableStyle="min-width: 100%"
-            paginatorTemplate="PrevPageLink CurrentPageReport NextPageLink"
+            tableStyle="width: 100%"
+            paginatorTemplate="RowsPerPageDropdown PrevPageLink CurrentPageReport NextPageLink"
             currentPageReportTemplate="{first} to {last} of {totalRecords} assets"
-            class="custom-datatable"
+            class="custom-datatable w-full"
             @row-click="goToDetail"
           >
             <template #empty>No asset found.</template>
             <template #loading>Loading assets. Please wait.</template>
 
-            <Column header="No." style="width: 5%">
+            <Column header="No." style="width: 10%">
               <template #body="{ index }">
                 <div class="text-center">{{ index + 1 }}</div>
               </template>
@@ -122,5 +124,19 @@ const userRole = ref(getCurrentUserRole());
   background-color: #C8D9ED;
 }
 
+:deep(.p-datatable .p-datatable-thead > tr > th),
+:deep(.p-datatable .p-datatable-tbody > tr > td) {
+  white-space: normal !important;
+  word-break: break-word !important;
+  max-width: 120px;
+}
 
+@media (max-width: 768px) {
+  :deep(.p-datatable .p-datatable-thead > tr > th),
+  :deep(.p-datatable .p-datatable-tbody > tr > td) {
+    font-size: 0.9rem;
+    max-width: 80px;
+    padding: 6px 4px;
+  }
+}
 </style>

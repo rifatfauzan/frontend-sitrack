@@ -6,13 +6,13 @@
       <div class="flex-1 p-4 main-content overflow-auto">
         <div class="container mx-auto max-w-4xl">
           <div class="card">
-            <div class="flex justify-between items-center mb-4">
-              <span class="p-input-icon-left">
-                <InputText v-model="filters['global'].value" placeholder="Search Keyword..." />
+            <div class="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+              <span class="p-input-icon-left w-full lg:w-auto">
+                <InputText v-model="filters['global'].value" placeholder="Search Keyword..." class="w-full" />
               </span>
               <VButton
                 title="+ Buat"
-                class="bg-[#1C5D99] text-white px-4 py-2 rounded"
+                class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full lg:w-auto"
                 @click="() => $router.push('/users/create')"
               />
             </div>
@@ -27,33 +27,33 @@
               :loading="loading"
               :globalFilterFields="['username', 'role']"
               stripedRows
-              tableStyle="min-width: 50rem"
+              tableStyle="width: 100%"
               paginatorTemplate="RowsPerPageDropdown PrevPageLink CurrentPageReport NextPageLink"
               currentPageReportTemplate="{first} to {last}"
-              class="custom-datatable"
+              class="custom-datatable w-full"
             >
               <template #empty> No users found. </template>
               <template #loading> Loading user data. Please wait. </template>
 
-              <Column header="No." style="width: 5%">
+              <Column header="No." style="width: 10%">
                 <template #body="{ index }">
                   <div class="text-center">{{ index + 1 }}</div>
                 </template>
               </Column>
 
-              <Column field="username" header="Username" class="p-sortable-column" style="min-width: 25%" sortable>
+              <Column field="username" header="Username" class="p-sortable-column" style="min-width: 20%" sortable>
                 <template #body="{ data }">
                   {{ data.username }}
                 </template>
               </Column>
 
-              <Column field="role" header="Role" style="min-width: 12rem" sortable>
+              <Column field="role" header="Role" style="min-width: 20%" sortable>
                 <template #body="{ data }">
                   {{ data.role }}
                 </template>
               </Column>
 
-              <Column header="Actions" style="width: 10%">
+              <Column header="Actions" style="width: 30%">
                 <template #body="slotProps">
                   <div class="flex justify-center">
                     <VButton
@@ -104,5 +104,19 @@ onMounted(async () => {
   border: 1px solid #d1d5db;
   border-radius: 0.375rem;
   padding: 0.5rem;
+}
+:deep(.p-datatable .p-datatable-thead > tr > th),
+:deep(.p-datatable .p-datatable-tbody > tr > td) {
+  white-space: normal !important;
+  word-break: break-word !important;
+  max-width: 120px;
+}
+@media (max-width: 768px) {
+  :deep(.p-datatable .p-datatable-thead > tr > th),
+  :deep(.p-datatable .p-datatable-tbody > tr > td) {
+    font-size: 0.9rem;
+    max-width: 80px;
+    padding: 6px 4px;
+  }
 }
 </style>

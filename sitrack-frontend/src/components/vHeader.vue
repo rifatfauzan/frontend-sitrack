@@ -23,3 +23,38 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+.header {
+    background-color: #FAFAFF;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 1024px) {
+    .header {
+        justify-content: center;
+        position: relative;
+    }
+
+    .header h1 {
+        padding-left: 0;
+        text-align: center;
+    }
+
+    .header > div {
+        position: absolute;
+        right: 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        height: 4rem;
+        padding: 0 0.5rem;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+}
+</style>

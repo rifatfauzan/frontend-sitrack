@@ -534,5 +534,50 @@ const markOrderAsDone = async () => {
         white-space: nowrap;
     }
 
+    @media screen and (max-width: 768px) {
+      .w-full.max-w-5xl {
+        max-height: none;
+        padding: 1rem;
+      }
+
+      .grid {
+        gap: 1rem;
+      }
+
+      .detail-item {
+        padding: 8px;
+        min-height: auto;
+      }
+
+      .detail-remarks {
+        padding: 8px;
+        margin-top: 8px;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      .w-full.max-w-5xl {
+        padding: 0.5rem;
+      }
+
+      .grid {
+        gap: 0.5rem;
+      }
+
+      .detail-item {
+        padding: 6px;
+        font-size: 0.9rem;
+      }
+
+      .detail-remarks {
+        padding: 6px;
+        font-size: 0.9rem;
+      }
+
+      .detail-remarks .text {
+        font-size: 0.9rem;
+      }
+    }
+
   </style>
   

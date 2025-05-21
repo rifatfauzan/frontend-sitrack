@@ -47,22 +47,23 @@ const goToCreateTruck = () => {
 <template>
   <div class="flex h-screen">
     <Sidebar />
-    <div class="flex-1 flex flex-col min-h-screen">
+    <div class="flex-1 flex flex-col min-h-screen lg:ml-0">
       <HeaderComponent title="List Vehicle" />
       <div class="flex-1 p-4 main-content overflow-auto">
         <div class="container mx-auto max-w-full">
           <div class="card">
-            <div class="flex justify-between items-center mb-4">
-              <span class="p-input-icon-left">
+            <div class="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+              <span class="p-input-icon-left w-full lg:w-auto">
                 <InputText
                   v-model="filters.global.value"
                   placeholder="Search Vehicle..."
+                  class="w-full"
                 />
               </span>
 
               <VButton
                 title="+ Buat"
-                class="bg-[#1C5D99] text-white px-4 py-2 rounded"
+                class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full lg:w-auto"
                 @click="goToCreateTruck"
               />
             </div>
@@ -130,5 +131,51 @@ const goToCreateTruck = () => {
 .table-container {
   overflow-x: auto;
   white-space: nowrap;
+}
+
+@media screen and (max-width: 768px) {
+  .table-container {
+    margin: 0 -1rem;
+    padding: 0 1rem;
+  }
+
+  :deep(.p-datatable) {
+    font-size: 0.9rem;
+  }
+
+  :deep(.p-datatable .p-datatable-thead > tr > th) {
+    padding: 0.5rem;
+  }
+
+  :deep(.p-datatable .p-datatable-tbody > tr > td) {
+    padding: 0.5rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .table-container {
+    margin: 0 -0.5rem;
+    padding: 0 0.5rem;
+  }
+
+  :deep(.p-datatable) {
+    font-size: 0.8rem;
+  }
+
+  :deep(.p-datatable .p-datatable-thead > tr > th) {
+    padding: 0.4rem;
+  }
+
+  :deep(.p-datatable .p-datatable-tbody > tr > td) {
+    padding: 0.4rem;
+  }
+
+  .card {
+    padding: 0.5rem;
+  }
 }
 </style>

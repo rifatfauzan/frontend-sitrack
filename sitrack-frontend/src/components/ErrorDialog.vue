@@ -61,7 +61,24 @@
 
     .error-button:hover {
         background-color: #e2e1e1;
-}
+    }
 
+    @media (max-width: 600px) {
+        .error {
+            padding: 16px 6px;
+        }
+        .popup-title {
+            font-size: 1.4rem;
+        }
+        .popup-actions {
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .error-icon {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+    }
 </style>
   

@@ -70,5 +70,18 @@
         background-color: #174d7a;
     }
 
+    @media (max-width: 600px) {
+        .confirmation {
+            padding: 16px 6px;
+        }
+        .popup-title {
+            font-size: 1.2rem;
+        }
+        .popup-actions {
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    }
 </style>
 
