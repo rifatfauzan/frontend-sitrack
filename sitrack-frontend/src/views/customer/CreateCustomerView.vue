@@ -26,12 +26,15 @@
                   <input class="placeholder-gray-400" v-model="form.siteId" type="text" id="siteId" minlength="3" maxlength="3" placeholder="Site ID" required />
                 </div>
                 <div class="form-group">
-                  <label for="address">Alamat</label>
+                  <label for="address">Alamat<span class="required">*</span></label>
                   <input class="placeholder-gray-400" v-model="form.address" id="address" maxlength="100" placeholder="Alamat">
                 </div>
                 <div class="form-group">
                   <label for="cityDestination">Kota Tujuan<span class="required">*</span></label>
-                  <input class="placeholder-gray-400" v-model="form.cityDestination" type="text" id="cityDestination" maxlength="100" placeholder="Kota Tujuan" required />
+                  <select v-model="form.cityDestination" id="cityDestination" required>
+                    <option value="" disabled>Pilih Kota Tujuan</option>
+                    <option v-for="loc in availableLocations" :key="loc" :value="loc">{{ loc }}</option>
+                  </select>
                 </div>
                 <div class="form-group">
                   <label for="contractNo">Nomor Kontrak</label>
@@ -44,10 +47,6 @@
                 <div class="form-group">
                   <label for="commodity">Komoditas</label>
                   <input class="placeholder-gray-400" v-model="form.commodity" type="text" id="commodity" maxlength="50" placeholder="Komoditas"/>
-                </div>
-                <div class="form-group">
-                  <label for="commission">Komisi<span class="required">*</span></label>
-                  <input class="placeholder-gray-400" v-model="form.commission" type="number" id="commission" min="0" step="0.01" placeholder="Rp0,00" required/>
                 </div>
               </div>
               <VButton type="submit" class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full mt-4" :disabled="loading">
@@ -82,8 +81,9 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, reactive } from 'vue';
+  import { ref, reactive, computed } from 'vue';
   import { useCustomerStore } from '@/stores/customer';
+  import { useKomisiStore } from '@/stores/komisi';
   import Sidebar from '@/components/vSidebar.vue';
   import HeaderComponent from '@/components/vHeader.vue';
   import FooterComponent from '@/components/vFooter.vue';
@@ -94,6 +94,7 @@
   import router from '@/router';
   
   const customerStore = useCustomerStore();
+  const komisiStore = useKomisiStore();
   const loading = ref(false);
   const showConfirm = ref(false);
   const showSuccess = ref(false);
@@ -108,8 +109,10 @@
     contractNo: '',
     cityOrigin: '',
     commodity: '',
-    // moveType: ''
-    commission: 0,
+  });
+
+  const availableLocations = computed<string[]>(() => {
+    return [...new Set(komisiStore.komisiList.map((k: { location: string }) => k.location))] as string[];
   });
   
   const goToList = () => {
