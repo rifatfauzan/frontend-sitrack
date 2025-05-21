@@ -102,13 +102,13 @@ const goToDetail = (event: { data: {komisiId: string} }) => {
 
               <Column header="Vehicle ID" sortable>
                 <template #body="{ data }">
-                  {{ getTruckNameById(data.truckId) }}
+                  {{ data.truckId }}
                 </template>
               </Column>
 
               <Column header="Vehicle Brand" sortable>
                 <template #body="{ data }">
-                  {{ data.truckId }}
+                  {{ getTruckNameById(data.truckId )}}
                 </template>
               </Column>
 
