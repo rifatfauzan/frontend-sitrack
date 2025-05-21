@@ -76,71 +76,80 @@ watch(selectedYearTransactions, fetchCustomerStats);
       </div>
 
       <main class="mt-16 flex-1 bg-[#BBCDE5] px-6 py-4 overflow-y-auto max-h-[calc(100vh-4rem)]">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 pb-20">
-          <div class="col-span-2 bg-[#E5ECF6] rounded-lg p-4 flex flex-col items-center">
-            <img src="@/assets/SiTrack.png" alt="SiTrack Logo" class="h-36" />
-            <h1 class="text-xl font-bold text-[#1C5D99]">Sistem Informasi Tracking</h1>
-            <h2 class="text-lg font-medium text-[#1C5D99]">PT. Glorious Interbuana</h2>
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 pb-20">
+          <div class="col-span-2 bg-[#E5ECF6] rounded-lg p-6 flex flex-col items-center">
+            <img src="@/assets/SiTrack.png" alt="SiTrack Logo" class="h-72" />
+            <h1 class="text-3xl font-bold text-[#1C5D99]">Sistem Informasi Tracking</h1>
+            <h2 class="text-xl font-medium text-[#1C5D99]">PT. Glorious Interbuana</h2>
           </div>
 
-          <div class="bg-white rounded-lg shadow p-4">
+          <div class="bg-white rounded-lg shadow p-6 min-h-[300px]">
             <h3 class="font-semibold text-base mb-2">Reference Data</h3>
-            <div class="w-full h-32 flex items-center justify-center text-gray-400 text-xs">[ isi sini der ]</div>
+            <div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">[ isi sini der ]</div>
           </div>
 
           <!-- Customer Transactions Pie Chart -->
-          <div class="bg-white rounded-lg shadow p-4">
-            <div class="flex justify-between items-center mb-2">
+          <div class="bg-white rounded-lg shadow p-6 min-h-[300px]">
+            <div class="flex justify-between items-center mb-4">
               <h3 class="font-semibold text-base">Customer Transactions</h3>
               <select v-model="selectedYearTransactions" class="border rounded px-2 py-1 text-xs">
                 <option :value="currentYear - 1">{{ currentYear - 1 }}</option>
                 <option :value="currentYear">{{ currentYear }}</option>
               </select>
             </div>
-            <div class="w-full h-48">
-              <Pie :data="{
-                labels: customerStats.map(cs => cs.name),
-                datasets: [
-                  {
-                    data: customerStats.map(cs => cs.value),
-                    backgroundColor: ['#1C5D99', '#EF4444', '#10B981', '#F59E0B', '#6366F1', '#EC4899']
-                  }
-                ]
-              }" :options="{
-                responsive: true,
-                plugins: {
-                  tooltip: {
-                    callbacks: {
-                      label: ctx => `${ctx.label}: ${ctx.raw}`
+            <div class="flex justify-center items-center gap-4">
+              <div class="w-[45%] h-64">
+                <Pie :data="{
+                  labels: customerStats.map(cs => cs.name),
+                  datasets: [
+                    {
+                      data: customerStats.map(cs => cs.value),
+                      backgroundColor: ['#1C5D99', '#EF4444', '#10B981', '#F59E0B', '#6366F1', '#EC4899']
                     }
-                  },
-                  legend: {
-                    position: 'bottom',
-                    labels: {
-                      boxWidth: 10,
-                      font: { size: 10 }
+                  ]
+                }" :options="{
+                  responsive: true,
+                  plugins: {
+                    tooltip: {
+                      callbacks: {
+                        label: ctx => `Jumlah Transaksi: ${ctx.raw}`
+                      }
+                    },
+                    legend: {
+                      display: false
                     }
                   }
-                }
-              }" />
+                }" />
+              </div>
+              <div class="text-xs">
+                <ul class="space-y-2">
+                  <li v-for="(item, index) in customerStats" :key="index" class="flex items-center">
+                    <span
+                      class="inline-block w-3 h-3 rounded-full mr-2"
+                      :style="{ backgroundColor: ['#1C5D99', '#EF4444', '#10B981', '#F59E0B', '#6366F1', '#EC4899'][index % 6] }"
+                    ></span>
+                    {{ item.name }}
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
 
-          <div class="bg-white rounded-lg shadow p-4">
+          <div class="bg-white rounded-lg shadow p-6 min-h-[300px]">
             <h3 class="font-semibold text-base mb-2">Destination Distribution</h3>
-            <div class="w-full h-32 flex items-center justify-center text-gray-400 text-xs">[ ini juga ye ]</div>
+            <div class="w-full h-full flex items-center justify-center text-gray-400 text-xs">[ ini juga ye ]</div>
           </div>
 
           <!-- Order Chart -->
-          <div class="bg-white rounded-lg shadow p-4">
-            <div class="flex justify-between items-center mb-2">
+          <div class="bg-white rounded-lg shadow p-6 min-h-[300px]">
+            <div class="flex justify-between items-center mb-4">
               <h3 class="font-semibold text-base">Order Chart</h3>
               <select v-model="selectedYearOrders" class="border rounded px-2 py-1 text-xs">
                 <option :value="currentYear - 1">{{ currentYear - 1 }}</option>
                 <option :value="currentYear">{{ currentYear }}</option>
               </select>
             </div>
-            <div class="w-full h-48">
+            <div class="w-full h-60">
               <Bar :data="{
                 labels: monthLabels,
                 datasets: [
