@@ -57,20 +57,23 @@
     position: fixed;
     background: white;
     border-radius: 12px;
+    padding: 1;
   }
   
   @media (max-width: 900px) {
     .dialog-box {
       width: 400px;
       max-width: 95vw;
+      padding: 1;
     }
   }
   @media (max-width: 600px) {
     .dialog-box {
-      width: 95vw;
-      max-width: 98vw;
+      width: 90vw;
+      max-width: 350px;
       min-width: 0;
-      padding: 0 8px;
+      padding: 0;
+      border-radius: 10px;
     }
   }
   

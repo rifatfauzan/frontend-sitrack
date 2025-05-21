@@ -172,6 +172,7 @@ const filteredNotifications = computed(() => {
 const handleNotificationClick = async (notif: Notification) => {
   if (!notif.isRead) {
     await store.markAsRead(notif.id)
+    await store.fetchUserNotifications();
     notif.isRead = true
   }
   router.push(notif.redirectEndpoint)
