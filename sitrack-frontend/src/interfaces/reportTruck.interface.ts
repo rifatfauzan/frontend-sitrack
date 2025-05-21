@@ -11,7 +11,7 @@ export interface ReportTruck {
   vehicleId: string;
   vehiclePlateNo?: string;
   vehicleType?: string;
-  vehicleBrand?: String;
+  vehicleBrand?: string;
   description: string;
   createdBy?: string;
   assets: ReportTruckAsset[];
