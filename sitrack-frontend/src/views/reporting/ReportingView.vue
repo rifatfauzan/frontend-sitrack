@@ -128,6 +128,7 @@ const reportTypes = [
   { label: 'All Vehicles', value: 'ALL_VEHICLES' },
   { label: 'All Chassis', value: 'ALL_CHASSIS' },
   { label: 'All Drivers', value: 'ALL_DRIVERS' },
+  { label: 'All Commissions', value: 'ALL_COMMISSIONS'},
   { label: 'All Orders', value: 'ALL_ORDERS' },
   { label: 'All SPJ', value: 'ALL_SPJ' },
 ]
