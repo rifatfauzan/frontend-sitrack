@@ -127,6 +127,12 @@ const goToList = () => {
 const confirmSubmit = () => {
   showConfirm.value = true;
 };
+
+const goToDetail = () => {
+  showSuccess.value = false;
+  router.push({ name: 'truck detail', query: { id: form.vehicleId } });
+};
+
 const showConfirm = ref(false);
 const showSuccess = ref(false);
 const showError = ref(false);
@@ -145,7 +151,7 @@ const errorMessage = ref("");
               <VButton title="Kembali" class="back-button" @click="router.back()">
                 <i class="pi pi-arrow-left"></i>
               </VButton>
-              <h1 class="header-title">Edit Truck</h1>
+              <h1 class="header-title">Edit Vehicle</h1>
             </div>
           </div>
 
@@ -208,8 +214,8 @@ const errorMessage = ref("");
 
               <!-- Vehicle Type -->
               <div class="form-group">
-                <label for="vehicleType">Vehicle Type</label>
-                <input v-model="form.vehicleType" type="text" id="vehicleType" maxlength="20"/>
+                <label for="vehicleType">Vehicle Type <span class="required">*</span></label>
+                <input v-model="form.vehicleType" type="text" id="vehicleType" maxlength="20" required/>
               </div>
 
               <!-- Cylinder -->
@@ -326,9 +332,9 @@ const errorMessage = ref("");
 
     <SuccessDialog 
       :visible="showSuccess" 
-      @close="goToList" 
+      @close="goToDetail" 
       :message="'Truck berhasil diupdate'" 
-      buttonText="Kembali ke List Truck" 
+      buttonText="Kembali ke Detail Truck" 
     />
 
     <ErrorDialog
