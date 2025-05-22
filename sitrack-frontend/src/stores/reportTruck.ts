@@ -63,5 +63,34 @@ export const useReportTruckStore = defineStore('reportTruck', {
         this.loading = false;
       }
     },
+
+    async exportReportTruck(type: 'pdf' | 'excel', reportTruckId: string) {
+      const authStore = useAuthStore();
+      const url = `${API_URL}/api/report-truck/export/${type}`;
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authStore.token}`,
+          },
+          body: JSON.stringify({ reportTruckId }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Gagal mengekspor report truck');
+        }
+        const blob = await response.blob();
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `report_truck.${type === 'pdf' ? 'pdf' : 'xlsx'}`;
+        link.click();
+        window.URL.revokeObjectURL(link.href);
+      } catch {
+
+      }
+    }
   },
 });
