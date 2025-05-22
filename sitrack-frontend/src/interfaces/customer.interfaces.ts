@@ -9,7 +9,6 @@ export interface Customer {
     cityOrigin?: string;
     cityDestination?: string;
     commodity?: string;
-    commission?: number;
     tariffs: Tariff[];
     insertedBy: string;
     updatedBy: string;
@@ -25,7 +24,6 @@ export interface CreateCustomerRequest {
     cityOrigin?: string;
     cityDestination?: string;
     commodity?: string;
-    commission?: number;
 }
 
 export interface UpdateCustomerRequest extends CreateCustomerRequest {

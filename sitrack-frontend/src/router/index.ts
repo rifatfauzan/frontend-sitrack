@@ -37,12 +37,22 @@ import VehicleOutListView from '@/views/spj/VehicleOutListView.vue'
 import VehicleInListView from '@/views/spj/VehicleInListView.vue'
 import CreateSpjView from '@/views/spj/CreateSpjView.vue'
 import SpjDetailView from '@/views/spj/SpjDetailView.vue'
+import ReportingView from '../views/reporting/ReportingView.vue'
 
 // import OrderListView from '@/views/order/OrderListView.vue'
 // import OrderDetailView from '@/views/order/OrderDetailView.vue'
 // import CreateOrderView from '@/views/order/CreateOrderView.vue'
 import EditOrderView from '@/views/order/EditOrderView.vue'
 import EditSpjView from '@/views/spj/EditSpjView.vue'
+<<<<<<< HEAD
+=======
+import CreateReportTruckView from '@/views/reportTruck/CreateReportTruckView.vue'
+import ReportTruckListView from '@/views/reportTruck/ReportTruckListView.vue'
+>>>>>>> d20975943734949aba79cf5c9fe9991956497bfb
+import KomisiListView from '@/views/komisi/KomisiListView.vue'
+import CreateKomisiView from '@/views/komisi/CreateKomisiView.vue'
+import DetailKomisiView from '@/views/komisi/DetailKomisiView.vue'
+import EditKomisiView from '@/views/komisi/EditKomisiView.vue'
 
 const decodeTokenPayload = (token: string) => {
   try {
@@ -61,7 +71,6 @@ const getCurrentUserRole = (): string | null => {
   return decoded?.role || null
 }
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -69,39 +78,39 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView,
-      meta: { public: true }
+      meta: { public: true },
     },
     {
       path: '/home',
       name: 'home',
       component: HomeView,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
     {
       path: '/users',
       name: 'users',
       component: UserListView,
-      meta: { 
+      meta: {
         requiresAuth: true,
-        authorize: ['Admin']
-      }
+        authorize: ['Admin'],
+      },
     },
     {
       path: '/users/create',
       name: 'create users',
       component: CreateUserView,
-      meta: { 
+      meta: {
         requiresAuth: true,
-        authorize: ['Admin']
-      }
+        authorize: ['Admin'],
+      },
     },
     {
       path: '/users/edit',
       name: 'edit users',
       component: EditUserView,
-      meta: { 
+      meta: {
         requiresAuth: true,
-        authorize: ['Admin']
+        authorize: ['Admin'],
       },
       props: (route) => ({ id: route.query.id }),
     },
@@ -109,64 +118,64 @@ const router = createRouter({
       path: '/unauthorized',
       name: 'unauthorized',
       component: UnauthorizedView,
-      meta: { public: true }
+      meta: { public: true },
     },
-    
+
     {
       path: '/chassis',
       name: 'view all chassis',
       component: ChassisListView,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
     {
       path: '/chassis/detail',
       name: 'detail chassis',
       component: ChassisDetailView,
-      meta: { requiresAuth: true , authorize: ['Supervisor', 'Manager', 'Admin']},
-      props: (route) => ({ id: route.query.id })
+      meta: { requiresAuth: true, authorize: ['Supervisor', 'Manager', 'Admin'] },
+      props: (route) => ({ id: route.query.id }),
     },
-    {  
+    {
       path: '/chassis/create',
       name: 'create chassis',
       component: CreateChassisView,
-      meta: { requiresAuth: true , authorize: ['Supervisor', 'Manager', 'Admin']},
+      meta: { requiresAuth: true, authorize: ['Supervisor', 'Manager', 'Admin'] },
     },
     {
       path: '/chassis/edit',
       name: 'edit chassis',
       component: EditChassisView,
-      meta: { requiresAuth: true , authorize: ['Supervisor', 'Manager', 'Admin']},
+      meta: { requiresAuth: true, authorize: ['Supervisor', 'Manager', 'Admin'] },
       props: (route) => ({ id: route.query.id }),
     },
     {
       path: '/',
-      redirect: '/login'
+      redirect: '/login',
     },
 
     {
       path: '/customers',
       name: 'customers',
       component: CustomerListView,
-      meta: { requiresAuth: true , authorize: ['Admin', 'Supervisor', 'Manager'] },
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] },
     },
     {
       path: '/customers/create',
       name: 'create customers',
       component: CreateCustomerView,
-      meta: { requiresAuth: true , authorize: ['Admin', 'Supervisor', 'Manager'] },
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] },
     },
     {
       path: '/customers/edit',
       name: 'edit customers',
       component: EditCustomerView,
-      meta: { requiresAuth: true , authorize: ['Admin', 'Supervisor', 'Manager'] },
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] },
       props: (route) => ({ siteId: route.query.siteId }),
     },
     {
       path: '/customers/detail',
       name: 'detail customers',
       component: CustomerDetailView,
-      meta: { requiresAuth: true , authorize: ['Admin', 'Supervisor', 'Manager'] },
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] },
       props: (route) => ({ siteId: route.query.siteId }),
     },
 
@@ -175,34 +184,26 @@ const router = createRouter({
       path: '/trucks',
       name: 'trucks',
       component: TruckListView,
-      meta: { requiresAuth: true,
-        authorize: ['Admin','Supervisor','Manager']
-       }
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] },
     },
     {
       path: '/trucks/create',
       name: 'create truck',
       component: CreateTruckView,
-      meta: { requiresAuth: true,
-        authorize: ['Admin','Supervisor','Manager']
-       }
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] },
     },
     {
       path: '/trucks/edit',
       name: 'edit truck',
       component: EditTruckView,
-      meta: { requiresAuth: true,
-        authorize: ['Admin','Supervisor','Manager']
-      },
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] },
       props: (route) => ({ id: route.query.id }),
     },
     {
       path: '/trucks/detail',
       name: 'truck detail',
       component: TruckDetailView,
-      meta: { requiresAuth: true,
-        authorize: ['Admin','Supervisor','Manager']
-       },
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] },
       props: (route) => ({ id: route.query.id }),
     },
 
@@ -210,72 +211,76 @@ const router = createRouter({
       path: '/sopir/add',
       name: 'add sopir',
       component: CreateSopirView,
-      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']}
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] },
     },
     {
       path: '/sopir/viewall',
       name: 'viewall sopir',
-      component : ViewallSopirView,
-      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']}
+      component: ViewallSopirView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] },
     },
     {
       path: '/sopir/:driverId',
       name: 'detail sopir',
       component: ViewDetailSopirView,
-      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']},
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] },
       props: true,
     },
     {
       path: '/sopir/update/:driverId',
       name: 'update sopir',
       component: EditSopirView,
-      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']},
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] },
       props: true,
     },
-    
+
     {
       path: '/notifications',
       name: 'view all notification',
       component: NotificationListView,
-      meta: { requiresAuth: true , authorize: ['Supervisor', 'Manager', 'Admin', 'Operasional', 'Mekanik']},
+      meta: {
+        requiresAuth: true,
+        authorize: ['Supervisor', 'Manager', 'Admin', 'Operasional', 'Mekanik'],
+      },
     },
 
-    { path: '/assets', 
-      name: 'assets', 
-      component: AssetListView, 
-      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager','Mekanik'] }
+    {
+      path: '/assets',
+      name: 'assets',
+      component: AssetListView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager', 'Mekanik'] },
     },
-    { path: '/assets/create', 
-      name: 'create asset', 
-      component: CreateAssetView, 
-      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] }
+    {
+      path: '/assets/create',
+      name: 'create asset',
+      component: CreateAssetView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] },
     },
-    
 
     {
       path: '/orders',
       name: 'view all order',
       component: OrderListView,
-      meta: { requiresAuth: true , authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin']},
+      meta: { requiresAuth: true, authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin'] },
     },
     {
       path: '/orders',
       name: 'view all order',
       component: OrderListView,
-      meta: { requiresAuth: true , authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin']},
+      meta: { requiresAuth: true, authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin'] },
     },
     {
       path: '/request-assets',
       name: 'request assets',
       component: RequestAssetListView,
-      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager','Mekanik'] }
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager', 'Mekanik'] },
     },
     {
       path: '/request-assets/create',
       name: 'create request asset',
       component: CreateRequestAssetView,
-      meta: { requiresAuth: true, authorize: ['Admin', 'Mekanik','Supervisor'] }
-    },    
+      meta: { requiresAuth: true, authorize: ['Admin', 'Mekanik', 'Supervisor'] },
+    },
     {
       path: '/request-assets/detail',
       name: 'detail request asset',
@@ -287,75 +292,75 @@ const router = createRouter({
       path: '/request-assets/edit',
       name: 'edit request asset',
       component: EditRequestAssetView,
-      meta: { requiresAuth: true, authorize: ['Admin', 'Mekanik','Supervisor'] },
+      meta: { requiresAuth: true, authorize: ['Admin', 'Mekanik', 'Supervisor'] },
       props: (route) => ({ id: route.query.id }),
     },
     {
       path: '/assets/update/:assetId',
       name: 'update asset',
       component: EditAssetView,
-      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager']},
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager'] },
       props: true,
     },
     {
       path: '/assets/:assetId',
       name: 'detail asset',
       component: DetailAssetView,
-      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager','Mekanik']},
+      meta: { requiresAuth: true, authorize: ['Admin', 'Supervisor', 'Manager', 'Mekanik'] },
       props: true,
     },
-    
+
     {
       path: '/orders',
       name: 'view all order',
       component: OrderListView,
-      meta: { public: true }
+      meta: { public: true },
     },
     {
       path: '/order/detail',
       name: 'detail order',
       component: OrderDetailView,
-      meta: { requiresAuth: true , authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin']},
-      props: (route) => ({ id: route.query.id })
+      meta: { requiresAuth: true, authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin'] },
+      props: (route) => ({ id: route.query.id }),
     },
     {
       path: '/order/create',
       name: 'create order',
       component: CreateOrderView,
-      meta: { requiresAuth: true , authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin']},
-      props: (route) => ({ id: route.query.id })
+      meta: { requiresAuth: true, authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin'] },
+      props: (route) => ({ id: route.query.id }),
     },
     {
       path: '/order/edit',
       name: 'edit order',
       component: EditOrderView,
-      meta: { requiresAuth: true , authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin']},
-      props: (route) => ({ id: route.query.id })
+      meta: { requiresAuth: true, authorize: ['Operasional', 'Supervisor', 'Manager', 'Admin'] },
+      props: (route) => ({ id: route.query.id }),
     },
     {
       path: '/vehicle-out',
       name: 'view all vehicle out',
       component: VehicleOutListView,
-      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] }
+      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] },
     },
     {
       path: '/vehicle-in',
       name: 'view all vehicle in',
       component: VehicleInListView,
-      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] }
+      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] },
     },
     {
       path: '/spj/create',
       name: 'create spj',
       component: CreateSpjView,
-      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] }
+      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] },
     },
     {
       path: '/spj/detail',
       name: 'detail spj',
       component: SpjDetailView,
       meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] },
-      props: (route) => ({ id: route.query.id })
+      props: (route) => ({ id: route.query.id }),
     },
     {
       path: '/spj/edit/:spjId',
@@ -363,7 +368,65 @@ const router = createRouter({
       component: EditSpjView,
       meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] },
       props: true,
-    }
+    },
+    {
+      path: '/reporting',
+      name: 'reporting',
+      component: ReportingView,
+      meta: {
+        requiresAuth: true,
+        authorize: ['Admin', 'Manager', 'Supervisor', 'Operasional', 'Mekanik'],
+      },
+    },
+    {
+<<<<<<< HEAD
+=======
+      path: '/report-truck/create',
+      name: 'create report truck',
+      component: CreateReportTruckView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Mekanik', 'Supervisor','Manager'] }
+    },
+    {
+      path: '/report-truck',
+      name: 'report truck list',
+      component: ReportTruckListView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Mekanik', 'Supervisor', 'Manager'] }
+    },
+    {
+>>>>>>> d20975943734949aba79cf5c9fe9991956497bfb
+      path:'/komisi',
+      name: 'view all komisi',
+      component: KomisiListView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] },
+      props: true,
+
+    },
+    {
+      path:'/komisi/create',
+      name: 'create komisi',
+      component: CreateKomisiView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] },
+      props: true,
+
+    },
+
+    {
+      path:'/komisi/detail/:komisiId',
+      name: 'detail komisi',
+      component: DetailKomisiView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] },
+      props: true,
+
+    },
+
+    {
+      path:'/komisi/edit/:komisiId',
+      name: 'edit komisi',
+      component: EditKomisiView,
+      meta: { requiresAuth: true, authorize: ['Admin', 'Operasional', 'Supervisor', 'Manager'] },
+      props: true,
+    },
+
   ],
 })
 
@@ -386,7 +449,7 @@ router.beforeEach((to, from, next) => {
   // Cek otorisasi role
   if (to.meta.authorize) {
     const requiredRoles = to.meta.authorize as string[]
-    
+
     if (!userRole || !requiredRoles.includes(userRole)) {
       next({ name: 'unauthorized' })
       return

@@ -237,7 +237,7 @@ const goToList = () => {
       @close="goToList"
       :message="'Request Asset berhasil dibuat!'"
       redirectTo="/request-assets"
-      buttonText="Kembali ke List Request Asset"
+      buttonText="Kembali ke Detail Request Asset"
     />
     <ErrorDialog
       :visible="showError"
