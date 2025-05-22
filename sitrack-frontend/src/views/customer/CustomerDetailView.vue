@@ -31,18 +31,17 @@
                 <div class="detail-item"><span>Customer ID</span><strong>{{ customer.id || '-' }}</strong></div>
                 <div class="detail-item alt"><span>Site ID</span><strong>{{ customer.siteId || '-' }}</strong></div>
                 <div class="detail-item"><span>Address</span><strong>{{ customer.address || '-' }}</strong></div>
-                <div class="detail-item alt"><span>Contract No.</span><strong>{{ customer.contractNo || '-' }}</strong></div>
-                <div class="detail-item"><span>City Origin</span><strong>{{ customer.cityOrigin || '-' }}</strong></div>
-                <div class="detail-item alt"><span>City Destination</span><strong>{{ customer.cityDestination || '-' }}</strong></div>
-                <div class="detail-item"><span>Commodity</span><strong>{{ customer.commodity || '-' }}</strong></div>
-                <div class="detail-item alt"><span>Commission</span><strong>{{ formatRupiah(customer.commission ?? 0) || '-' }}</strong></div>
+                <div class="detail-item alt"><span>City Origin</span><strong>{{ customer.cityOrigin || '-' }}</strong></div>
+                <div class="detail-item"><span>City Destination</span><strong>{{ customer.cityDestination || '-' }}</strong></div>
+                <div class="detail-item alt"><span>Commodity</span><strong>{{ customer.commodity || '-' }}</strong></div>
               </div>
               
               <div class="space-y-3">
-                <div class="detail-item"><span>Created By</span><strong>{{ customer.insertedBy || '-' }}</strong></div>
-                <div class="detail-item alt"><span>Created Date</span><strong>{{ formatDate(customer.insertedDate) || '-' }}</strong></div>
-                <div class="detail-item"><span>Updated By</span><strong>{{ customer.updatedBy || '-' }}</strong></div>
-                <div class="detail-item alt"><span>Updated Date</span><strong>{{ formatDate(customer.updatedDate) || '-' }}</strong></div>
+                <div class="detail-item"><span>Contract No.</span><strong>{{ customer.contractNo || '-' }}</strong></div>
+                <div class="detail-item alt"><span>Created By</span><strong>{{ customer.insertedBy || '-' }}</strong></div>
+                <div class="detail-item"><span>Created Date</span><strong>{{ formatDate(customer.insertedDate) || '-' }}</strong></div>
+                <div class="detail-item alt"><span>Updated By</span><strong>{{ customer.updatedBy || '-' }}</strong></div>
+                <div class="detail-item"><span>Updated Date</span><strong>{{ formatDate(customer.updatedDate) || '-' }}</strong></div>
               </div>
             </div>
 
@@ -52,6 +51,7 @@
                 <thead>
                   <tr class="tariff-table text-left">
                     <th class="p-3 border">Chassis Size</th>
+                    <th class="p-3 border">Container Type</th>
                     <th class="p-3 border">Move Type</th>
                     <th class="p-3 border">Std Tariff</th>
                     <th class="p-3 border">Insurance</th>
@@ -65,6 +65,7 @@
                 <tbody>
                   <tr v-for="tariff in customer.tariffs" :key="tariff.tariffId" class="tariff-table">
                     <td class="p-3 border text-left font-bold">{{ tariff.chassisSize }}</td>
+                    <td class="p-3 border text-left font-bold">{{ tariff.containerType }}</td>
                     <td class="p-3 border text-left font-bold">{{ tariff.moveType }}</td>
                     <td class="p-3 border text-left">{{ formatRupiah(tariff.stdTariff) }}</td>
                     <td class="p-3 border text-left">{{ formatRupiah(tariff.insurance) }}</td>
