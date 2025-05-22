@@ -13,6 +13,7 @@ import SuccessDialog from '@/components/SuccessDialog.vue';
 import ErrorDialog from '@/components/ErrorDialog.vue';
 import type { Spj } from '@/interfaces/spj.interfaces';
 import { useSopirStore } from '@/stores/sopir';
+import { useOrderStore } from '@/stores/order';
 
 const router = useRouter();
 const route = useRoute();
@@ -67,12 +68,19 @@ const formatRupiah = (angka: number | string | null | undefined) => {
 };
 
 const driverName = ref<string | null>(null);
+const moveType = ref<string | null>(null);
 const sopirStore = useSopirStore();
+const orderStore = useOrderStore();
 
 onMounted(async () => {
   if (spjId) {
     loading.value = true;
     spjDetail.value = await spjStore.fetchSpjById(spjId);
+
+    if (spjDetail.value?.orderId) {
+      const order = await orderStore.getOrderById(spjDetail.value.orderId);
+      moveType.value = order?.moveType || null;
+    }
 
     if (spjDetail.value?.driverId) {
       const driver = await sopirStore.getSopirById(spjDetail.value.driverId);
@@ -237,15 +245,16 @@ const goToEdit = () => {
             </div>
             
             <div class="space-y-3">
-              <div class="detail-item"><span>Date Out</span><strong>{{ formatDate(spjDetail.dateOut) }}</strong></div>
-              <div class="detail-item alt"><span>Date In</span><strong>{{ formatDate(spjDetail.dateIn) }}</strong></div>
-              <div class="detail-item"><span>Actual Date In</span><strong>{{ formatDate(spjDetail.actualDateIn) }}</strong></div>
-              <div class="detail-item alt"><span>Created By</span><strong>{{ spjDetail.insertedBy || '-' }}</strong></div>
-              <div class="detail-item"><span>Created Date</span><strong>{{ formatDate(spjDetail.insertedDate) }}</strong></div>
-              <div class="detail-item alt"><span>Updated By</span><strong>{{ spjDetail.updatedBy || '-' }}</strong></div>
-              <div class="detail-item"><span>Updated Date</span><strong>{{ formatDate(spjDetail.updatedDate) }}</strong></div>
-              <div class="detail-item alt"><span>Approved By</span><strong>{{ spjDetail.approvedBy || '-' }}</strong></div>
-              <div class="detail-item"><span>Approved Date</span><strong>{{ formatDate(spjDetail.approvedDate) }}</strong></div>
+              <div class="detail-item"><span>Move Type</span><strong>{{ moveType }}</strong></div>
+              <div class="detail-item alt"><span>Date Out</span><strong>{{ formatDate(spjDetail.dateOut) }}</strong></div>
+              <div class="detail-item"><span>Date In</span><strong>{{ formatDate(spjDetail.dateIn) }}</strong></div>
+              <div class="detail-item alt"><span>Actual Date In</span><strong>{{ formatDate(spjDetail.actualDateIn) }}</strong></div>
+              <div class="detail-item"><span>Created By</span><strong>{{ spjDetail.insertedBy || '-' }}</strong></div>
+              <div class="detail-item alt"><span>Created Date</span><strong>{{ formatDate(spjDetail.insertedDate) }}</strong></div>
+              <div class="detail-item"><span>Updated By</span><strong>{{ spjDetail.updatedBy || '-' }}</strong></div>
+              <div class="detail-item alt"><span>Updated Date</span><strong>{{ formatDate(spjDetail.updatedDate) }}</strong></div>
+              <div class="detail-item"><span>Approved By</span><strong>{{ spjDetail.approvedBy || '-' }}</strong></div>
+              <div class="detail-item alt"><span>Approved Date</span><strong>{{ formatDate(spjDetail.approvedDate) }}</strong></div>
             </div>
           </div>
 

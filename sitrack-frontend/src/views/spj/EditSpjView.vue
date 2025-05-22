@@ -19,7 +19,7 @@
               <div class="form-grid">
                 <div class="form-group">
                   <label for="customer">Customer <span class="text-red-500">*</span></label>
-                  <input v-model="form.customerId" type="text" id="customerId" class="readonly-input" readonly />
+                  <input v-model="form.customerId" type="text" id="customerId" readonly />
                 </div>
                 
 
@@ -60,9 +60,9 @@
   
                 <div class="form-group">
                   <label>Container Type<span class="text-red-500">*</span></label>
-                  <select v-model="form.containerType" required >
-                    <option value="" >Pilih Container</option>
-                    <option v-for="type in availableContainerTypes" :key="type" :value="type">
+                  <select v-model="form.containerType" required>
+                    <option value="" disabled>Pilih Container</option>
+                    <option v-for="type in filteredContainerTypes" :key="type" :value="type">
                       {{ type }}
                     </option>
                   </select>
@@ -116,10 +116,9 @@
   
         <SuccessDialog
           :visible="showSuccess"
-          @close="goToList"
+          @close="goBack"
           :message="'SPJ berhasil dibuat!'"
-          redirectTo="/vehicle-out"
-          buttonText="Kembali ke List SPJ"
+          buttonText="Kembali ke Detail SPJ"
         />
   
         <ErrorDialog
@@ -146,24 +145,32 @@
   import { useChassisStore } from '@/stores/chassis';
   import { useSopirStore } from '@/stores/sopir';
   import { useSpjStore } from '@/stores/spj';
+  import { useOrderStore } from '@/stores/order';
   import router from '@/router';
-
-import { useRoute } from 'vue-router';
+  import { useRoute } from 'vue-router';
   
   const truckStore = useTruckStore();
   const chassisStore = useChassisStore();
   const sopirStore = useSopirStore();
   const spjStore = useSpjStore();
+  const orderStore = useOrderStore();
   const route = useRoute();
-  
 
   const availableChassisSizes = ref<number[]>([]);
   const availableContainerTypes = ref<string[]>([]);
   const availableChassis = ref<Map<number, number>>(new Map());
   const availableContainerQty = ref<Map<string, number>>(new Map());
-const originalContainerType = ref<string>('');
-const originalContainerQty   = ref<number>(0);
+  const originalContainerType = ref<string>('');
+  const originalContainerQty   = ref<number>(0);
   const selectedChassisSize = ref<number | null>(null);
+  const selectedMoveType = ref<string>('');
+  const containerTypes20 = ['120mtfl', '120mt', 'ch120fl'];
+  const containerTypes40 = [
+    '120mtfl', '120mt', '220mtfl', '220mt', '140mtfl', '140mt',
+    '120mt120fl', '120mt220fl', '220mt120fl', '220mt220fl',
+    '120mt140fl', 'ch120fl', 'ch140fl', 'ch220fl',
+    '145mt', '145fl', '145mtfl'
+  ];
   
   const form = reactive({
     spjId: '',
@@ -187,53 +194,83 @@ const originalContainerQty   = ref<number>(0);
   const showError = ref(false);
   const errorMessage = ref('');
   
-  const availableTrucks = computed(() => truckStore.truckList.filter(truck => truck.rowStatus === 'A' || truck.rowStatus === 'I' && truck.vehicleId === form.vehicleId));
-  const availableSopirs = computed(() => sopirStore.sopirs.filter(sopir => sopir.rowStatus === 'A' || sopir.rowStatus === 'I' && sopir.driverId === form.driverId));
-  const filteredChassisList = computed(() =>
-    chassisStore.chassisList.filter(ch => ch.rowStatus === 'A' && (Number(ch.chassisSize) === selectedChassisSize.value) || (ch.rowStatus === 'I' && ch.chassisId === form.chassisId &&(Number(ch.chassisSize) === selectedChassisSize.value) ) )
-  );
-  
-
+  const availableTrucks = computed(() => {
+    if (selectedMoveType.value === 'REPO') {
+      return truckStore.truckList.filter(
+        truck => truck.rowStatus === 'A' || truck.rowStatus === 'R' || truck.vehicleId === form.vehicleId
+      );
+    }
+    return truckStore.truckList.filter(
+      truck => truck.rowStatus === 'A' || truck.rowStatus === 'H' || truck.vehicleId === form.vehicleId
+    );
+  });
+  const availableSopirs = computed(() => {
+    if (selectedMoveType.value === 'REPO') {
+      return sopirStore.sopirs.filter(
+        sopir => sopir.rowStatus === 'A' || sopir.rowStatus === 'R' || sopir.driverId === form.driverId
+      );
+    }
+    return sopirStore.sopirs.filter(
+      sopir => sopir.rowStatus === 'A' || sopir.rowStatus === 'H' || sopir.driverId === form.driverId
+    );
+  });
+  const filteredChassisList = computed(() => {
+    if (selectedMoveType.value === 'REPO') {
+      return chassisStore.chassisList.filter(
+        ch =>
+          (ch.rowStatus === 'A' || ch.rowStatus === 'R' || ch.chassisId === form.chassisId) &&
+          Number(ch.chassisSize) === selectedChassisSize.value
+      );
+    }
+    return chassisStore.chassisList.filter(
+      ch =>
+        (ch.rowStatus === 'A' || ch.rowStatus === 'H' || ch.chassisId === form.chassisId) &&
+        Number(ch.chassisSize) === selectedChassisSize.value
+    );
+  });
+  const filteredContainerTypes = computed(() => {
+    if (!selectedChassisSize.value) return [];
+    const allowedTypes = selectedChassisSize.value === 20 ? containerTypes20 : containerTypes40;
+    return availableContainerTypes.value.filter(type => allowedTypes.includes(type));
+  });
   
   onMounted(async () => {
-  const spjId = route.params.spjId as string;
-  if (!spjId){
+    const spjId = route.params.spjId as string;
+    if (!spjId){
       router.push('/vehicle-out');
       return;
-  }
+    }
 
-  loading.value = true;
-  try {
-
+    loading.value = true;
+    try {
       await Promise.all([
-          truckStore.fetchTrucks(),
-          chassisStore.fetchChassis(),
-          sopirStore.fetchSopirs()
+        truckStore.fetchTrucks(),
+        chassisStore.fetchChassis(),
+        sopirStore.fetchSopirs(),
+        orderStore.fetchOrders(),
       ]);
-
 
       const spjData = await spjStore.fetchSpjById(spjId);
       if (!spjData) {
-          router.push('/vehicle-out');
-          return;
+        router.push('/vehicle-out');
+        return;
       }
 
-
       Object.assign(form, {
-          ...spjData,
-          spjId: spjData.id,
-          orderId: spjData.orderId,
-          customerId: spjData.customerId,
-          vehicleId: spjData.vehicleId,
-          chassisId: spjData.chassisId,
-          driverId: spjData.driverId,
-          chassisSize: spjData.chassisSize,
-          containerType: spjData.containerType,
-          containerQty: spjData.containerQty,
-          dateOut: spjData.dateOut,
-          dateIn: spjData.dateIn,
-          othersCommission: spjData.othersCommission,
-          remarksOperasional: spjData.remarksOperasional
+        ...spjData,
+        spjId: spjData.id,
+        orderId: spjData.orderId,
+        customerId: spjData.customerId,
+        vehicleId: spjData.vehicleId,
+        chassisId: spjData.chassisId,
+        driverId: spjData.driverId,
+        chassisSize: spjData.chassisSize,
+        containerType: spjData.containerType,
+        containerQty: spjData.containerQty,
+        dateOut: spjData.dateOut,
+        dateIn: spjData.dateIn,
+        othersCommission: spjData.othersCommission,
+        remarksOperasional: spjData.remarksOperasional
       });
       selectedChassisSize.value = form.chassisSize;
       originalContainerType.value = spjData.containerType;
@@ -245,7 +282,9 @@ const originalContainerQty   = ref<number>(0);
       });
       const resData = await res.json();
       const data = resData.data;
+      const order = orderStore.orderList.find(o => o.orderId === spjData.orderId);
 
+      selectedMoveType.value = order?.moveType?.toUpperCase() || '';
       availableChassisSizes.value = [];
       availableContainerTypes.value = [];
       availableChassis.value.clear();
@@ -255,33 +294,41 @@ const originalContainerQty   = ref<number>(0);
       if (data.chassis40 > 0) availableChassisSizes.value.push(40);
 
       for (const [key, qty] of Object.entries(data)) {
-          if (Number(qty) > 0 && key !== 'chassis20' && key !== 'chassis40') {
-              availableContainerTypes.value.push(key);
-              availableContainerQty.value.set(key, Number(qty));
-          }
+        if (Number(qty) > 0 && key !== 'chassis20' && key !== 'chassis40') {
+          availableContainerTypes.value.push(key);
+          availableContainerQty.value.set(key, Number(qty));
+        }
       }
 
       if (
         form.containerType &&
         !availableContainerTypes.value.includes(form.containerType)
-        ) {
+      ) {
         availableContainerTypes.value.push(form.containerType);
-        }
+      }
+      if (form.chassisSize && !availableChassisSizes.value.includes(form.chassisSize)) {
+        availableChassisSizes.value.push(form.chassisSize);
+      }
 
-      if (form.chassisSize && !availableChassisSizes.value.includes(form.chassisSize) ) {
-        const matchingChassis = chassisStore.chassisList.find(chassis => chassis.chassisId === form.chassisId);
+      // if (
+      //   form.containerType &&
+      //   !availableContainerTypes.value.includes(form.containerType)
+      // ) {
+      //   availableContainerTypes.value.push(form.containerType);
+      // }
+
+      // if (form.chassisSize && !availableChassisSizes.value.includes(form.chassisSize) ) {
+      //   const matchingChassis = chassisStore.chassisList.find(chassis => chassis.chassisId === form.chassisId);
   
-        if (matchingChassis && Number(matchingChassis.chassisSize) === form.chassisSize) {
-                availableChassisSizes.value.push(form.chassisSize);
-            }
-        }
-  } catch  {
-  } finally {
+      //   if (matchingChassis && Number(matchingChassis.chassisSize) === form.chassisSize) {
+      //     availableChassisSizes.value.push(form.chassisSize);
+      //   }
+      // }
+    } catch  {
+    } finally {
       loading.value = false;
-  }
-});
-
-  
+    }
+  });
   
   function filterChassisOptions() {
     form.chassisId = '';
@@ -292,39 +339,46 @@ const originalContainerQty   = ref<number>(0);
   }
   
   async function submitForm() {
-  showConfirm.value = false;
-  loading.value = true;
-  try {
-      const maxContainer = form.chassisSize === 20 ? 1 : 2;
-      if (form.containerQty > maxContainer) {
-          throw new Error(`Maksimal ${maxContainer} container untuk chassis size ${form.chassisSize}`);
-      }
-
-      const unchangedContainer = form.containerType === originalContainerType.value && form.containerQty === originalContainerQty.value;
-
-      if (!unchangedContainer){
-          const containerAvailable = availableContainerQty.value.get(form.containerType) || 0;
-    
-          if (form.containerQty > containerAvailable ) {
-              throw new Error(`Sisa container hanya ${containerAvailable}`);
+    showConfirm.value = false;
+    loading.value = true;
+    try {
+        let maxContainer = 1;
+        if (form.chassisSize === 20) {
+          maxContainer = 1;
+        } else if (form.chassisSize === 40) {
+          const doubleAllowed = ['120mtfl', '120mt', 'ch120fl'];
+          if (doubleAllowed.includes(form.containerType)) {
+            maxContainer = 2;
+          } else {
+            maxContainer = 1;
           }
-      }
-      form.chassisSize = selectedChassisSize.value!;
-      await spjStore.editSpj(form.spjId, form);
-      showSuccess.value = true;
-  } catch (err) {
-      errorMessage.value = (err as Error).message || 'Gagal membuat SPJ';
-      showError.value = true;
-  } finally {
-      loading.value = false;
-  }
-}
+        }
 
-  
-  const goToList = () => {
-    showSuccess.value = false;
-    router.push('/vehicle-out');
-  };
+        if (form.containerQty > maxContainer) {
+          throw new Error(
+            `Maksimal ${maxContainer} container untuk chassis size ${form.chassisSize} dan container type ${form.containerType}`
+          );
+        }
+
+        const unchangedContainer = form.containerType === originalContainerType.value && form.containerQty === originalContainerQty.value;
+
+        if (!unchangedContainer){
+            const containerAvailable = availableContainerQty.value.get(form.containerType) || 0;
+      
+            if (form.containerQty > containerAvailable ) {
+                throw new Error(`Sisa container hanya ${containerAvailable}`);
+            }
+        }
+        form.chassisSize = selectedChassisSize.value!;
+        await spjStore.editSpj(form.spjId, form);
+        showSuccess.value = true;
+    } catch (err) {
+        errorMessage.value = (err as Error).message || 'Gagal membuat SPJ';
+        showError.value = true;
+    } finally {
+        loading.value = false;
+    }
+  }
   
   const goBack = () => router.back();
   </script>
@@ -363,6 +417,11 @@ const originalContainerQty   = ref<number>(0);
   input:disabled,
   select:disabled,
   textarea:disabled {
+    background-color: #f3f3f3;
+    cursor: not-allowed;
+  }
+
+  input[readonly] {
     background-color: #f3f3f3;
     cursor: not-allowed;
   }

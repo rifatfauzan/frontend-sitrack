@@ -1,7 +1,6 @@
 
 import { defineStore } from 'pinia';
 import { useAuthStore } from './auth';
-import { useToast } from 'vue-toastification';
 import type { Asset, CreateAssetRequest } from '@/interfaces/asset.interface';
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -19,7 +18,7 @@ export const useAssetStore = defineStore('asset', {
             this.loading = true;
             this.error = null;
             const authStore = useAuthStore();
-            const toast = useToast();
+            
 
             try {
                 const response = await fetch(`${API_URL}/api/asset/all`, {
@@ -33,7 +32,7 @@ export const useAssetStore = defineStore('asset', {
                 this.assetList = data.data || [];
             } catch (err) {
                 this.error = `Gagal mengambil data asset: ${err}`;
-                toast.error(this.error);
+                
             } finally {
                 this.loading = false;
             }
@@ -44,7 +43,7 @@ export const useAssetStore = defineStore('asset', {
             this.loading = true;
             this.error = null;
             const authStore = useAuthStore();
-            const toast = useToast();
+            
 
             try {
                 const response = await fetch(`${API_URL}/api/asset/add`, {
@@ -64,11 +63,11 @@ export const useAssetStore = defineStore('asset', {
                 const data = await response.json();
                 this.assetList.push({ ...assetData, assetId: data.data.assetId });
 
-                toast.success('Asset berhasil ditambahkan!');
+                
                 return { success: true, message: "Asset berhasil ditambahkan!" };
             } catch (err) {
                 this.error = `Gagal menambah asset: ${(err as Error).message}`;
-                toast.error(this.error);
+                
                 return { success: false, message: this.error };
             } finally {
                 this.loading = false;
@@ -78,7 +77,7 @@ export const useAssetStore = defineStore('asset', {
             this.loading = true;
             this.error = null;
             const authStore = useAuthStore();
-            const toast = useToast();
+            
 
             try {
                 const response = await fetch(`${API_URL}/api/asset/update/${assetId}`, {
@@ -98,11 +97,11 @@ export const useAssetStore = defineStore('asset', {
                 const data = await response.json();
                 this.assetList = this.assetList.map(asset => asset.assetId === assetId ? { ...asset, ...data.data } : asset);
 
-                toast.success('Asset berhasil diedit!');
+                
                 return { success: true, message: "Asset berhasil diedit!" };
             } catch (err) {
                 this.error = `Gagal mengedit asset: ${(err as Error).message}`;
-                toast.error(this.error);
+                
                 return { success: false, message: this.error };
             } finally {
                 this.loading = false;
