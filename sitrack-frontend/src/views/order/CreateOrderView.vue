@@ -53,6 +53,11 @@ const form = reactive({
   qtyCh120fl: 0,
   qtyCh220fl: 0,
   qtyCh140fl: 0,
+
+  qty120mt140fl: 0,
+  qty145mt: 0,
+  qty145fl: 0,
+  qty145mtfl: 0,
 });
 
 const getTariffForCustomer = (customerId: string, moveType: string, chassisSize: number): number | string => {
