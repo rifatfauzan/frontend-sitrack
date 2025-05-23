@@ -102,21 +102,13 @@ const goToDetail = (event: { data: {komisiId: string} }) => {
 
               <Column header="Vehicle ID" sortable>
                 <template #body="{ data }">
-<<<<<<< HEAD
-                  {{ data.truckId }}
-=======
                   {{ getTruckNameById(data.truckId) }}
->>>>>>> d20975943734949aba79cf5c9fe9991956497bfb
                 </template>
               </Column>
 
               <Column header="Vehicle Brand" sortable>
                 <template #body="{ data }">
-<<<<<<< HEAD
-                  {{ getTruckNameById(data.truckId )}}
-=======
                   {{ data.truckId }}
->>>>>>> d20975943734949aba79cf5c9fe9991956497bfb
                 </template>
               </Column>
 

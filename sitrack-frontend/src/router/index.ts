@@ -377,8 +377,6 @@ const router = createRouter({
       },
     },
     {
-<<<<<<< HEAD
-=======
       path: '/report-truck/create',
       name: 'create report truck',
       component: CreateReportTruckView,
@@ -391,7 +389,6 @@ const router = createRouter({
       meta: { requiresAuth: true, authorize: ['Admin', 'Mekanik', 'Supervisor', 'Manager'] }
     },
     {
->>>>>>> d20975943734949aba79cf5c9fe9991956497bfb
       path:'/komisi',
       name: 'view all komisi',
       component: KomisiListView,
