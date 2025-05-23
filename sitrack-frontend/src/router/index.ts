@@ -44,11 +44,9 @@ import ReportingView from '../views/reporting/ReportingView.vue'
 // import CreateOrderView from '@/views/order/CreateOrderView.vue'
 import EditOrderView from '@/views/order/EditOrderView.vue'
 import EditSpjView from '@/views/spj/EditSpjView.vue'
-<<<<<<< HEAD
-=======
+
 import CreateReportTruckView from '@/views/reportTruck/CreateReportTruckView.vue'
 import ReportTruckListView from '@/views/reportTruck/ReportTruckListView.vue'
->>>>>>> d20975943734949aba79cf5c9fe9991956497bfb
 import KomisiListView from '@/views/komisi/KomisiListView.vue'
 import CreateKomisiView from '@/views/komisi/CreateKomisiView.vue'
 import DetailKomisiView from '@/views/komisi/DetailKomisiView.vue'
