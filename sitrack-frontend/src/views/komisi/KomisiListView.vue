@@ -112,6 +112,7 @@ const goToDetail = (event: { data: {komisiId: string} }) => {
                 </template>
               </Column>
 
+
               <Column field="location" header="Location" sortable />
             </DataTable>
           </div>
