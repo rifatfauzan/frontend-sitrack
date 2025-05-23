@@ -4,6 +4,7 @@ import FooterComponent from '@/components/vFooter.vue';
 import HeaderComponent from '@/components/vHeader.vue';
 import { ref, onMounted, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth';
+import { computed } from 'vue';
 import {
   Chart as ChartJS,
   Title,
@@ -26,6 +27,8 @@ const customerStats = ref<{ name: string; value: number }[]>([]);
 const authStore = useAuthStore();
 
 const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+const isAuthorized = computed(() => ['Admin', 'Manager'].includes(authStore.role));
 
 const fetchOrderStats = async () => {
   try {
@@ -86,10 +89,12 @@ const fetchReferenceData = async () => {
 };
 
 onMounted(() => {
-  fetchOrderStats();
-  fetchCustomerStats();
-  fetchDestinationStats();
-  fetchReferenceData();
+  if (isAuthorized.value){
+    fetchOrderStats();
+    fetchCustomerStats();
+    fetchDestinationStats();
+    fetchReferenceData();
+  } 
 });
 
 watch(selectedYearOrders, fetchOrderStats);
@@ -116,7 +121,7 @@ watch (selectedYearDest, fetchDestinationStats);
             <h2 class="text-xl font-medium text-[#1C5D99]">PT. Glorious Interbuana</h2>
           </div>
 
-          <div class="bg-white rounded-lg shadow p-6">
+          <div v-if="isAuthorized" class="bg-white rounded-lg shadow p-6">
             <h3 class="font-semibold text-base mb-4">Current Reference Data</h3>
               <div class="grid grid-cols-4 gap-4">
                 <div class="rounded-lg h-48 w-full flex flex-col justify-center items-center text-white font-bold text-lg" style="background-color: #1C5D99;">
@@ -139,7 +144,7 @@ watch (selectedYearDest, fetchDestinationStats);
           </div>
 
           <!-- Customer Transactions Pie Chart -->
-          <div class="bg-white rounded-lg shadow p-6 min-h-[300px]">
+          <div v-if="isAuthorized" class="bg-white rounded-lg shadow p-6 min-h-[300px]">
             <div class="flex justify-between items-center mb-4">
               <h3 class="font-semibold text-base">Customer Transactions</h3>
               <select v-model="selectedYearTransactions" class="border rounded px-2 py-1 text-xs">
@@ -186,7 +191,7 @@ watch (selectedYearDest, fetchDestinationStats);
           </div>
 
           <!-- Destination Distribution Pie Chart -->
-          <div class="bg-white rounded-lg shadow p-6 min-h-[300px]">
+          <div v-if="isAuthorized" class="bg-white rounded-lg shadow p-6 min-h-[300px]">
             <div class="flex justify-between items-center mb-4">
               <h3 class="font-semibold text-base">Destination Distribution</h3>
               <select v-model="selectedYearDest" class="border rounded px-2 py-1 text-xs">
@@ -238,7 +243,7 @@ watch (selectedYearDest, fetchDestinationStats);
 
 
           <!-- Order Chart -->
-          <div class="bg-white rounded-lg shadow p-6 min-h-[300px]">
+          <div v-if="isAuthorized" class="bg-white rounded-lg shadow p-6 min-h-[300px]">
             <div class="flex justify-between items-center mb-4">
               <h3 class="font-semibold text-base">Order Chart</h3>
               <select v-model="selectedYearOrders" class="border rounded px-2 py-1 text-xs">
