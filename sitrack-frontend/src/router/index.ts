@@ -39,9 +39,6 @@ import CreateSpjView from '@/views/spj/CreateSpjView.vue'
 import SpjDetailView from '@/views/spj/SpjDetailView.vue'
 import ReportingView from '../views/reporting/ReportingView.vue'
 
-// import OrderListView from '@/views/order/OrderListView.vue'
-// import OrderDetailView from '@/views/order/OrderDetailView.vue'
-// import CreateOrderView from '@/views/order/CreateOrderView.vue'
 import EditOrderView from '@/views/order/EditOrderView.vue'
 import EditSpjView from '@/views/spj/EditSpjView.vue'
 
@@ -377,8 +374,6 @@ const router = createRouter({
       },
     },
     {
-<<<<<<< HEAD
-=======
       path: '/report-truck/create',
       name: 'create report truck',
       component: CreateReportTruckView,
@@ -391,7 +386,6 @@ const router = createRouter({
       meta: { requiresAuth: true, authorize: ['Admin', 'Mekanik', 'Supervisor', 'Manager'] }
     },
     {
->>>>>>> d20975943734949aba79cf5c9fe9991956497bfb
       path:'/komisi',
       name: 'view all komisi',
       component: KomisiListView,
