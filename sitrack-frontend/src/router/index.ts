@@ -386,6 +386,7 @@ const router = createRouter({
       meta: { requiresAuth: true, authorize: ['Admin', 'Mekanik', 'Supervisor', 'Manager'] }
     },
     {
+
       path:'/komisi',
       name: 'view all komisi',
       component: KomisiListView,
