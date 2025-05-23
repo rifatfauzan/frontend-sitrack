@@ -39,9 +39,6 @@ import CreateSpjView from '@/views/spj/CreateSpjView.vue'
 import SpjDetailView from '@/views/spj/SpjDetailView.vue'
 import ReportingView from '../views/reporting/ReportingView.vue'
 
-// import OrderListView from '@/views/order/OrderListView.vue'
-// import OrderDetailView from '@/views/order/OrderDetailView.vue'
-// import CreateOrderView from '@/views/order/CreateOrderView.vue'
 import EditOrderView from '@/views/order/EditOrderView.vue'
 import EditSpjView from '@/views/spj/EditSpjView.vue'
 
