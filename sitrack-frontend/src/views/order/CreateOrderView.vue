@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { useOrderStore } from '@/stores/order';
 import Sidebar from '@/components/vSidebar.vue';
 import HeaderComponent from '@/components/vHeader.vue';
@@ -12,6 +12,7 @@ import router from '@/router';
 import { onMounted } from 'vue';
 import { useCustomerStore } from '@/stores/customer';
 import { watch } from 'vue';
+import ContainerLoadsTable from '@/components/ContainerLoadsTable.vue';
 
 const orderStore = useOrderStore();
 const customerStore = useCustomerStore();
@@ -54,6 +55,43 @@ const form = reactive({
   qtyCh120fl: 0,
   qtyCh220fl: 0,
   qtyCh140fl: 0,
+
+  qty145mt: 0,
+  qty145fl: 0,
+  qty145mtfl: 0,
+});
+
+
+type LoadRow = { code:string; qty:number };
+const loads = ref<LoadRow[]>([]);
+
+const loadCatalog: Record<string, { chassis: 20 | 40 }> = {
+  '120MTFL':      { chassis: 20 },
+  '120MT':        { chassis: 20 },
+  'CH120FL':      { chassis: 20 },
+
+  '120MT120FL':   { chassis: 40 },
+  '120MT220FL':   { chassis: 40 },
+  '220MT':        { chassis: 40 },
+  '220MTFL':      { chassis: 40 },
+  'CH220FL':      { chassis: 40 },
+  '140MTFL':      { chassis: 40 },
+  '145MT':        { chassis: 40 },
+  '145FL':        { chassis: 40 },
+  '145MTFL':      { chassis: 40 },
+};
+
+const needed = computed(() => {
+  return loads.value.reduce(
+    (acc, r) => {
+      if (!r.code || r.qty <= 0) return acc;
+      const ch = loadCatalog[r.code]?.chassis;
+      if (ch === 20) acc.ch20 += r.qty;
+      if (ch === 40) acc.ch40 += r.qty;
+      return acc;
+    },
+    { ch20: 0, ch40: 0 }
+  );
 });
 
 const getTariffForCustomer = (customerId: string, moveType: string, chassisSize: number): number | string => {
@@ -131,6 +169,13 @@ watch(
   },
   { immediate: true }
 );
+
+
+watch(needed, n => {
+  form.qtyChassis20 = n.ch20;
+  form.qtyChassis40 = n.ch40;
+});
+
 
 const formatRupiah = (angka: number | string) => {
   if (!angka) return "Rp0,00";
@@ -236,43 +281,37 @@ const submitForm = async () => {
                 <!-- <input v-model.number="form.downPayment" type="number" id="downPayment" /> -->
                 <input class="placeholder-gray-400" v-model="form.downPayment" type="number" id="downPayment" min="0" step="0.01" placeholder="Rp0,00" required/>
               </div>
-
-              <div class="form-group">
-                <label for="qtyChassis20">20' Chassis Quantity<span class="text-red-500">*</span></label>
-                <input v-model.number="form.qtyChassis20" type="number" id="qtyChassis20" min="0" required/>
+    
             </div>
-
-            <div class="form-group">
-                <label for="qtyChassis40">40' Chassis Quantity<span class="text-red-500">*</span></label>
-                <input v-model.number="form.qtyChassis40" type="number" id="qtyChassis40" min="0" required />
-            </div>
-
-              
-            </div>
-           <br>
-
-            <h2 class="text-base font-bold mb-1">Container Data</h2>
-            <div class="form-grid bg-[#BBCDE5] rounded-2xl p-4 shadow-sm">
-            
-            <div
-                class="form-group"
-                v-for="field in Object.keys(form).filter(f => f.startsWith('qty') && f !== 'qtyChassis20' && f !== 'qtyChassis40')"
-                :key="field"
-            >
-                <label :for="field">{{ field }}</label>
-                <input v-model.number="form[field]" type="number" :id="field" min="0" />
-            </div>
-            </div>
-
 
             <br>
 
+            <h2 class="text-base font-bold mb-1">Container Data</h2>
+            <ContainerLoadsTable v-model="loads" class="bg-[#F5F7FA] p-4 rounded-lg shadow-sm" />
 
-            <div class="form-group full-width">
-                <label for="remarksOperasional">Remarks</label>
-                <textarea v-model="form.remarksOperasional" id="remarksOperasional" maxlength="300"></textarea>
-            <!-- <input v-model="form.remarksOperasional" type="text" id="remarksOperasional" /> -->
+            <div class="flex gap-4 mt-6">
+            <div class="flex-1">
+              <div class="bg-[#1C5D99] text-white text-center py-2 rounded-t-lg">
+                <b>Total 20' Chassis Quantity</b>
+              </div>
+              <input
+                class="w-full border border-gray-300 rounded-b-lg py-2 text-center"
+                :value="form.qtyChassis20"
+                readonly
+              />
             </div>
+
+            <div class="flex-1">
+              <div class="bg-[#1C5D99] text-white text-center py-2 rounded-t-lg">
+                <b>Total 40' Chassis Quantity</b>
+              </div>
+              <input
+                class="w-full border border-gray-300 rounded-b-lg py-2 text-center"
+                :value="form.qtyChassis40"
+                readonly
+              />
+            </div>
+          </div>
 
             <div class="mt-4">
               <h2 class="text-base font-semibold mb-2">Tariff Details</h2>
@@ -309,6 +348,12 @@ const submitForm = async () => {
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="remarksOperasional">Remarks</label>
+                <textarea v-model="form.remarksOperasional" id="remarksOperasional" maxlength="300"></textarea>
+            <!-- <input v-model="form.remarksOperasional" type="text" id="remarksOperasional" /> -->
             </div>
 
             <div class="mt-10"></div>

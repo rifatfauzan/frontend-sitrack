@@ -148,21 +148,59 @@ const confirmApproval = async () => {
   }
 };
 
+const loadCatalog: Record<string, { field: string }> = {
+  '120MTFL':    { field: 'qty120mtfl' },
+  '120MT':      { field: 'qty120mt' },
+  'CH120FL':    { field: 'qtyCh120fl' },
+  '220MTFL':    { field: 'qty220mtfl' },
+  '220MT':      { field: 'qty220mt' },
+  '140MTFL':    { field: 'qty140mtfl' },
+  '140MT':      { field: 'qty140mt' },
+  '120MT120FL': { field: 'qty120mt120fl' },
+  '120MT220FL': { field: 'qty120mt220fl' },
+  '220MT120FL': { field: 'qty220mt120fl' },
+  '220MT220FL': { field: 'qty220mt220fl' },
+  '120MT140FL': { field: 'qty120mt140fl' },
+  'CH140FL':    { field: 'qtyCh140fl' },
+  'CH220FL':    { field: 'qtyCh220fl' },
+  '145MT':      { field: 'qty145mt' },
+  '145FL':      { field: 'qty145fl' },
+  '145MTFL':    { field: 'qty145mtfl' },
+}
 
 const goToDetail = () => {
   router.go(0);
 };
 
-const canMarkAsDone = computed(() => {
-  const order = orderDetail.value;
-  if (!order) return false;
+const filteredLoads = computed(() => {
+  if (!orderDetail.value) return []
+  return Object.entries(loadCatalog)
+    .filter(([code, { field }]) => (orderDetail.value![field] ?? 0) > 0)
+    .map(([code, { field }]) => ({
+      code,
+      qty: orderDetail.value![field] as number
+    }))
+})
 
-  const orderOngoing = order.orderStatus == 3;
-  const totalChassis = (order.qtyChassis20 || 0) + (order.qtyChassis40 || 0);
-  const allSpjDone = order.spjList.every(spj => spj.status === 4); 
-  
-  return totalChassis === order.spjList.length && allSpjDone && orderOngoing;
-});
+const nonRejectedSpjs = computed(() => {
+  if (!orderDetail.value) return []
+  return orderDetail.value.spjList.filter(spj => spj.status !== 0)
+})
+
+const canMarkAsDone = computed(() => {
+  const order = orderDetail.value
+  if (!order) return false
+
+  const spjs = nonRejectedSpjs.value
+  const totalChassis = (order.qtyChassis20 || 0) + (order.qtyChassis40 || 0)
+
+  const allDone = spjs.every(s => s.status === 4)
+
+  return order.orderStatus === 3
+      && spjs.length === totalChassis
+      && allDone
+})
+
 
 const markOrderAsDone = async () => {
   if (orderDetail.value?.orderId) {
@@ -254,7 +292,7 @@ const markOrderAsDone = async () => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="spj in orderDetail.spjList" :key="spj.id" class="border-t">
+                    <tr v-for="spj in nonRejectedSpjs" :key="spj.id">
                       <td class="px-4 py-2">{{ spj.id }}</td>
                       <td class="px-4 py-2">{{ spj.chassisSize }}</td>
                       <td class="px-4 py-2">
@@ -304,72 +342,53 @@ const markOrderAsDone = async () => {
                 </div>
             </div>
 
-            <div class="mt-4">
+            <!-- <div class="mt-4">
             <h2 class="text-base font-semibold mb-1">Container Data</h2>
             <div class="bg-[#BBCDE5] rounded-2xl p-4 shadow-sm">
-              <div class="grid grid-cols-2 gap-2 text-sm">
+                <div class="grid grid-cols-2 gap-2 text-sm">
                 <div class="space-y-1.5">
-                  <div class="detail-item" title='1x20” Empty Out, Full In'>
-                    <span>1x20” Empty Out, Full In</span>
-                    <strong>{{ orderDetail.qty120mtfl ?? '-' }}</strong>
-                  </div>
-                  <div class="detail-item" title='1x20” Full Out, Empty In'>
-                    <span>1x20” Full Out, Empty In</span>
-                    <strong>{{ orderDetail.qty120mt ?? '-' }}</strong>
-                  </div>
-                  <div class="detail-item" title='2x20” Empty Out, Full In'>
-                    <span>2x20” Empty Out, Full In</span>
-                    <strong>{{ orderDetail.qty220mtfl ?? '-' }}</strong>
-                  </div>
-                  <div class="detail-item" title='2x20” Full Out, Empty In'>
-                    <span>2x20” Full Out, Empty In</span>
-                    <strong>{{ orderDetail.qty220mt ?? '-' }}</strong>
-                  </div>
-                  <div class="detail-item" title='1x40” Empty Out, Full In'>
-                    <span>1x40” Empty Out, Full In</span>
-                    <strong>{{ orderDetail.qty140mtfl ?? '-' }}</strong>
-                  </div>
-                  <div class="detail-item" title='1x40” Full Out, Empty In'>
-                    <span>1x40” Full Out, Empty In</span>
-                    <strong>{{ orderDetail.qty140mt ?? '-' }}</strong>
-                  </div>
-                  <div class="detail-item" title='Chassis Only Out, 1x40” Full In'>
-                    <span>Chassis Only Out, 1x40” Full In</span>
-                    <strong>{{ orderDetail.qtyCh140fl ?? '-' }}</strong>
-                  </div>
+                    <div class="detail-item"><span>Qty 120 MTFL</span><strong>{{ orderDetail.qty120mtfl ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty 120 MT</span><strong>{{ orderDetail.qty120mt ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty 220 MTFL</span><strong>{{ orderDetail.qty220mtfl ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty 220 MT</span><strong>{{ orderDetail.qty220mt ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty 140 MTFL</span><strong>{{ orderDetail.qty140mtfl ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty 140 MT</span><strong>{{ orderDetail.qty140mt ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty CH 140FL</span><strong>{{ orderDetail.qtyCh140fl ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty 120 MT 140 FL</span><strong>{{ orderDetail.qty120mt140fl ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty 145 MT</span><strong>{{ orderDetail.qty145mt ?? '-' }}</strong></div>
                 </div>
 
                 <div class="space-y-1.5">
-                  <div class="detail-item" title='Chassis 40: 1x20” Full Out & 1x20” Full In'>
-                    <span>1x20” Full Out & In</span>
-                    <strong>{{ orderDetail.qty120mt120fl ?? '-' }}</strong>
-                  </div>
-                  <div class="detail-item" title='Chassis 40: 1x20” Full Out & 1x40” Full In'>
-                    <span>1x20” Full Out & 1x40” Full In</span>
-                    <strong>{{ orderDetail.qty120mt140fl ?? '-' }}</strong>
-                  </div>
-                  <div class="detail-item" title='1x20” Empty Out, 2x20” Full In'>
-                    <span>1x20” Empty Out, 2x20” Full In</span>
-                    <strong>{{ orderDetail.qty120mt220fl ?? '-' }}</strong>
-                  </div>
-                  <div class="detail-item" title='2x20” Empty Out, 1x20” Full In'>
-                    <span>2x20” Empty Out, 1x20” Full In</span>
-                    <strong>{{ orderDetail.qty220mt120fl ?? '-' }}</strong>
-                  </div>
-                  <div class="detail-item" title='2x20” Empty Out, 2x20” Full In'>
-                    <span>2x20” Empty Out, 2x20” Full In</span>
-                    <strong>{{ orderDetail.qty220mt220fl ?? '-' }}</strong>
-                  </div>
-                  <div class="detail-item" title='Chassis Only Out, 1x20” Full In'>
-                    <span>Chassis Only Out, 1x20” Full In</span>
-                    <strong>{{ orderDetail.qtyCh120fl ?? '-' }}</strong>
-                  </div>
-                  <div class="detail-item" title='Chassis Only Out, 2x20” Full In'>
-                    <span>Chassis Only Out, 2x20” Full In</span>
-                    <strong>{{ orderDetail.qtyCh220fl ?? '-' }}</strong>
-                  </div>
+                    <div class="detail-item"><span>Qty 120MT 120FL</span><strong>{{ orderDetail.qty120mt120fl ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty 120MT 220FL</span><strong>{{ orderDetail.qty120mt220fl ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty 220MT 120FL</span><strong>{{ orderDetail.qty220mt120fl ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty 220MT 220FL</span><strong>{{ orderDetail.qty220mt220fl ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty CH 120FL</span><strong>{{ orderDetail.qtyCh120fl ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty CH 220FL</span><strong>{{ orderDetail.qtyCh220fl ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty 145 FL</span><strong>{{ orderDetail.qty145fl ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty 145 MTFL</span><strong>{{ orderDetail.qty145mtfl ?? '-' }}</strong></div>
                 </div>
-              </div>
+                </div>
+            </div>
+            </div> -->
+
+            <div v-if="filteredLoads.length" class="mt-4">
+            <h2 class="text-base font-semibold mb-2">Container Data</h2>
+            <div class="table-wrapper">
+              <table class="load-table">
+                <thead>
+                  <tr>
+                    <th>Container Type</th>
+                    <th>Quantity</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="load in filteredLoads" :key="load.code">
+                    <td class="text-left">{{ load.code }}</td>
+                    <td class="text-center">{{ load.qty }}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
@@ -576,6 +595,68 @@ const markOrderAsDone = async () => {
         text-align: center;
         white-space: nowrap;
     }
+
+    .table-wrapper {
+      overflow-x: auto;
+      background: #F5F7FA;
+      padding: 1rem;
+      border-radius: 12px;
+    }
+
+    .load-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      font-size: 0.95rem;
+    }
+
+    .load-table thead {
+      background: #1C5D99;
+      color: white;
+    }
+
+    .load-table thead th {
+      position: sticky;
+      top: 0;
+      padding: 0.75rem 1rem;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .load-table thead th:first-child {
+      border-top-left-radius: 8px;
+    }
+
+    .load-table thead th:last-child {
+      border-top-right-radius: 8px;
+    }
+
+    .load-table tbody tr:nth-child(odd) {
+      background: #FAFAFF;
+    }
+
+    .load-table tbody tr:nth-child(even) {
+      background: #FFFFFF;
+    }
+
+    .load-table tbody td {
+      padding: 0.75rem 1rem;
+      text-align: center;
+    }
+
+    .load-table tbody td:first-child {
+      text-align: left;
+    }
+
+    .load-table tbody tr:last-child td:first-child {
+      border-bottom-left-radius: 8px;
+    }
+
+    .load-table tbody tr:last-child td:last-child {
+      border-bottom-right-radius: 8px;
+    }
+
 
   </style>
   

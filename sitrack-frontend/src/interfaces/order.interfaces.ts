@@ -30,6 +30,11 @@ export interface Order {
     qtyCh220fl?: number;
     qtyCh140fl?: number;
 
+    qty120mt140fl?: number;
+    qty145mt?: number;
+    qty145fl?: number;
+    qty145mtfl?: number;
+
     tariffChassis20?: number;
     tariffChassis40?: number;
   
@@ -68,6 +73,11 @@ export interface Order {
     qtyCh120fl?: number;
     qtyCh220fl?: number;
     qtyCh140fl?: number;
+
+    qty120mt140fl?: number;
+    qty145mt?: number;
+    qty145fl?: number;
+    qty145mtfl?: number;
   }
   
   export interface CreateOrderResponse {
