@@ -177,6 +177,7 @@ watch(selectedYearDest, fetchDestinationStats);
             <div class="flex justify-between items-center mb-4">
               <h3 class="font-semibold text-base">Destination Distribution</h3>
               <select v-model="selectedYearDest" class="border rounded px-2 py-1 text-xs">
+                <option :value="currentYear - 2">{{ currentYear - 2 }}</option>
                 <option :value="currentYear - 1">{{ currentYear - 1 }}</option>
                 <option :value="currentYear">{{ currentYear }}</option>
               </select>
@@ -200,6 +201,7 @@ watch(selectedYearDest, fetchDestinationStats);
               </p>
             </div>         
           </div>
+
 
           <!-- Order Chart -->
           <div v-if="isAuthorized" class="bg-white rounded-lg shadow p-6 min-h-[300px]">
