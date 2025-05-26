@@ -11,10 +11,16 @@ import InputText from 'primevue/inputtext'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import { FilterMatchMode } from '@primevue/core/api'
+import SuccessDialog from '@/components/SuccessDialog.vue'
+import ErrorDialog from '@/components/ErrorDialog.vue'
 
 const router = useRouter()
 const reportTruckStore = useReportTruckStore()
 const { reportTruckList, loading } = storeToRefs(reportTruckStore)
+const showSuccessDialog = ref(false)
+const showErrorDialog = ref(false)
+const successMessage = ref('')
+const errorMessage = ref('')
 
 const filters = ref({
   global: { value: null, matchMode: FilterMatchMode.CONTAINS }
@@ -45,6 +51,17 @@ const formattedReportList = computed(() =>
     formattedFinishRepair: formatDate(item.finishRepair),
   }))
 )
+
+const handleExport = async (type: 'pdf' | 'excel', reportTruckId: string) => {
+  try {
+    await reportTruckStore.exportReportTruck(type, reportTruckId)
+    successMessage.value = 'Sukses mengunduh data dalam bentuk ' + (type === 'pdf' ? 'PDF' : 'Excel') + '!'
+    showSuccessDialog.value = true
+  } catch (error) {
+    errorMessage.value = 'Gagal mengunduh data dalam bentuk ' + (type === 'pdf' ? 'PDF' : 'Excel') + '!'
+    showErrorDialog.value = true
+  }
+}
 </script>
 
 <template>
@@ -52,7 +69,7 @@ const formattedReportList = computed(() =>
     <Sidebar />
     <div class="flex-1 flex flex-col min-h-screen">
       <HeaderComponent title="Vehicle Maintenance Report List" />
-      <div class="flex-1 p-4 overflow-auto bg-[#C8D9ED]">
+      <div class="flex-1 p-4 overflow-auto bg-C8D9ED">
         <div class="container mx-auto max-w-7xl p-6 rounded shadow bg-white">
           <div class="flex justify-between items-center mb-4">
             <InputText v-model="filters.global.value" placeholder="Search Maintenance..." class="w-64" />
@@ -102,20 +119,37 @@ const formattedReportList = computed(() =>
               </template>
             </Column>
             <Column header="Actions">
-              <template #body>
-                <div class="flex justify-center gap-2">
-                  <button class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded">
-                    <i class="pi pi-file"></i>
-                  </button>
-                  <button class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded">
-                    <i class="pi pi-file-edit"></i>
-                  </button>
+              <template #body="{ data }">
+                <div class="flex justify gap-2 mb-4">
+                  <VButton
+                    title=".PDF"
+                    icon="fas fa-file-pdf"
+                    class="!px-3 !py-2 !text-s"
+                    @click="handleExport('pdf', data.reportTruckId)">
+                  </VButton>
+                  <VButton
+                    title=".XLSX"
+                    icon="fas fa-file-excel"
+                    class="!px-3 !py-2 !text-s"
+                    @click="handleExport('excel', data.reportTruckId)">
+                  </VButton>
                 </div>
               </template>
             </Column>
           </DataTable>
         </div>
       </div>
+      <SuccessDialog
+        :visible="showSuccessDialog"
+        :message="successMessage"
+        buttonText="Tutup"
+        @close="showSuccessDialog = false"
+      />
+      <ErrorDialog
+        :visible="showErrorDialog"
+        :message="errorMessage"
+        @close="showErrorDialog = false"
+      />
       <FooterComponent />
     </div>
   </div>
@@ -127,7 +161,7 @@ const formattedReportList = computed(() =>
   cursor: pointer;
 }
 
-.bg-[#C8D9ED] {
+.bg-C8D9ED {
   background-color: #C8D9ED;
 }
 </style>

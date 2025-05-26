@@ -316,6 +316,8 @@ const markOrderAsDone = async () => {
                     <div class="detail-item"><span>Qty 140 MTFL</span><strong>{{ orderDetail.qty140mtfl ?? '-' }}</strong></div>
                     <div class="detail-item"><span>Qty 140 MT</span><strong>{{ orderDetail.qty140mt ?? '-' }}</strong></div>
                     <div class="detail-item"><span>Qty CH 140FL</span><strong>{{ orderDetail.qtyCh140fl ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty 120 MT 140 FL</span><strong>{{ orderDetail.qty120mt140fl ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty 145 MT</span><strong>{{ orderDetail.qty145mt ?? '-' }}</strong></div>
                 </div>
 
                 <div class="space-y-1.5">
@@ -325,6 +327,8 @@ const markOrderAsDone = async () => {
                     <div class="detail-item"><span>Qty 220MT 220FL</span><strong>{{ orderDetail.qty220mt220fl ?? '-' }}</strong></div>
                     <div class="detail-item"><span>Qty CH 120FL</span><strong>{{ orderDetail.qtyCh120fl ?? '-' }}</strong></div>
                     <div class="detail-item"><span>Qty CH 220FL</span><strong>{{ orderDetail.qtyCh220fl ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty 145 FL</span><strong>{{ orderDetail.qty145fl ?? '-' }}</strong></div>
+                    <div class="detail-item"><span>Qty 145 MTFL</span><strong>{{ orderDetail.qty145mtfl ?? '-' }}</strong></div>
                 </div>
                 </div>
             </div>
