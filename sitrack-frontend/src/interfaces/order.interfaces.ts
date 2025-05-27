@@ -30,7 +30,7 @@ export interface Order {
     qtyCh220fl?: number;
     qtyCh140fl?: number;
 
-    qty120mt140fl?: number;
+    // qty120mt140fl?: number;
     qty145mt?: number;
     qty145fl?: number;
     qty145mtfl?: number;
