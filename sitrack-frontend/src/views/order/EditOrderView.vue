@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, computed } from 'vue';
 // import { useSopirStore } from '@/stores/sopir';
 import { useToast } from 'vue-toastification';
 import Sidebar from '@/components/vSidebar.vue';
@@ -14,6 +14,8 @@ import { useOrderStore } from '@/stores/order';
 import { useRoute } from 'vue-router';
 import { useCustomerStore } from '@/stores/customer';
 import { watch } from 'vue';
+import ContainerLoadsTable from '@/components/ContainerLoadsTable.vue';
+
 
 const orderStore = useOrderStore();
 const customerStore = useCustomerStore();
@@ -53,6 +55,7 @@ const form = reactive({
   qty140mtfl: 0,
   qty140mt: 0,
   qty120mt120fl: 0,
+  qty120mt140fl: 0,
   qty120mt220fl: 0,
   qty220mt120fl: 0,
   qty220mt220fl: 0,
@@ -65,6 +68,51 @@ const form = reactive({
   qty145fl: 0,
   qty145mtfl: 0,
 });
+
+/* tabel dinamis */
+type LoadRow = { code:string; qty:number };
+const loads = ref<LoadRow[]>([]);
+
+/* mapping kode → chassis */
+const loadCatalog: Record<string,{ chassis:20|40 , field:string }> = {
+  // ---- 20
+  '120MTFL':{ chassis:20, field:'qty120mtfl' },
+  '120MT'  :{ chassis:20, field:'qty120mt'   },
+  'CH120FL':{ chassis:20, field:'qtyCh120fl' },
+  // ---- 40
+  '220MTFL':      { chassis:40, field:'qty220mtfl' },
+  '220MT':        { chassis:40, field:'qty220mt'   },
+  '140MTFL':      { chassis:40, field:'qty140mtfl' },
+  '140MT':        { chassis:40, field:'qty140mt'   },
+  '120MT120FL':   { chassis:40, field:'qty120mt120fl' },
+  '120MT220FL':   { chassis:40, field:'qty120mt220fl' },
+  '220MT120FL':   { chassis:40, field:'qty220mt120fl' },
+  '220MT220FL':   { chassis:40, field:'qty220mt220fl' },
+  '120MT140FL':   { chassis:40, field:'qty120mt140fl' },
+  'CH140FL':      { chassis:40, field:'qtyCh140fl' },
+  'CH220FL':      { chassis:40, field:'qtyCh220fl' },
+  '145MT':        { chassis:40, field:'qty145mt'   },
+  '145FL':        { chassis:40, field:'qty145fl'   },
+  '145MTFL':      { chassis:40, field:'qty145mtfl' },
+};
+
+/* ————————— helpers konversi lama ⇄ array loads ————————— */
+function fieldsToLoads() {
+  loads.value = [];
+  Object.entries(loadCatalog).forEach(([code,{ field }])=>{
+    const qty = (form as any)[field] || 0;
+    if (qty>0) loads.value.push({ code, qty });
+  });
+}
+function loadsToFields() {
+  // reset semua qty field 0
+  Object.values(loadCatalog).forEach(({field})=> (form as any)[field]=0 );
+  loads.value.forEach(l => {
+    if (!l.code || l.qty<=0) return;
+    const field = loadCatalog[l.code].field;
+    (form as any)[field] = l.qty;
+  });
+}
 
 onMounted(async () => {
     const orderId = route.query.id as string;
@@ -86,6 +134,8 @@ onMounted(async () => {
         }
 
         Object.assign(form, orderData);
+        fieldsToLoads();           
+
         calculateTariffDetails();
     } catch {
         toast.error("Terjadi kesalahan saat mengambil data order");
@@ -170,6 +220,20 @@ watch(
   { immediate: true }
 );
 
+const needed = computed(()=>loads.value.reduce((a,l)=>{
+  if (l.qty>0){
+    const ch = loadCatalog[l.code].chassis;
+    ch===20 ? a.ch20+=l.qty : a.ch40+=l.qty;
+  }
+  return a;
+},{ ch20:0, ch40:0 }));
+
+watch(needed, n => {
+  form.qtyChassis20 = n.ch20;
+  form.qtyChassis40 = n.ch40;
+});
+
+
 const formatRupiah = (angka: number | string) => {
   if (!angka) return "Rp0,00";
   const rupiah = angka.toString().replace(/[^,\d]/g, "");
@@ -190,6 +254,7 @@ const formatRupiah = (angka: number | string) => {
 const submitForm = async () => {
   loading.value = true; 
   showConfirm.value = false;
+  loadsToFields();
 
   try {
     const response = await orderStore.updateOrder(form.orderId,{
@@ -280,8 +345,9 @@ const submitForm = async () => {
                   <!-- <input v-model.number="form.downPayment" type="number" id="downPayment" /> -->
                   <input class="placeholder-gray-400" v-model="form.downPayment" type="number" id="downPayment" min="0" step="0.01" placeholder="Rp0,00" required/>
                 </div>
+              </div>
   
-                <div class="form-group">
+                <!-- <div class="form-group">
                   <label for="qtyChassis20">20' Chassis Quantity</label>
                   <input v-model.number="form.qtyChassis20" type="number" id="qtyChassis20" min="0" />
               </div>
@@ -306,19 +372,36 @@ const submitForm = async () => {
                   <label :for="field">{{ field }}</label>
                   <input v-model.number="form[field]" type="number" :id="field" min="0" />
               </div>
-              </div>
-  
-  
-              <br>
-  
-  
-              <div class="form-group full-width">
-                  <label for="remarksOperasional">Remarks</label>
-                  <textarea v-model="form.remarksOperasional" id="remarksOperasional" maxlength="300"></textarea>
-              <!-- <input v-model="form.remarksOperasional" type="text" id="remarksOperasional" /> -->
-              </div>
+              </div> -->
 
-              <div class="mt-4">
+            <h2 class="mt-6 font-bold">Container Data</h2>
+            <ContainerLoadsTable v-model="loads" class="bg-[#f5f7fa] p-4 rounded-lg shadow-sm"/>
+
+            <div class="flex gap-4 mt-6">
+            <div class="flex-1">
+              <div class="bg-[#1C5D99] text-white text-center py-2 rounded-t-lg">
+                <b>Total 20' Chassis Quantity</b>
+              </div>
+              <input
+                class="w-full border border-gray-300 rounded-b-lg py-2 text-center"
+                :value="form.qtyChassis20"
+                readonly
+              />
+            </div>
+
+            <div class="flex-1">
+              <div class="bg-[#1C5D99] text-white text-center py-2 rounded-t-lg">
+                <b>Total 40' Chassis Quantity</b>
+              </div>
+              <input
+                class="w-full border border-gray-300 rounded-b-lg py-2 text-center"
+                :value="form.qtyChassis40"
+                readonly
+              />
+            </div>
+          </div>
+
+          <div class="mt-4">
                 <h2 class="text-base font-semibold mb-2">Tariff Details</h2>
                 <div class="overflow-x-auto bg-[#FAFAFF] rounded-lg shadow-sm">
                   <table class="min-w-full text-sm text-left">
@@ -353,6 +436,14 @@ const submitForm = async () => {
                     </tbody>
                   </table>
                 </div>
+              </div>
+  
+            <br>
+
+              <div class="form-group full-width">
+                  <label for="remarksOperasional">Remarks</label>
+                  <textarea v-model="form.remarksOperasional" id="remarksOperasional" maxlength="300"></textarea>
+              <!-- <input v-model="form.remarksOperasional" type="text" id="remarksOperasional" /> -->
               </div>
   
               <div class="mt-10"></div>
