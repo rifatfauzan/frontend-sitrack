@@ -120,26 +120,34 @@ watch(selectedYearDest, fetchDestinationStats);
             <h2 class="text-xl font-medium text-[#1C5D99]">PT. Glorious Interbuana</h2>
           </div>
 
-          <div v-if="isAuthorized" class="bg-white rounded-lg shadow p-6">
+          <!-- Reference Data -->
+          <div v-if="isAuthorized" class="bg-white rounded-lg shadow p-6 reference-box">
             <h3 class="font-semibold text-base mb-4">Current Reference Data</h3>
-            <div class="grid grid-cols-4 gap-4">
-              <div class="rounded-lg h-48 w-full flex flex-col justify-center items-center text-white font-bold text-lg" style="background-color: #1C5D99;">
-                <span class="text-sm">Trucks</span>
-                <span class="text-4xl mt-1">{{ referenceData?.trucks }}</span>
+              <div class="grid grid-cols-4 gap-4 h-full items-stretch">
+                <!-- Trucks -->
+                <div class="rounded-lg w-full h-full min-h-[160px] flex flex-col justify-center items-center font-bold text-lg text-white" style="background-color: #1C5D99;">
+                  <span class="text-sm">Trucks</span>
+                  <span class="text-4xl mt-1">{{ referenceData?.trucks }}</span>
+                </div>
+
+                <!-- Chassis -->
+                <div class="rounded-lg w-full h-full min-h-[160px] flex flex-col justify-center items-center font-bold text-lg text-white" style="background-color: #469C9F;">
+                  <span class="text-sm">Chassis</span>
+                  <span class="text-4xl mt-1">{{ referenceData?.chassis }}</span>
+                </div>
+
+                <!-- Drivers -->
+                <div class="rounded-lg w-full h-full min-h-[160px] flex flex-col justify-center items-center font-bold text-lg text-black" style="background-color: #A9BEDC;">
+                  <span class="text-sm">Drivers</span>
+                  <span class="text-4xl mt-1">{{ referenceData?.drivers }}</span>
+                </div>
+
+                <!-- Customers -->
+                <div class="rounded-lg w-full h-full min-h-[160px] flex flex-col justify-center items-center font-bold text-lg text-white" style="background-color: #66A9BF;">
+                  <span class="text-sm">Customers</span>
+                  <span class="text-4xl mt-1">{{ referenceData?.customers }}</span>
+                </div>
               </div>
-              <div class="rounded-lg h-48 w-full flex flex-col justify-center items-center text-white font-bold text-lg" style="background-color: #469C9F;">
-                <span class="text-sm">Chassis</span>
-                <span class="text-4xl mt-1">{{ referenceData?.chassis }}</span>
-              </div>
-              <div class="rounded-lg h-48 w-full flex flex-col justify-center items-center text-black font-bold text-lg" style="background-color: #A9BEDC;">
-                <span class="text-sm">Drivers</span>
-                <span class="text-4xl text-black mt-1">{{ referenceData?.drivers }}</span>
-              </div>
-              <div class="rounded-lg h-48 w-full flex flex-col justify-center items-center text-white font-bold text-lg" style="background-color: #66A9BF;">
-                <span class="text-sm">Customers</span>
-                <span class="text-4xl mt-1">{{ referenceData?.customers }}</span>
-              </div>
-            </div>
           </div>
 
           <!-- Customer Transactions Pie Chart -->
@@ -231,4 +239,12 @@ a
 body {
   margin: 0;
 }
+
+.reference-box {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 200px;
+}
+
 </style>

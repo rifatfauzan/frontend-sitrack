@@ -216,6 +216,20 @@ watch([() => form.customerId, () => form.moveType, loads], calculateTariffDetail
   immediate: true,
 });
 
+const needed = computed(()=>loads.value.reduce((a,l)=>{
+  if (l.qty>0){
+    const ch = loadCatalog[l.code].chassis;
+    ch===20 ? a.ch20+=l.qty : a.ch40+=l.qty;
+  }
+  return a;
+},{ ch20:0, ch40:0 }));
+
+watch(needed, n => {
+  form.qtyChassis20 = n.ch20;
+  form.qtyChassis40 = n.ch40;
+});
+
+
 const formatRupiah = (angka: number | string) => {
   if (!angka) return "Rp0,00";
   const rupiah = angka.toString().replace(/[^,\d]/g, "");
@@ -253,12 +267,6 @@ const submitForm = async () => {
   }
 };
 </script>
-
-<!--
-  Template & style NYARIS sama dengan versi Anda sebelumnya.
-  Tidak ada perubahan selain binding data baru already present.
--->
-
 
 <template>
     <div class="flex h-screen">
