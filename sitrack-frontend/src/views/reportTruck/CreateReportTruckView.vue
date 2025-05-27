@@ -97,7 +97,7 @@ const confirmSubmit = () => {
   const finishRepairDate = new Date(form.finishRepair).setHours(0, 0, 0, 0);
 
   if (startRepairDate > today) {
-    errorMessage.value = 'Tanggal Start Repair hanya bisa di masa lampau';
+    errorMessage.value = 'Tanggal Start Repair hanya bisa di masa lampau atau hari ini';
     showError.value = true;
     return;
   }
