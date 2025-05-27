@@ -2,7 +2,7 @@
 import Sidebar from '@/components/vSidebar.vue';
 import FooterComponent from '@/components/vFooter.vue';
 import HeaderComponent from '@/components/vHeader.vue';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import {
   Chart as ChartJS,
@@ -26,6 +26,8 @@ const customerStats = ref<{ name: string; value: number }[]>([]);
 const authStore = useAuthStore();
 
 const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+const isAuthorized = computed(() => ['Admin', 'Manager'].includes(authStore.role));
 
 const fetchOrderStats = async () => {
   try {
@@ -55,19 +57,19 @@ const fetchCustomerStats = async () => {
   }
 };
 
-const selectedYearDest     = ref(currentYear)
-const destinationStats     = ref<{ name: string; value: number }[]>([])
+const selectedYearDest = ref(currentYear);
+const destinationStats = ref<{ name: string; value: number }[]>([]);
 
 const fetchDestinationStats = async () => {
   try {
     const res = await fetch(
       `${import.meta.env.VITE_API_URL}/api/order/destination?year=${selectedYearDest.value}`,
       { headers: { Authorization: `Bearer ${authStore.token}` } }
-    )
-    const json = await res.json()
-    destinationStats.value = json.data
+    );
+    const json = await res.json();
+    destinationStats.value = json.data;
   } catch (e) {
-    console.error('Gagal fetch destination stats', e)
+    console.error('Gagal fetch destination stats', e);
   }
 };
 
@@ -86,15 +88,17 @@ const fetchReferenceData = async () => {
 };
 
 onMounted(() => {
-  fetchOrderStats();
-  fetchCustomerStats();
-  fetchDestinationStats();
-  fetchReferenceData();
+  if (isAuthorized.value) {
+    fetchOrderStats();
+    fetchCustomerStats();
+    fetchDestinationStats();
+    fetchReferenceData();
+  }
 });
 
 watch(selectedYearOrders, fetchOrderStats);
 watch(selectedYearTransactions, fetchCustomerStats);
-watch (selectedYearDest, fetchDestinationStats);
+watch(selectedYearDest, fetchDestinationStats);
 </script>
 
 <template>
@@ -116,166 +120,101 @@ watch (selectedYearDest, fetchDestinationStats);
             <h2 class="text-xl font-medium text-[#1C5D99]">PT. Glorious Interbuana</h2>
           </div>
 
-          <div class="bg-white rounded-lg shadow p-6">
+          <div v-if="isAuthorized" class="bg-white rounded-lg shadow p-6">
             <h3 class="font-semibold text-base mb-4">Current Reference Data</h3>
-              <div class="grid grid-cols-4 gap-4">
-                <div class="rounded-lg h-48 w-full flex flex-col justify-center items-center text-white font-bold text-lg" style="background-color: #1C5D99;">
-                  <span class="text-sm">Trucks</span>
-                  <span class="text-4xl mt-1">{{ referenceData?.trucks }}</span>
-                </div>
-                <div class="rounded-lg h-48 w-full flex flex-col justify-center items-center text-white font-bold text-lg" style="background-color: #469C9F;">
-                  <span class="text-sm">Chassis</span>
-                  <span class="text-4xl mt-1">{{ referenceData?.chassis }}</span>
-                </div>
-                <div class="rounded-lg h-48 w-full flex flex-col justify-center items-center text-black font-bold text-lg" style="background-color: #A9BEDC;">
-                  <span class="text-sm">Drivers</span>
-                  <span class="text-4xl text-black mt-1">{{ referenceData?.drivers }}</span>
-                </div>
-                <div class="rounded-lg h-48 w-full flex flex-col justify-center items-center text-white font-bold text-lg" style="background-color: #66A9BF;">
-                  <span class="text-sm">Customers</span>
-                  <span class="text-4xl mt-1">{{ referenceData?.customers }}</span>
-                </div>
+            <div class="grid grid-cols-4 gap-4">
+              <div class="rounded-lg h-48 w-full flex flex-col justify-center items-center text-white font-bold text-lg" style="background-color: #1C5D99;">
+                <span class="text-sm">Trucks</span>
+                <span class="text-4xl mt-1">{{ referenceData?.trucks }}</span>
               </div>
+              <div class="rounded-lg h-48 w-full flex flex-col justify-center items-center text-white font-bold text-lg" style="background-color: #469C9F;">
+                <span class="text-sm">Chassis</span>
+                <span class="text-4xl mt-1">{{ referenceData?.chassis }}</span>
+              </div>
+              <div class="rounded-lg h-48 w-full flex flex-col justify-center items-center text-black font-bold text-lg" style="background-color: #A9BEDC;">
+                <span class="text-sm">Drivers</span>
+                <span class="text-4xl text-black mt-1">{{ referenceData?.drivers }}</span>
+              </div>
+              <div class="rounded-lg h-48 w-full flex flex-col justify-center items-center text-white font-bold text-lg" style="background-color: #66A9BF;">
+                <span class="text-sm">Customers</span>
+                <span class="text-4xl mt-1">{{ referenceData?.customers }}</span>
+              </div>
+            </div>
           </div>
 
           <!-- Customer Transactions Pie Chart -->
-          <div class="bg-white rounded-lg shadow p-6 min-h-[300px]">
+          <div v-if="isAuthorized" class="bg-white rounded-lg shadow p-6 min-h-[300px]">
             <div class="flex justify-between items-center mb-4">
               <h3 class="font-semibold text-base">Customer Transactions</h3>
               <select v-model="selectedYearTransactions" class="border rounded px-2 py-1 text-xs">
+                <option :value="currentYear - 2">{{ currentYear - 2 }}</option>
                 <option :value="currentYear - 1">{{ currentYear - 1 }}</option>
                 <option :value="currentYear">{{ currentYear }}</option>
               </select>
             </div>
-            <div class="flex justify-center items-center gap-4">
+            <div v-if="customerStats.length" class="flex justify-center items-center gap-4">
               <div class="w-[45%] h-64">
-                <Pie :data="{
-                  labels: customerStats.map(cs => cs.name),
-                  datasets: [
-                    {
-                      data: customerStats.map(cs => cs.value),
-                      backgroundColor: ['#1C5D99', '#EF4444', '#10B981', '#F59E0B', '#6366F1', '#EC4899']
-                    }
-                  ]
-                }" :options="{
-                  responsive: true,
-                  plugins: {
-                    tooltip: {
-                      callbacks: {
-                        label: ctx => `Jumlah Transaksi: ${ctx.raw}`
-                      }
-                    },
-                    legend: {
-                      display: false
-                    }
-                  }
-                }" />
+                <Pie :data="{ labels: customerStats.map(cs => cs.name), datasets: [ { data: customerStats.map(cs => cs.value), backgroundColor: ['#1C5D99', '#EF4444', '#10B981', '#F59E0B', '#6366F1', '#EC4899'] } ] }" :options="{ responsive: true, plugins: { tooltip: { callbacks: { label: ctx => `Jumlah Transaksi: ${ctx.raw}` } }, legend: { display: false } } }" />
               </div>
               <div class="text-xs">
                 <ul class="space-y-2">
                   <li v-for="(item, index) in customerStats" :key="index" class="flex items-center">
-                    <span
-                      class="inline-block w-3 h-3 rounded-full mr-2"
-                      :style="{ backgroundColor: ['#1C5D99', '#EF4444', '#10B981', '#F59E0B', '#6366F1', '#EC4899'][index % 6] }"
-                    ></span>
+                    <span class="inline-block w-3 h-3 rounded-full mr-2" :style="{ backgroundColor: ['#1C5D99', '#EF4444', '#10B981', '#F59E0B', '#6366F1', '#EC4899'][index % 6] }"></span>
                     {{ item.name }}
                   </li>
                 </ul>
               </div>
+            </div>
+            <div v-else class="flex-grow flex items-center justify-center">
+              <p class="text-center text-gray-500 text-sm">
+                Tidak ada data transaksi customer pada tahun {{ selectedYearTransactions }}
+              </p>
             </div>
           </div>
 
           <!-- Destination Distribution Pie Chart -->
-          <div class="bg-white rounded-lg shadow p-6 min-h-[300px]">
+          <div v-if="isAuthorized" class="bg-white rounded-lg shadow p-6 min-h-[300px]">
             <div class="flex justify-between items-center mb-4">
               <h3 class="font-semibold text-base">Destination Distribution</h3>
               <select v-model="selectedYearDest" class="border rounded px-2 py-1 text-xs">
+                <option :value="currentYear - 2">{{ currentYear - 2 }}</option>
                 <option :value="currentYear - 1">{{ currentYear - 1 }}</option>
                 <option :value="currentYear">{{ currentYear }}</option>
               </select>
             </div>
-
-            <div class="flex justify-center items-center gap-4">
+            <div v-if="destinationStats.length" class="flex justify-center items-center gap-4">
               <div class="w-[45%] h-64">
-                <Pie
-                  :data="{
-                    labels: destinationStats.map(ds => ds.name),
-                    datasets: [{
-                      data: destinationStats.map(ds => ds.value),
-                      backgroundColor: ['#1C5D99','#EF4444','#10B981','#F59E0B','#6366F1','#EC4899']
-                    }]
-                  }"
-                  :options="{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      tooltip: {
-                        callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}` }
-                      },
-                      legend: { display: false }
-                    }
-                  }"
-                />
+                <Pie :data="{ labels: destinationStats.map(ds => ds.name), datasets: [ { data: destinationStats.map(ds => ds.value), backgroundColor: ['#1C5D99','#EF4444','#10B981','#F59E0B','#6366F1','#EC4899'] } ] }" :options="{ responsive: true, maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}` } }, legend: { display: false } } }" />
               </div>
-
               <div class="text-xs">
                 <ul class="space-y-2">
-                  <li
-                    v-for="(item, index) in destinationStats"
-                    :key="index"
-                    class="flex items-center"
-                  >
-                    <span
-                      class="inline-block w-3 h-3 rounded-full mr-2"
-                      :style="{ backgroundColor: ['#1C5D99','#EF4444','#10B981','#F59E0B','#6366F1','#EC4899'][index % 6] }"
-                    ></span>
+                  <li v-for="(item, index) in destinationStats" :key="index" class="flex items-center">
+                    <span class="inline-block w-3 h-3 rounded-full mr-2" :style="{ backgroundColor: ['#1C5D99','#EF4444','#10B981','#F59E0B','#6366F1','#EC4899'][index % 6] }"></span>
                     {{ item.name }}
                   </li>
                 </ul>
               </div>
             </div>
+            <div v-else class="flex-grow flex items-center justify-center">
+              <p class="text-center text-gray-500 text-sm">
+                Tidak ada data destinasi pada tahun {{ selectedYearTransactions }}
+              </p>
+            </div>         
           </div>
 
 
           <!-- Order Chart -->
-          <div class="bg-white rounded-lg shadow p-6 min-h-[300px]">
+          <div v-if="isAuthorized" class="bg-white rounded-lg shadow p-6 min-h-[300px]">
             <div class="flex justify-between items-center mb-4">
               <h3 class="font-semibold text-base">Order Chart</h3>
               <select v-model="selectedYearOrders" class="border rounded px-2 py-1 text-xs">
+                <option :value="currentYear - 2">{{ currentYear - 2 }}</option>
                 <option :value="currentYear - 1">{{ currentYear - 1 }}</option>
                 <option :value="currentYear">{{ currentYear }}</option>
               </select>
             </div>
             <div class="w-full h-60">
-              <Bar :data="{
-                labels: monthLabels,
-                datasets: [
-                  {
-                    label: 'Jumlah Order',
-                    backgroundColor: '#1C5D99',
-                    data: monthlyOrders
-                  }
-                ]
-              }" :options="{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: { display: false },
-                  tooltip: {
-                    callbacks: {
-                      label: ctx => `Jumlah Order: ${ctx.raw}`
-                    }
-                  }
-                },
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    ticks: {
-                      precision: 0
-                    }
-                  }
-                }
-              }" />
+              <Bar :data="{ labels: monthLabels, datasets: [ { label: 'Jumlah Order', backgroundColor: '#1C5D99', data: monthlyOrders } ] }" :options="{ responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `Jumlah Order: ${ctx.raw}` } } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }" />
             </div>
           </div>
         </div>
@@ -287,7 +226,7 @@ watch (selectedYearDest, fetchDestinationStats);
     </div>
   </div>
 </template>
-
+a
 <style scoped>
 body {
   margin: 0;
