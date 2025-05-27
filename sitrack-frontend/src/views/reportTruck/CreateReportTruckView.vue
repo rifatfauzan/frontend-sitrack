@@ -97,7 +97,7 @@ const confirmSubmit = () => {
   const finishRepairDate = new Date(form.finishRepair).setHours(0, 0, 0, 0);
 
   if (startRepairDate > today) {
-    errorMessage.value = 'Tanggal Start Repair hanya bisa di masa lampau';
+    errorMessage.value = 'Tanggal Start Repair hanya bisa di masa lampau atau hari ini';
     showError.value = true;
     return;
   }
@@ -219,7 +219,7 @@ const goToList = () => router.push('/report-truck');
           </div>
 
           <VButton class="bg-[#1C5D99] text-white px-4 py-2 rounded" @click="addAsset">
-            Tambah Asset
+            Gunakan Asset
           </VButton>
 
           <div v-if="form.assets.length > 0">
