@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import { useOrderStore } from '@/stores/order';
 import Sidebar from '@/components/vSidebar.vue';
 import HeaderComponent from '@/components/vHeader.vue';
@@ -12,6 +12,7 @@ import router from '@/router';
 import { onMounted } from 'vue';
 import { useCustomerStore } from '@/stores/customer';
 import { watch } from 'vue';
+import ContainerLoadsTable from '@/components/ContainerLoadsTable.vue';
 
 const orderStore = useOrderStore();
 const customerStore = useCustomerStore();
@@ -47,6 +48,7 @@ const form = reactive({
   qty140mtfl: 0,
   qty140mt: 0,
   qty120mt120fl: 0,
+  qty120mt140fl: 0,
   qty120mt220fl: 0,
   qty220mt120fl: 0,
   qty220mt220fl: 0,
@@ -54,79 +56,163 @@ const form = reactive({
   qtyCh220fl: 0,
   qtyCh140fl: 0,
 
-  qty120mt140fl: 0,
   qty145mt: 0,
   qty145fl: 0,
   qty145mtfl: 0,
 });
 
-const getTariffForCustomer = (customerId: string, moveType: string, chassisSize: number): number | string => {
+
+type LoadRow = { code:string; qty:number };
+const loads = ref<LoadRow[]>([]);
+
+const needed = computed(() => {
+  return loads.value.reduce(
+    (acc, r) => {
+      if (!r.code || r.qty <= 0) return acc;
+      const ch = loadCatalog[r.code]?.chassis;
+      if (ch === 20) acc.ch20 += r.qty;
+      if (ch === 40) acc.ch40 += r.qty;
+      return acc;
+    },
+    { ch20: 0, ch40: 0 }
+  );
+});
+
+type TariffRow = {
+  containerType: string;
+  chassisSize: 20 | 40;
+  moveType: string;
+  quantity: number;
+  tariff?: number;
+  totalTariff?: number;
+  error?: string;
+};
+const tariffDetails = ref<TariffRow[]>([]);
+
+const loadCatalog: Record<
+  string,
+  { field: string; chassis: 20 | 40; containerType: string }
+> = {
+  // ---- 20'
+  '120MTFL':    { field: 'qty120mtfl',    chassis: 20, containerType: '120MTFL' },
+  '120MT':      { field: 'qty120mt',      chassis: 20, containerType: '120MT'   },
+  'CH120FL':    { field: 'qtyCh120fl',    chassis: 20, containerType: 'CH120FL' },
+  // ---- 40'
+  '220MTFL':    { field: 'qty220mtfl',    chassis: 40, containerType: '220MTFL' },
+  '220MT':      { field: 'qty220mt',      chassis: 40, containerType: '220MT'   },
+  '140MTFL':    { field: 'qty140mtfl',    chassis: 40, containerType: '140MTFL' },
+  '140MT':      { field: 'qty140mt',      chassis: 40, containerType: '140MT'   },
+  '120MT120FL': { field: 'qty120mt120fl', chassis: 40, containerType: '120MT120FL' },
+  '120MT220FL': { field: 'qty120mt220fl', chassis: 40, containerType: '120MT220FL' },
+  '220MT120FL': { field: 'qty220mt120fl', chassis: 40, containerType: '220MT120FL' },
+  '220MT220FL': { field: 'qty220mt220fl', chassis: 40, containerType: '220MT220FL' },
+  '120MT140FL': { field: 'qty120mt140fl', chassis: 40, containerType: '120MT140FL' },
+  'CH140FL':    { field: 'qtyCh140fl',    chassis: 40, containerType: 'CH140FL' },
+  'CH220FL':    { field: 'qtyCh220fl',    chassis: 40, containerType: 'CH220FL' },
+  '145MT':      { field: 'qty145mt',      chassis: 40, containerType: '145MT'   },
+  '145FL':      { field: 'qty145fl',      chassis: 40, containerType: '145FL'   },
+  '145MTFL':    { field: 'qty145mtfl',    chassis: 40, containerType: '145MTFL' },
+};
+
+function loadsToFields() {
+  Object.values(loadCatalog).forEach(({ field }) => (form as any)[field] = 0);
+
+  loads.value.forEach(l => {
+    if (!l.code || l.qty <= 0) return;
+    const field = loadCatalog[l.code].field;
+    (form as any)[field] = l.qty;
+  });
+}
+
+
+const getTariffForCustomer = (customerId: string, moveType: string, chassisSize: number, containerType: string): number | string => {
   const customer = customerStore.customers.find(c => c.id === customerId);
   if (!customer) return `Customer tidak ditemukan`;
 
   const tariff = customer.tariffs.find(
-    t => t.moveType.toLowerCase() === moveType.toLowerCase() && t.chassisSize === chassisSize
+    t => t.moveType.toLowerCase() === moveType.toLowerCase() && t.chassisSize === chassisSize && t.containerType === containerType
   );
 
   if (!tariff) {
-    return `Tariff untuk Chassis Size ${chassisSize} dengan Move Type ${moveType} belum didefinisikan untuk Customer ini.`;
+    return `Tariff untuk Chassis Size ${chassisSize} dan Container Type ${containerType} dengan Move Type ${moveType} belum didefinisikan untuk Customer ini.`;
   }
 
   return tariff.stdTariff;
 };
 
-const tariffDetails = ref<{ chassisSize: number; moveType: string; tariff: number; quantity: number; totalTariff: number; error?: string }[]>([]);
 const calculateTariffDetails = () => {
   tariffDetails.value = [];
-
   if (!form.customerId || !form.moveType) return;
 
-  if (form.qtyChassis20 > 0) {
-    const tariff20 = getTariffForCustomer(form.customerId, form.moveType, 20);
-    if (typeof tariff20 === 'string') {
-      tariffDetails.value.push({
-        chassisSize: 20,
-        moveType: form.moveType,
-        tariff: 0,
-        quantity: form.qtyChassis20,
-        totalTariff: 0,
-        error: tariff20,
-      });
-    } else {
-      const totalTariff20 = tariff20 * form.qtyChassis20;
-      tariffDetails.value.push({
-        chassisSize: 20,
-        moveType: form.moveType,
-        tariff: tariff20,
-        quantity: form.qtyChassis20,
-        totalTariff: totalTariff20,
-      });
-    }
+  const hasLoadCh20 = loads.value.some(
+    r => loadCatalog[r.code]?.chassis === 20 && r.qty > 0
+  );
+  const hasLoadCh40 = loads.value.some(
+    r => loadCatalog[r.code]?.chassis === 40 && r.qty > 0
+  );
+
+  if (form.qtyChassis20 > 0 && !hasLoadCh20) {
+    const tariff20 = getTariffForCustomer(
+      form.customerId,
+      form.moveType,
+      20,
+      '-'  
+    );
+    tariffDetails.value.push({
+      containerType: '-',
+      chassisSize:   20,
+      moveType:      form.moveType,
+      quantity:      form.qtyChassis20,
+      tariff:        typeof tariff20 === 'string' ? 0 : tariff20,
+      totalTariff:   typeof tariff20 === 'string' ? 0 : tariff20 * form.qtyChassis20,
+      error:         typeof tariff20 === 'string' ? tariff20 : undefined,
+    });
   }
 
-  if (form.qtyChassis40 > 0) {
-    const tariff40 = getTariffForCustomer(form.customerId, form.moveType, 40);
-    if (typeof tariff40 === 'string') {
-      tariffDetails.value.push({
-        chassisSize: 40,
-        moveType: form.moveType,
-        tariff: 0,
-        quantity: form.qtyChassis40,
-        totalTariff: 0,
-        error: tariff40,
-      });
-    } else {
-      const totalTariff40 = tariff40 * form.qtyChassis40;
-      tariffDetails.value.push({
-        chassisSize: 40,
-        moveType: form.moveType,
-        tariff: tariff40,
-        quantity: form.qtyChassis40,
-        totalTariff: totalTariff40,
-      });
-    }
+  if (form.qtyChassis40 > 0 && !hasLoadCh40) {
+    const tariff40 = getTariffForCustomer(
+      form.customerId,
+      form.moveType,
+      40,
+      '-'
+    );
+    tariffDetails.value.push({
+      containerType: '-',
+      chassisSize:   40,
+      moveType:      form.moveType,
+      quantity:      form.qtyChassis40,
+      tariff:        typeof tariff40 === 'string' ? 0 : tariff40,
+      totalTariff:   typeof tariff40 === 'string' ? 0 : tariff40 * form.qtyChassis40,
+      error:         typeof tariff40 === 'string' ? tariff40 : undefined,
+    });
   }
+
+  loads.value
+    .filter(r => r.code && r.qty > 0)
+    .forEach(r => {
+      const meta = loadCatalog[r.code];
+      if (!meta) return;
+
+      const res = getTariffForCustomer(
+        form.customerId,
+        form.moveType,
+        meta.chassis,
+        meta.containerType
+      );
+
+      tariffDetails.value.push({
+        containerType: meta.containerType,
+        chassisSize:   meta.chassis,
+        moveType:      form.moveType,
+        quantity:      r.qty,
+        tariff:        typeof res === 'string' ? 0 : res,
+        totalTariff:   typeof res === 'string' ? 0 : res * r.qty,
+        error:         typeof res === 'string' ? res : undefined,
+      });
+    });
 };
+
+
 
 watch(
   [() => form.customerId, () => form.moveType, () => form.qtyChassis20, () => form.qtyChassis40],
@@ -135,6 +221,13 @@ watch(
   },
   { immediate: true }
 );
+
+
+watch(needed, n => {
+  form.qtyChassis20 = n.ch20;
+  form.qtyChassis40 = n.ch40;
+});
+
 
 const formatRupiah = (angka: number | string) => {
   if (!angka) return "Rp0,00";
@@ -160,6 +253,9 @@ const confirmSubmit = () => (showConfirm.value = true);
 const submitForm = async () => {
   showConfirm.value = false;
   loading.value = true;
+
+  loadsToFields();
+
   try {
     const response = await orderStore.addOrder({
       ...form,
@@ -240,43 +336,37 @@ const submitForm = async () => {
                 <!-- <input v-model.number="form.downPayment" type="number" id="downPayment" /> -->
                 <input class="placeholder-gray-400" v-model="form.downPayment" type="number" id="downPayment" min="0" step="0.01" placeholder="Rp0,00" required/>
               </div>
-
-              <div class="form-group">
-                <label for="qtyChassis20">20' Chassis Quantity<span class="text-red-500">*</span></label>
-                <input v-model.number="form.qtyChassis20" type="number" id="qtyChassis20" min="0" required/>
+    
             </div>
-
-            <div class="form-group">
-                <label for="qtyChassis40">40' Chassis Quantity<span class="text-red-500">*</span></label>
-                <input v-model.number="form.qtyChassis40" type="number" id="qtyChassis40" min="0" required />
-            </div>
-
-              
-            </div>
-           <br>
-
-            <h2 class="text-base font-bold mb-1">Container Data</h2>
-            <div class="form-grid bg-[#BBCDE5] rounded-2xl p-4 shadow-sm">
-            
-            <div
-                class="form-group"
-                v-for="field in Object.keys(form).filter(f => f.startsWith('qty') && f !== 'qtyChassis20' && f !== 'qtyChassis40')"
-                :key="field"
-            >
-                <label :for="field">{{ field }}</label>
-                <input v-model.number="form[field]" type="number" :id="field" min="0" />
-            </div>
-            </div>
-
 
             <br>
 
+            <h2 class="text-base font-bold mb-1">Container Data</h2>
+            <ContainerLoadsTable v-model="loads" class="bg-[#F5F7FA] p-4 rounded-lg shadow-sm" />
 
-            <div class="form-group full-width">
-                <label for="remarksOperasional">Remarks</label>
-                <textarea v-model="form.remarksOperasional" id="remarksOperasional" maxlength="300"></textarea>
-            <!-- <input v-model="form.remarksOperasional" type="text" id="remarksOperasional" /> -->
+            <div class="flex gap-4 mt-6">
+            <div class="flex-1">
+              <div class="bg-[#1C5D99] text-white text-center py-2 rounded-t-lg">
+                <b>Total 20' Chassis Quantity</b>
+              </div>
+              <input
+                class="w-full border border-gray-300 rounded-b-lg py-2 text-center"
+                :value="form.qtyChassis20"
+                readonly
+              />
             </div>
+
+            <div class="flex-1">
+              <div class="bg-[#1C5D99] text-white text-center py-2 rounded-t-lg">
+                <b>Total 40' Chassis Quantity</b>
+              </div>
+              <input
+                class="w-full border border-gray-300 rounded-b-lg py-2 text-center"
+                :value="form.qtyChassis40"
+                readonly
+              />
+            </div>
+          </div>
 
             <div class="mt-4">
               <h2 class="text-base font-semibold mb-2">Tariff Details</h2>
@@ -286,6 +376,7 @@ const submitForm = async () => {
                     <tr>
                       <th class="px-4 py-3">Chassis Size</th>
                       <th class="px-4 py-3">Move Type</th>
+                      <th class="px-4 py-3">Container Type</th>
                       <th class="px-4 py-3">Tariff</th>
                       <th class="px-4 py-3">Quantity</th>
                       <th class="px-4 py-3">Total Tariff</th>
@@ -295,6 +386,7 @@ const submitForm = async () => {
                     <tr v-for="tariff in tariffDetails" :key="tariff.chassisSize" class="border-t">
                       <td class="px-4 py-2">{{ tariff.chassisSize }}</td>
                       <td class="px-4 py-2">{{ tariff.moveType }}</td>
+                      <td class="px-4 py-2">{{ tariff.containerType }}</td>
                       <td class="px-4 py-2" :class="{ 'text-red-500': tariff.error }">
                         {{ tariff.error || formatRupiah(tariff.tariff) }}
                       </td>
@@ -313,6 +405,12 @@ const submitForm = async () => {
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="remarksOperasional">Remarks</label>
+                <textarea v-model="form.remarksOperasional" id="remarksOperasional" maxlength="300"></textarea>
+            <!-- <input v-model="form.remarksOperasional" type="text" id="remarksOperasional" /> -->
             </div>
 
             <div class="mt-10"></div>
