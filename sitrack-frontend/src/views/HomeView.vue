@@ -4,6 +4,7 @@ import FooterComponent from '@/components/vFooter.vue';
 import HeaderComponent from '@/components/vHeader.vue';
 import { ref, onMounted, watch, computed } from 'vue';
 import { useAuthStore } from '@/stores/auth';
+import { computed } from 'vue';
 import {
   Chart as ChartJS,
   Title,
