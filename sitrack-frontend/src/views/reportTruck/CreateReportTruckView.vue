@@ -219,7 +219,7 @@ const goToList = () => router.push('/report-truck');
           </div>
 
           <VButton class="bg-[#1C5D99] text-white px-4 py-2 rounded" @click="addAsset">
-            Tambah Asset
+            Gunakan Asset
           </VButton>
 
           <div v-if="form.assets.length > 0">
