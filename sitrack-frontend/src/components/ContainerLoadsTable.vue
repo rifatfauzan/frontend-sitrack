@@ -145,8 +145,8 @@ function removeRow (i: number) {
 .btn-del:hover{ background:#a71d2a; }
 
 .btn-add{
-  background:#1C5D99;
-  color:#fff;
+  background:#BBCDE5;
+  color:#222222;
   border-radius:0 0 8px 8px;
 }
 </style>

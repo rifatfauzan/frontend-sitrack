@@ -148,25 +148,29 @@ const confirmApproval = async () => {
   }
 };
 
-const loadCatalog: Record<string, { field: string }> = {
-  '120MTFL':    { field: 'qty120mtfl' },
-  '120MT':      { field: 'qty120mt' },
-  'CH120FL':    { field: 'qtyCh120fl' },
-  '220MTFL':    { field: 'qty220mtfl' },
-  '220MT':      { field: 'qty220mt' },
-  '140MTFL':    { field: 'qty140mtfl' },
-  '140MT':      { field: 'qty140mt' },
-  '120MT120FL': { field: 'qty120mt120fl' },
-  '120MT220FL': { field: 'qty120mt220fl' },
-  '220MT120FL': { field: 'qty220mt120fl' },
-  '220MT220FL': { field: 'qty220mt220fl' },
-  '120MT140FL': { field: 'qty120mt140fl' },
-  'CH140FL':    { field: 'qtyCh140fl' },
-  'CH220FL':    { field: 'qtyCh220fl' },
-  '145MT':      { field: 'qty145mt' },
-  '145FL':      { field: 'qty145fl' },
-  '145MTFL':    { field: 'qty145mtfl' },
-}
+const loadCatalog: Record<
+  string,
+  { chassis: 20 | 40; field: string; containerType: string }
+> = {
+  '120MTFL': { chassis: 20, field: 'qty120mtfl',  containerType: '120MTFL' },
+  '120MT'  : { chassis: 20, field: 'qty120mt',    containerType: '120MT'   },
+  'CH120FL': { chassis: 20, field: 'qtyCh120fl',  containerType: 'CH120FL' },
+  
+  '220MTFL':     { chassis: 40, field: 'qty220mtfl',     containerType: '220MTFL' },
+  '220MT':       { chassis: 40, field: 'qty220mt',       containerType: '220MT'   },
+  '140MTFL':     { chassis: 40, field: 'qty140mtfl',     containerType: '140MTFL' },
+  '140MT':       { chassis: 40, field: 'qty140mt',       containerType: '140MT'   },
+  '120MT120FL':  { chassis: 40, field: 'qty120mt120fl',  containerType: '120MT120FL' },
+  '120MT220FL':  { chassis: 40, field: 'qty120mt220fl',  containerType: '120MT220FL' },
+  '120MT140FL':  { chassis: 40, field: 'qty120mt140fl',  containerType: '120MT140FL' },
+  '220MT120FL':  { chassis: 40, field: 'qty220mt120fl',  containerType: '220MT120FL' },
+  '220MT220FL':  { chassis: 40, field: 'qty220mt220fl',  containerType: '220MT220FL' },
+  'CH140FL':     { chassis: 40, field: 'qtyCh140fl',     containerType: 'CH140FL'   },
+  'CH220FL':     { chassis: 40, field: 'qtyCh220fl',     containerType: 'CH220FL'   },
+  '145MT':       { chassis: 40, field: 'qty145mt',       containerType: '145MT'     },
+  '145FL':       { chassis: 40, field: 'qty145fl',       containerType: '145FL'     },
+  '145MTFL':     { chassis: 40, field: 'qty145mtfl',     containerType: '145MTFL'   },
+};
 
 const goToDetail = () => {
   router.go(0);
@@ -213,6 +217,37 @@ const markOrderAsDone = async () => {
     }
   }
 };
+
+const containerTariffs = computed(() => {
+  if (!orderDetail.value) return [];
+
+  const cust = customers.value.find(c => c.id === orderDetail.value!.customerId);
+  if (!cust) return [];
+
+  return filteredLoads.value.map(l => {
+    const meta = loadCatalog[l.code];
+    const tariffObj = cust.tariffs.find(
+      t =>
+        t.moveType.toLowerCase() === orderDetail.value!.moveType.toLowerCase() &&
+        t.chassisSize === meta.chassis &&
+        t.containerType === meta.containerType
+    );
+    const tariff = tariffObj?.stdTariff ?? 0; 
+    return {
+      containerType: meta.containerType,
+      chassisSize:   meta.chassis,
+      quantity:      l.qty,
+      tariff,
+      total:         tariff * l.qty,
+    };
+  });
+});
+
+
+const grandTotalTariff = computed(() =>
+  containerTariffs.value.reduce((s, r) => s + r.total, 0)
+);
+
 
 </script>
 
@@ -317,125 +352,70 @@ const markOrderAsDone = async () => {
             <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-3">
                   <div class="detail-item alt"><span>Customer ID</span><strong>{{ orderDetail.customerId || '-' }}</strong></div>
-
-                    <div class="detail-item"><span>Order Date</span><strong>{{ formatDate(orderDetail.orderDate) || '-' }}</strong></div>                    
-                    <div class="detail-item alt"><span>Move Type</span><strong>{{ orderDetail.moveType || '-' }}</strong></div>
-                    <div class="detail-item"><span>Down Payment</span><strong>{{ formatRupiah(orderDetail.downPayment) ?? '-' }}</strong></div>
-                    <div class="detail-item alt"><span>Site ID</span><strong>{{ orderDetail.siteId || '-' }}</strong></div>
-                    <div class="detail-item"><span>20' Chassis Quantity</span><strong>{{ orderDetail.qtyChassis20 ?? '-' }}</strong></div>
-                    <div class="detail-item alt"><span>40' Chassis Quantity</span><strong>{{ orderDetail.qtyChassis40 ?? '-' }}</strong></div>
+                  <div class="detail-item">
+                    <span>Customer Name</span>
+                    <strong>{{ getCustomerNameById(orderDetail.customerId) }}</strong>
+                  </div>
+                  <div class="detail-item alt"><span>Order Date</span><strong>{{ formatDate(orderDetail.orderDate) || '-' }}</strong></div>                    
+                  <div class="detail-item"><span>Move Type</span><strong>{{ orderDetail.moveType || '-' }}</strong></div>
+                  <div class="detail-item alt"><span>Down Payment</span><strong>{{ formatRupiah(orderDetail.downPayment) ?? '-' }}</strong></div>
+                  <div class="detail-item"><span>Site ID</span><strong>{{ orderDetail.siteId || '-' }}</strong></div>
+                  <div class="detail-item chassis"><span>20' Chassis Quantity</span><strong>{{ orderDetail.qtyChassis20 ?? '-' }}</strong></div>
                 </div>
 
                 <div class="space-y-3">
                     <!-- <div class="detail-item"><span>Status</span><strong>{{ statusLabel.label }}</strong></div> -->
-                    <div class="detail-item alt">
-                    <span>Customer Name</span>
-                    <strong>{{ getCustomerNameById(orderDetail.customerId) }}</strong>
-                  </div>
 
-                    <div class="detail-item"><span>Created By</span><strong>{{ orderDetail.createdBy || '-' }}</strong></div>
-                    <div class="detail-item alt"><span>Created Date</span><strong>{{ formatDate(orderDetail.createdDate) || '-' }}</strong></div>
-                    <div class="detail-item"><span>Updated By</span><strong>{{ orderDetail.updatedBy || '-' }}</strong></div>
-                    <div class="detail-item alt"><span>Updated Date</span><strong>{{ formatDate(orderDetail.updatedDate) || '-' }}</strong></div>
-                    <div class="detail-item"><span>Approved By</span><strong>{{ orderDetail.approvedBy || '-' }}</strong></div>
-                    <div class="detail-item alt"><span>Approved Date</span><strong>{{ formatDate(orderDetail.approvedDate) || '-' }}</strong></div>
+
+                    <div class="detail-item alt"><span>Created By</span><strong>{{ orderDetail.createdBy || '-' }}</strong></div>
+                    <div class="detail-item"><span>Created Date</span><strong>{{ formatDate(orderDetail.createdDate) || '-' }}</strong></div>
+                    <div class="detail-item alt"><span>Updated By</span><strong>{{ orderDetail.updatedBy || '-' }}</strong></div>
+                    <div class="detail-item"><span>Updated Date</span><strong>{{ formatDate(orderDetail.updatedDate) || '-' }}</strong></div>
+                    <div class="detail-item alt"><span>Approved By</span><strong>{{ orderDetail.approvedBy || '-' }}</strong></div>
+                    <div class="detail-item"><span>Approved Date</span><strong>{{ formatDate(orderDetail.approvedDate) || '-' }}</strong></div>
+                    <div class="detail-item chassis"><span>40' Chassis Quantity</span><strong>{{ orderDetail.qtyChassis40 ?? '-' }}</strong></div>
                 </div>
             </div>
-
-            <!-- <div class="mt-4">
-            <h2 class="text-base font-semibold mb-1">Container Data</h2>
-            <div class="bg-[#BBCDE5] rounded-2xl p-4 shadow-sm">
-                <div class="grid grid-cols-2 gap-2 text-sm">
-                <div class="space-y-1.5">
-                    <div class="detail-item"><span>Qty 120 MTFL</span><strong>{{ orderDetail.qty120mtfl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 120 MT</span><strong>{{ orderDetail.qty120mt ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 220 MTFL</span><strong>{{ orderDetail.qty220mtfl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 220 MT</span><strong>{{ orderDetail.qty220mt ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 140 MTFL</span><strong>{{ orderDetail.qty140mtfl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 140 MT</span><strong>{{ orderDetail.qty140mt ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty CH 140FL</span><strong>{{ orderDetail.qtyCh140fl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 120 MT 140 FL</span><strong>{{ orderDetail.qty120mt140fl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 145 MT</span><strong>{{ orderDetail.qty145mt ?? '-' }}</strong></div>
-                </div>
-
-                <div class="space-y-1.5">
-                    <div class="detail-item"><span>Qty 120MT 120FL</span><strong>{{ orderDetail.qty120mt120fl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 120MT 220FL</span><strong>{{ orderDetail.qty120mt220fl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 220MT 120FL</span><strong>{{ orderDetail.qty220mt120fl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 220MT 220FL</span><strong>{{ orderDetail.qty220mt220fl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty CH 120FL</span><strong>{{ orderDetail.qtyCh120fl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty CH 220FL</span><strong>{{ orderDetail.qtyCh220fl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 145 FL</span><strong>{{ orderDetail.qty145fl ?? '-' }}</strong></div>
-                    <div class="detail-item"><span>Qty 145 MTFL</span><strong>{{ orderDetail.qty145mtfl ?? '-' }}</strong></div>
-                </div>
-                </div>
-            </div>
-            </div> -->
-
-            <div v-if="filteredLoads.length" class="mt-4">
-            <h2 class="text-base font-semibold mb-2">Container Data</h2>
-            <div class="table-wrapper">
-              <table class="load-table">
-                <thead>
-                  <tr>
-                    <th>Container Type</th>
-                    <th>Quantity</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="load in filteredLoads" :key="load.code">
-                    <td class="text-left">{{ load.code }}</td>
-                    <td class="text-center">{{ load.qty }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
 
             <div class="mt-4">
-              <h2 class="text-base font-semibold mb-2">Tariff Details</h2>
-              <div class="overflow-x-auto bg-[#FAFAFF] rounded-lg shadow-sm">
-                <table class="min-w-full text-sm text-left">
-                  <thead class="bg-[#1C5D99] text-white text-center">
+              <h2 class="text-base font-semibold mb-2">Container & Tariff Details</h2>
+              <div class="table-wrapper">
+                <table class="load-table">
+                  <thead>
                     <tr>
-                      <th class="px-4 py-3">Chassis Size</th>
-                      <th class="px-4 py-3">Move Type</th>
-                      <th class="px-4 py-3">Tariff</th>
-                      <th class="px-4 py-3">Quantity</th>
-                      <th class="px-4 py-3">Total Tariff</th>
+                      <th>Container Type</th>
+                      <th>Chassis</th>
+                      <th>Quantity</th>
+                      <th>Tariff</th>
+                      <th>Total</th>
                     </tr>
                   </thead>
-                  <tbody class="text-center">
-                    <tr v-if="(orderDetail?.qtyChassis20 ?? 0) > 0" class="border-t">
-                      <td class="px-4 py-2">{{ 20 }}</td>
-                      <td class="px-4 py-2">{{ orderDetail.moveType || '-' }}</td>
-                      <td class="px-4 py-2">{{ formatRupiah(orderDetail.tariffChassis20 || 0) }}</td>
-                      <td class="px-4 py-2">{{ orderDetail.qtyChassis20 }}</td>
-                      <td class="px-4 py-2 font-bold">{{ formatRupiah((orderDetail.tariffChassis20 || 0) * (orderDetail.qtyChassis20 || 0)) }}</td>
+                  <tbody>
+                    <tr v-for="row in containerTariffs" :key="row.containerType">
+                      <td class="text-left">{{ row.containerType }}</td>
+                      <td class="text-center">{{ row.chassisSize }}</td>
+                      <td class="text-center">{{ row.quantity }}</td>
+                      <td class="text-center">{{ formatRupiah(row.tariff) }}</td>
+                      <td class="text-center font-bold">{{ formatRupiah(row.total) }}</td>
                     </tr>
-                    <tr v-if="(orderDetail.qtyChassis40 ?? 0) > 0" class="border-t">
-                      <td class="px-4 py-2">{{ 40 }}</td>
-                      <td class="px-4 py-2">{{ orderDetail.moveType || '-' }}</td>
-                      <td class="px-4 py-2">{{ formatRupiah(orderDetail.tariffChassis40 || 0) }}</td>
-                      <td class="px-4 py-2">{{ orderDetail.qtyChassis40 }}</td>
-                      <td class="px-4 py-2 font-bold">{{ formatRupiah((orderDetail.tariffChassis40 || 0) * (orderDetail.qtyChassis40 || 0)) }}</td>
-                    </tr>
-                    <tr v-if="(orderDetail?.qtyChassis20 ?? 0) > 0 || (orderDetail?.qtyChassis40 ?? 0) > 0" class="border-t">
-                      <td colspan="4"></td>
-                      <td class="px-4 py-2 font-bold text-[#1C5D99]">
-                        {{ formatRupiah(
-                          ((orderDetail.tariffChassis20 || 0) * (orderDetail.qtyChassis20 || 0)) +
-                          ((orderDetail.tariffChassis40 || 0) * (orderDetail.qtyChassis40 || 0))
-                        ) }}
+
+                    <tr v-if="containerTariffs.length">
+                      <td colspan="4" class="text-right font-bold">Grand Total</td>
+                      <td class="text-center font-bold text-[#1C5D99]">
+                        {{ formatRupiah(grandTotalTariff) }}
                       </td>
                     </tr>
-                    <tr v-if="(orderDetail?.qtyChassis20 ?? 0) === 0 && (orderDetail?.qtyChassis40 ?? 0) === 0">
-                      <td colspan="5" class="text-center py-4 text-gray-500">Tidak ada Tariff yang dapat ditampilkan.</td>
+
+                    <tr v-if="!containerTariffs.length">
+                      <td colspan="5" class="text-center py-4 text-gray-500">
+                        Tidak ada data container / tariff.
+                      </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
             </div>
+
 
             <div class="mt-4"></div>
 
@@ -533,6 +513,11 @@ const markOrderAsDone = async () => {
 
     .detail-remarks.alt{
     background-color: #BBCDE5;
+    }
+
+    .detail-item.chassis{
+    background-color: #1C5D99;
+    color: #FAFAFF;
     }
 
     .detail-remarks .label {
