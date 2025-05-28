@@ -212,8 +212,6 @@ const calculateTariffDetails = () => {
     });
 };
 
-
-
 watch(
   [() => form.customerId, () => form.moveType, () => form.qtyChassis20, () => form.qtyChassis40],
   () => {
@@ -308,12 +306,6 @@ const submitForm = async () => {
 
                 </select>
                 </div>
-
-<!-- 
-              <div class="form-group">
-                <label for="siteId">Site ID</label>
-                <input v-model="form.siteId" type="text" id="siteId" required />
-              </div> -->
 
               <div class="form-group">
                 <label for="orderDate">Order Date <span class="text-red-500">*</span></label>
