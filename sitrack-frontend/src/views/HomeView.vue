@@ -148,19 +148,6 @@ watch(selectedYearDest, fetchDestinationStats);
                   <span class="text-4xl mt-1">{{ referenceData?.customers }}</span>
                 </div>
               </div>
-              <div class="rounded-lg h-48 w-full flex flex-col justify-center items-center text-white font-bold text-lg" style="background-color: #469C9F;">
-                <span class="text-sm">Chassis</span>
-                <span class="text-4xl mt-1">{{ referenceData?.chassis }}</span>
-              </div>
-              <div class="rounded-lg h-48 w-full flex flex-col justify-center items-center text-black font-bold text-lg" style="background-color: #A9BEDC;">
-                <span class="text-sm">Drivers</span>
-                <span class="text-4xl text-black mt-1">{{ referenceData?.drivers }}</span>
-              </div>
-              <div class="rounded-lg h-48 w-full flex flex-col justify-center items-center text-white font-bold text-lg" style="background-color: #66A9BF;">
-                <span class="text-sm">Customers</span>
-                <span class="text-4xl mt-1">{{ referenceData?.customers }}</span>
-              </div>
-            </div>
           </div>
 
           <!-- Customer Transactions Pie Chart -->
