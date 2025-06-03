@@ -88,6 +88,11 @@ const fetchReferenceData = async () => {
 };
 
 const customerViewType = ref<'top' | 'bottom'>('top');
+const destinationViewType = ref<'top' | 'bottom'>('top');
+
+const toggleDestinationView = () => {
+  destinationViewType.value = destinationViewType.value === 'top' ? 'bottom' : 'top';
+}
 
 const toggleCustomerView = () => {
   customerViewType.value = customerViewType.value === 'top' ? 'bottom' : 'top'
@@ -106,6 +111,14 @@ const sortedCustomerStats = computed(() => {
   }
 });
 
+const sotredDestinationStats = computed(() => {
+  const sorted = destinationStats.value.slice().sort((a, b) => b.value - a.value);
+  if (destinationViewType.value === 'top') {
+    return sorted.slice(0, 5);
+  } else {
+    return sorted.slice(-5).reverse();
+  }
+});
 
 const chartColors = ['#1C5D99', '#EF4444', '#10B981', '#F59E0B', '#6366F1', '#EC4899'];
 
@@ -303,13 +316,26 @@ watch(selectedYearDest, fetchDestinationStats);
                   }"
                 />
               </div>
-              <div class="text-xs">
-                <ul class="space-y-2">
-                  <li v-for="(item, index) in destinationStats" :key="index" class="flex items-center">
+              <div class="text-xs w-[45%]">
+                <div class="'flex items-center justify-between mb-2">
+                  <div class="flex items-center gap-1">
+                    <h4 class="font-semibold">{{ destinationViewType === 'top' ? 'Top 5' : 'Bottom 5' }} Destinations</h4>
+                    <button @click="toggleDestinationView" class="rounded hover:bg-gray-100" title="Toggle sort">
+                      <svg v-if="destinationViewType === 'top'" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 01.894.553l5 10A1 1 0 0115 15H5a1 1 0 01-.894-1.447l5-10A1 1 0 0110 3zm0 2.618L6.618 13h6.764L10 5.618z" clip-rule="evenodd" />
+                      </svg>
+                      <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 17a1 1 0 01-.894-.553l-5-10A1 1 0 015 5h10a1 1 0 01.894 1.447l-5 10A1 1 0 0110 17zm0-2.618L13.382 7H6.618L10 14.382z" clip-rule="evenodd" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <ol class="space-y-2">
+                  <li v-for="(item, index) in sotredDestinationStats" :key="index" class="flex items-center">
                     <span class="inline-block w-3 h-3 rounded-full mr-2" :style="{ backgroundColor: glassColors[index % glassColors.length] }"></span>
-                    {{ item.name }}
+                    {{ index + 1 }}. {{ item.name }}
                   </li>
-                </ul>
+                </ol>
               </div>
             </div>
             <div v-else class="flex-grow flex items-center justify-center">

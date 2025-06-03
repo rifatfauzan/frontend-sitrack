@@ -32,8 +32,8 @@ onMounted(() => {
 const form = reactive({
     truckId: '',
     location: '',
-    commissionFee : '',
-    truckCommission: '',
+    commissionFee : 0,
+    truckCommission: 0,
  
 });
 
@@ -61,6 +61,15 @@ const confirmSubmit = () => (showConfirm.value = true);
 const submitForm = async () => {
   showConfirm.value = false;
   loading.value = true;
+  if(
+    form.commissionFee > 2147483647 ||
+    form.truckCommission > 2147483647 
+  ){
+    errorMessage.value = 'Nilai komisi out of range!';
+    showError.value = true;
+    loading.value = false;
+    return;
+  }
   try {
     const response = await komisiStore.addKomisi({
       ...form,
