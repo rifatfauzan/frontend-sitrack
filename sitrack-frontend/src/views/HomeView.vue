@@ -87,6 +87,38 @@ const fetchReferenceData = async () => {
   }
 };
 
+const customerViewType = ref<'top' | 'bottom'>('top');
+
+const toggleCustomerView = () => {
+  customerViewType.value = customerViewType.value === 'top' ? 'bottom' : 'top'
+}
+
+const customerViewTypeLabel = computed(() =>
+  customerViewType.value === 'top' ? 'Top 5' : 'Bottom 5'
+)
+
+const sortedCustomerStats = computed(() => {
+  const sorted = customerStats.value.slice().sort((a, b) => b.value - a.value);
+  if (customerViewType.value === 'top') {
+    return sorted.slice(0, 5);
+  } else {
+    return sorted.slice(-5).reverse();
+  }
+});
+
+
+const chartColors = ['#1C5D99', '#EF4444', '#10B981', '#F59E0B', '#6366F1', '#EC4899'];
+
+const glassColors = [
+  'rgba(28, 93, 153, 0.4)',
+  'rgba(239, 68, 68, 0.4)',
+  'rgba(16, 185, 129, 0.4)',
+  'rgba(245, 158, 11, 0.4)',
+  'rgba(99, 102, 241, 0.4)',
+  'rgba(236, 72, 153, 0.4)',
+];
+
+
 onMounted(() => {
   if (isAuthorized.value) {
     fetchOrderStats();
@@ -162,16 +194,68 @@ watch(selectedYearDest, fetchDestinationStats);
             </div>
             <div v-if="customerStats.length" class="flex justify-center items-center gap-4">
               <div class="w-[45%] h-64">
-                <Pie :data="{ labels: customerStats.map(cs => cs.name), datasets: [ { data: customerStats.map(cs => cs.value), backgroundColor: ['#1C5D99', '#EF4444', '#10B981', '#F59E0B', '#6366F1', '#EC4899'] } ] }" :options="{ responsive: true, plugins: { tooltip: { callbacks: { label: ctx => `Jumlah Transaksi: ${ctx.raw}` } }, legend: { display: false } } }" />
+                <Pie
+                  :data="{
+                    labels: customerStats.map(cs => cs.name),
+                    datasets: [
+                      {
+                        data: customerStats.map(cs => cs.value),
+                        backgroundColor: glassColors,
+                        borderColor: 'rgba(0, 0, 0, 0.15)',
+                        borderWidth: 3
+                      }
+                    ]
+                  }"
+                  :options="{
+                    responsive: true,
+                    plugins: {
+                      tooltip: {
+                        callbacks: {
+                          label: ctx => `Jumlah Transaksi: ${ctx.raw}`
+                        }
+                      },
+                      legend: {
+                        display: false
+                      }
+                    }
+                  }"
+                />
+
               </div>
-              <div class="text-xs">
-                <ul class="space-y-2">
-                  <li v-for="(item, index) in customerStats" :key="index" class="flex items-center">
-                    <span class="inline-block w-3 h-3 rounded-full mr-2" :style="{ backgroundColor: ['#1C5D99', '#EF4444', '#10B981', '#F59E0B', '#6366F1', '#EC4899'][index % 6] }"></span>
-                    {{ item.name }}
+
+              
+              <div class="text-xs w-[45%]">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center gap-1">
+                    <h4 class="font-semibold">{{ customerViewTypeLabel }} Customers</h4>
+                    <button @click="toggleCustomerView" class="rounded hover:bg-gray-100" title="Toggle sort">
+                      <svg v-if="customerViewType === 'top'" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 01.894.553l5 10A1 1 0 0115 15H5a1 1 0 01-.894-1.447l5-10A1 1 0 0110 3zm0 2.618L6.618 13h6.764L10 5.618z" clip-rule="evenodd" />
+                      </svg>
+                      <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 17a1 1 0 01-.894-.553l-5-10A1 1 0 015 5h10a1 1 0 01.894 1.447l-5 10A1 1 0 0110 17zm0-2.618L13.382 7H6.618L10 14.382z" clip-rule="evenodd" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <ol class="space-y-1">
+                  <li
+                    v-for="(item, index) in sortedCustomerStats"
+                    :key="index"
+                    class="flex justify-between items-center"
+                  >
+                    <div class="flex items-center">
+                      <span
+                        class="inline-block w-3 h-3 rounded-full mr-2"
+                        :style="{ backgroundColor: glassColors[index % glassColors.length] }"
+                      ></span>
+                      {{ index + 1 }}. {{ item.name }}
+                    </div>
+                    <span class="font-medium">{{ item.value }}</span>
                   </li>
-                </ul>
+                </ol>
               </div>
+
             </div>
             <div v-else class="flex-grow flex items-center justify-center">
               <p class="text-center text-gray-500 text-sm">
@@ -192,12 +276,37 @@ watch(selectedYearDest, fetchDestinationStats);
             </div>
             <div v-if="destinationStats.length" class="flex justify-center items-center gap-4">
               <div class="w-[45%] h-64">
-                <Pie :data="{ labels: destinationStats.map(ds => ds.name), datasets: [ { data: destinationStats.map(ds => ds.value), backgroundColor: ['#1C5D99','#EF4444','#10B981','#F59E0B','#6366F1','#EC4899'] } ] }" :options="{ responsive: true, maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.raw}` } }, legend: { display: false } } }" />
+                <Pie
+                  :data="{
+                    labels: destinationStats.map(ds => ds.name),
+                    datasets: [
+                      {
+                        data: destinationStats.map(ds => ds.value),
+                        backgroundColor: glassColors,
+                        borderColor: 'rgba(0, 0, 0, 0.15)',
+                        borderWidth: 3
+                      }
+                    ]
+                  }"
+                  :options="{
+                    responsive: true,
+                    plugins: {
+                      tooltip: {
+                        callbacks: {
+                          label: ctx => `${ctx.label}: ${ctx.raw}`
+                        }
+                      },
+                      legend: {
+                        display: false
+                      }
+                    }
+                  }"
+                />
               </div>
               <div class="text-xs">
                 <ul class="space-y-2">
                   <li v-for="(item, index) in destinationStats" :key="index" class="flex items-center">
-                    <span class="inline-block w-3 h-3 rounded-full mr-2" :style="{ backgroundColor: ['#1C5D99','#EF4444','#10B981','#F59E0B','#6366F1','#EC4899'][index % 6] }"></span>
+                    <span class="inline-block w-3 h-3 rounded-full mr-2" :style="{ backgroundColor: glassColors[index % glassColors.length] }"></span>
                     {{ item.name }}
                   </li>
                 </ul>
@@ -205,7 +314,7 @@ watch(selectedYearDest, fetchDestinationStats);
             </div>
             <div v-else class="flex-grow flex items-center justify-center">
               <p class="text-center text-gray-500 text-sm">
-                Tidak ada data destinasi pada tahun {{ selectedYearTransactions }}
+                Tidak ada data destinasi pada tahun {{ selectedYearDest }}
               </p>
             </div>         
           </div>
