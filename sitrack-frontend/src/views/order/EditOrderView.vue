@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-// import { useSopirStore } from '@/stores/sopir';
+import { ref, reactive, computed, watch, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useToast } from 'vue-toastification';
+import { useOrderStore } from '@/stores/order';
+import { useCustomerStore } from '@/stores/customer';
 import Sidebar from '@/components/vSidebar.vue';
 import HeaderComponent from '@/components/vHeader.vue';
 import FooterComponent from '@/components/vFooter.vue';
@@ -9,27 +11,19 @@ import VButton from '@/components/VButton.vue';
 import ConfirmationDialog from '@/components/ConfirmationDialog.vue';
 import SuccessDialog from '@/components/SuccessDialog.vue';
 import ErrorDialog from '@/components/ErrorDialog.vue';
-import router from '@/router';
-import { useOrderStore } from '@/stores/order';
-import { useRoute } from 'vue-router';
-import { useCustomerStore } from '@/stores/customer';
-import { watch } from 'vue';
+import ContainerLoadsTable from '@/components/ContainerLoadsTable.vue';
 
 const orderStore = useOrderStore();
 const customerStore = useCustomerStore();
-
-const toast = useToast();
-const loading = ref(false);
 const route = useRoute();
+const router = useRouter();
+const toast = useToast();
 
+const loading = ref(false);
 const showConfirm = ref(false);
 const showSuccess = ref(false);
 const showError = ref(false);
-const errorMessage = ref("");
-
-const goToDetail = () =>  router.push({ name: 'detail order', query: { id: form.orderId } });
-const goBack = () => router.push('/orders');
-const confirmSubmit = () => (showConfirm.value = true);
+const errorMessage = ref('');
 
 const form = reactive({
   orderId: '',
@@ -40,130 +34,193 @@ const form = reactive({
   downPayment: 0,
   remarksOperasional: '',
   remarksSupervisor: '',
-  tariffChassis20: 0,
-  tariffChassis40: 0,
 
   qtyChassis20: 0,
   qtyChassis40: 0,
 
-  qty120mtfl: 0,
-  qty120mt: 0,
-  qty220mtfl: 0,
-  qty220mt: 0,
-  qty140mtfl: 0,
-  qty140mt: 0,
-  qty120mt120fl: 0,
-  qty120mt220fl: 0,
-  qty220mt120fl: 0,
-  qty220mt220fl: 0,
-  qtyCh120fl: 0,
-  qtyCh220fl: 0,
-  qtyCh140fl: 0,
+  qty120mtfl: 0,  qty120mt: 0,  qty220mtfl: 0,  qty220mt: 0,
+  qty140mtfl: 0,  qty140mt: 0,
+  qty120mt120fl: 0, qty120mt140fl: 0, qty120mt220fl: 0,
+  qty220mt120fl: 0, qty220mt220fl: 0,
+  qtyCh120fl: 0,  qtyCh220fl: 0,  qtyCh140fl: 0,
+  qty145mt: 0,   qty145fl: 0,   qty145mtfl: 0,
 });
 
+type LoadRow = { code: string; qty: number };
+const loads = ref<LoadRow[]>([]);
+
+const loadCatalog: Record<
+  string,
+  { chassis: 20 | 40; field: string; containerType: string }
+> = {
+  '120MTFL': { chassis: 20, field: 'qty120mtfl',  containerType: '120MTFL' },
+  '120MT'  : { chassis: 20, field: 'qty120mt',    containerType: '120MT'   },
+  'CH120FL': { chassis: 20, field: 'qtyCh120fl',  containerType: 'CH120FL' },
+  
+  '220MTFL':     { chassis: 40, field: 'qty220mtfl',     containerType: '220MTFL' },
+  '220MT':       { chassis: 40, field: 'qty220mt',       containerType: '220MT'   },
+  '140MTFL':     { chassis: 40, field: 'qty140mtfl',     containerType: '140MTFL' },
+  '140MT':       { chassis: 40, field: 'qty140mt',       containerType: '140MT'   },
+  '120MT120FL':  { chassis: 40, field: 'qty120mt120fl',  containerType: '120MT120FL' },
+  '120MT220FL':  { chassis: 40, field: 'qty120mt220fl',  containerType: '120MT220FL' },
+  '120MT140FL':  { chassis: 40, field: 'qty120mt140fl',  containerType: '120MT140FL' },
+  '220MT120FL':  { chassis: 40, field: 'qty220mt120fl',  containerType: '220MT120FL' },
+  '220MT220FL':  { chassis: 40, field: 'qty220mt220fl',  containerType: '220MT220FL' },
+  'CH140FL':     { chassis: 40, field: 'qtyCh140fl',     containerType: 'CH140FL'   },
+  'CH220FL':     { chassis: 40, field: 'qtyCh220fl',     containerType: 'CH220FL'   },
+  '145MT':       { chassis: 40, field: 'qty145mt',       containerType: '145MT'     },
+  '145FL':       { chassis: 40, field: 'qty145fl',       containerType: '145FL'     },
+  '145MTFL':     { chassis: 40, field: 'qty145mtfl',     containerType: '145MTFL'   },
+};
+
+function fieldsToLoads() {
+  loads.value = [];
+  Object.entries(loadCatalog).forEach(([code, { field }]) => {
+    const q = (form as any)[field] || 0;
+    if (q > 0) loads.value.push({ code, qty: q });
+  });
+}
+function loadsToFields() {
+  Object.values(loadCatalog).forEach(({ field }) => ((form as any)[field] = 0));
+  loads.value.forEach(l => {
+    if (l.qty > 0) (form as any)[loadCatalog[l.code].field] = l.qty;
+  });
+}
+
+
 onMounted(async () => {
-    const orderId = route.query.id as string;
-    if (!orderId){
-        toast.error("Order ID tidak ditemukan");
-        router.push('/orders');
-        return;
-    }
+  const id = route.query.id as string;
+  if (!id) {
+    toast.error('Order ID tidak ditemukan');
+    router.push('/orders');
+    return;
+  }
+  loading.value = true;
+  try {
+    await customerStore.fetchCustomers();
+    const data = await orderStore.getOrderById(id);
+    if (!data) throw new Error();
+    Object.assign(form, data);
+    fieldsToLoads();
+    calculateTariffDetails();
+  } catch {
+    toast.error('Gagal memuat data order');
+    router.push('/orders');
+  } finally {
+    loading.value = false;
+  }
+});
 
-    loading.value= true;
 
-    try{
-      await customerStore.fetchCustomers();
-        const orderData = await orderStore.getOrderById(orderId);
-        if (!orderData){
-            toast.error("Data order tidak ditemukan");
-            router.push('/orders');
-            return;
-        }
+const needed = computed(() =>
+  loads.value.reduce(
+    (a, l) => {
+      const meta = loadCatalog[l.code as keyof typeof loadCatalog];
+      if (!meta || l.qty <= 0) return a;
 
-        Object.assign(form, orderData);
-        calculateTariffDetails();
-    } catch {
-        toast.error("Terjadi kesalahan saat mengambil data order");
-    } finally {
-        loading.value = false;
-    }
-})
+      meta.chassis === 20 ? (a.ch20 += l.qty) : (a.ch40 += l.qty);
+      return a;
+    },
+    { ch20: 0, ch40: 0 }
+  )
+);
 
-const getTariffForCustomer = (customerId: string, moveType: string, chassisSize: number): number | string => {
+
+watch(needed, n => {
+  form.qtyChassis20 = n.ch20;
+  form.qtyChassis40 = n.ch40;
+});
+
+
+type TariffRow = {
+  containerType: string;
+  chassisSize: 20 | 40;
+  moveType: string;
+  quantity: number;
+  tariff?: number;
+  totalTariff?: number;
+  error?: string;
+};
+const tariffDetails = ref<TariffRow[]>([]);
+
+const getTariffForCustomer = (customerId: string, moveType: string, chassisSize: number, containerType: string): number | string => {
   const customer = customerStore.customers.find(c => c.id === customerId);
   if (!customer) return `Customer tidak ditemukan`;
 
   const tariff = customer.tariffs.find(
-    t => t.moveType.toLowerCase() === moveType.toLowerCase() && t.chassisSize === chassisSize
+    t => t.moveType.toLowerCase() === moveType.toLowerCase() && t.chassisSize === chassisSize && t.containerType === containerType
   );
 
   if (!tariff) {
-    return `Tariff untuk Chassis Size ${chassisSize} dengan Move Type ${moveType} belum didefinisikan untuk Customer ini.`;
+    return `Tariff untuk Chassis Size ${chassisSize} dan Container Type ${containerType} dengan Move Type ${moveType} belum didefinisikan untuk Customer ini.`;
   }
 
   return tariff.stdTariff;
 };
-
-const tariffDetails = ref<{ chassisSize: number; moveType: string; tariff: number; quantity: number; totalTariff: number; error?: string }[]>([]);
 const calculateTariffDetails = () => {
   tariffDetails.value = [];
-
   if (!form.customerId || !form.moveType) return;
 
-  if (form.qtyChassis20 > 0) {
-    const tariff20 = getTariffForCustomer(form.customerId, form.moveType, 20);
-    if (typeof tariff20 === 'string') {
-      tariffDetails.value.push({
-        chassisSize: 20,
-        moveType: form.moveType,
-        tariff: 0,
-        quantity: form.qtyChassis20,
-        totalTariff: 0,
-        error: tariff20,
-      });
-    } else {
-      const totalTariff20 = tariff20 * form.qtyChassis20;
-      tariffDetails.value.push({
-        chassisSize: 20,
-        moveType: form.moveType,
-        tariff: tariff20,
-        quantity: form.qtyChassis20,
-        totalTariff: totalTariff20,
-      });
-    }
+  const has20 = loads.value.some(l => {
+    const meta = loadCatalog[l.code as keyof typeof loadCatalog];
+    return meta && meta.chassis === 20 && l.qty > 0;
+  });
+  const has40 = loads.value.some(l => {
+    const meta = loadCatalog[l.code as keyof typeof loadCatalog];
+    return meta && meta.chassis === 40 && l.qty > 0;
+  });
+
+  if (form.qtyChassis20 > 0 && !has20) {
+    const t = getTariffForCustomer(form.customerId, form.moveType, 20, '-');
+    tariffDetails.value.push({
+      containerType: '-',
+      chassisSize: 20,
+      moveType: form.moveType,
+      quantity: form.qtyChassis20,
+      tariff: typeof t === 'string' ? 0 : t,
+      totalTariff: typeof t === 'string' ? 0 : t * form.qtyChassis20,
+      error: typeof t === 'string' ? t : undefined,
+    });
+  }
+  if (form.qtyChassis40 > 0 && !has40) {
+    const t = getTariffForCustomer(form.customerId, form.moveType, 40, '-');
+    tariffDetails.value.push({
+      containerType: '-',
+      chassisSize: 40,
+      moveType: form.moveType,
+      quantity: form.qtyChassis40,
+      tariff: typeof t === 'string' ? 0 : t,
+      totalTariff: typeof t === 'string' ? 0 : t * form.qtyChassis40,
+      error: typeof t === 'string' ? t : undefined,
+    });
   }
 
-  if (form.qtyChassis40 > 0) {
-    const tariff40 = getTariffForCustomer(form.customerId, form.moveType, 40);
-    if (typeof tariff40 === 'string') {
-      tariffDetails.value.push({
-        chassisSize: 40,
-        moveType: form.moveType,
-        tariff: 0,
-        quantity: form.qtyChassis40,
-        totalTariff: 0,
-        error: tariff40,
-      });
-    } else {
-      const totalTariff40 = tariff40 * form.qtyChassis40;
-      tariffDetails.value.push({
-        chassisSize: 40,
-        moveType: form.moveType,
-        tariff: tariff40,
-        quantity: form.qtyChassis40,
-        totalTariff: totalTariff40,
-      });
-    }
-  }
+  loads.value.forEach(l => {
+    if (l.qty <= 0) return;
+    const meta = loadCatalog[l.code as keyof typeof loadCatalog];
+    if (!meta) return;
+    const t = getTariffForCustomer(form.customerId, form.moveType, meta.chassis, meta.containerType);
+    tariffDetails.value.push({
+      containerType: meta.containerType,
+      chassisSize: meta.chassis,
+      moveType: form.moveType,
+      quantity: l.qty,
+      tariff: typeof t === 'string' ? 0 : t,
+      totalTariff: typeof t === 'string' ? 0 : t * l.qty,
+      error: typeof t === 'string' ? t : undefined,
+    });
+  });
 };
 
-watch(
-  [() => form.customerId, () => form.moveType, () => form.qtyChassis20, () => form.qtyChassis40],
-  () => {
-    calculateTariffDetails();
-  },
-  { immediate: true }
-);
+watch([() => form.customerId, () => form.moveType, loads], calculateTariffDetails, {
+  immediate: true,
+});
+
+watch(needed, n => {
+  form.qtyChassis20 = n.ch20;
+  form.qtyChassis40 = n.ch40;
+});
+
 
 const formatRupiah = (angka: number | string) => {
   if (!angka) return "Rp0,00";
@@ -182,53 +239,25 @@ const formatRupiah = (angka: number | string) => {
   return "Rp" + rupiahFormatted;
 };
 
+const confirmSubmit = () => (showConfirm.value = true);
+const goBack   = () => router.push('/orders');
+const goToDetail = () => router.push({ name: 'detail order', query: { id: form.orderId } });
+
+
 const submitForm = async () => {
-  loading.value = true; 
   showConfirm.value = false;
-
+  loading.value = true;
+  loadsToFields();
   try {
-    const response = await orderStore.updateOrder(form.orderId,{
-        customerId: form.customerId,
-        orderDate: form.orderDate,
-        siteId: form.siteId,
-        moveType: form.moveType,
-        downPayment: form.downPayment,
-        remarksOperasional: form.remarksOperasional,
-        qtyChassis20: form.qtyChassis20,
-        qtyChassis40: form.qtyChassis40,
-        qty120mtfl: form.qty120mtfl,
-        qty120mt: form.qty120mt,
-        qty220mtfl: form.qty220mtfl,
-        qty220mt: form.qty220mt,
-        qty140mtfl: form.qty140mtfl,
-        qty140mt: form.qty140mt,
-        qty120mt120fl: form.qty120mt120fl,
-        qty120mt220fl: form.qty120mt220fl,
-        qty220mt120fl: form.qty220mt120fl,
-        qty220mt220fl: form.qty220mt220fl,
-        qtyCh120fl: form.qtyCh120fl,
-        qtyCh220fl: form.qtyCh220fl,
-        qtyCh140fl: form.qtyCh140fl,
-
-        
-    });
-
-    if (response.success) {
-      showSuccess.value = true;
-    } else {
-      toast.error(response.message);
-      errorMessage.value = response.message;
-      showError.value = true;
-    }
+    const res = await orderStore.updateOrder(form.orderId, { ...form });
+    res.success ? (showSuccess.value = true) : (errorMessage.value = res.message || 'Gagal', showError.value = true);
   } catch {
-    toast.error('Terjadi kesalahan!');
-    errorMessage.value ="Terjadi kesalahan!";
+    errorMessage.value = 'Terjadi kesalahan';
     showError.value = true;
   } finally {
     loading.value = false;
   }
 };
-
 </script>
 
 <template>
@@ -275,61 +304,54 @@ const submitForm = async () => {
                   <!-- <input v-model.number="form.downPayment" type="number" id="downPayment" /> -->
                   <input class="placeholder-gray-400" v-model="form.downPayment" type="number" id="downPayment" min="0" step="0.01" placeholder="Rp0,00" required/>
                 </div>
-  
-                <div class="form-group">
-                  <label for="qtyChassis20">20' Chassis Quantity</label>
-                  <input v-model.number="form.qtyChassis20" type="number" id="qtyChassis20" min="0" />
-              </div>
-  
-              <div class="form-group">
-                  <label for="qtyChassis40">40' Chassis Quantity</label>
-                  <input v-model.number="form.qtyChassis40" type="number" id="qtyChassis40" min="0" />
-              </div>
-  
-                
-              </div>
-             <br>
-  
-              <h2 class="text-base font-bold mb-1">Container Data</h2>
-              <div class="form-grid bg-[#BBCDE5] rounded-2xl p-4 shadow-sm">
-              
-              <div
-                  class="form-group"
-                  v-for="field in Object.keys(form).filter(f => f.startsWith('qty') && f !== 'qtyChassis20' && f !== 'qtyChassis40')"
-                  :key="field"
-              >
-                  <label :for="field">{{ field }}</label>
-                  <input v-model.number="form[field]" type="number" :id="field" min="0" />
-              </div>
-              </div>
-  
-  
-              <br>
-  
-  
-              <div class="form-group full-width">
-                  <label for="remarksOperasional">Remarks</label>
-                  <textarea v-model="form.remarksOperasional" id="remarksOperasional" maxlength="300"></textarea>
-              <!-- <input v-model="form.remarksOperasional" type="text" id="remarksOperasional" /> -->
               </div>
 
-              <div class="mt-4">
+            <h2 class="mt-6 font-bold">Container Data</h2>
+            <ContainerLoadsTable v-model="loads" class="bg-[#f5f7fa] p-4 rounded-lg shadow-sm"/>
+
+            <div class="flex gap-4 mt-6">
+            <div class="flex-1">
+              <div class="bg-[#1C5D99] text-white text-center py-2 rounded-t-lg">
+                <b>Total 20' Chassis Quantity</b>
+              </div>
+              <input
+                class="w-full border border-gray-300 rounded-b-lg py-2 text-center"
+                :value="form.qtyChassis20"
+                readonly
+              />
+            </div>
+
+            <div class="flex-1">
+              <div class="bg-[#1C5D99] text-white text-center py-2 rounded-t-lg">
+                <b>Total 40' Chassis Quantity</b>
+              </div>
+              <input
+                class="w-full border border-gray-300 rounded-b-lg py-2 text-center"
+                :value="form.qtyChassis40"
+                readonly
+              />
+            </div>
+          </div>
+
+          <div class="mt-4">
                 <h2 class="text-base font-semibold mb-2">Tariff Details</h2>
                 <div class="overflow-x-auto bg-[#FAFAFF] rounded-lg shadow-sm">
                   <table class="min-w-full text-sm text-left">
                     <thead class="bg-[#1C5D99] text-white text-center">
                       <tr>
-                        <th class="px-4 py-3">Chassis Size</th>
-                        <th class="px-4 py-3">Move Type</th>
-                        <th class="px-4 py-3">Tariff</th>
-                        <th class="px-4 py-3">Quantity</th>
-                        <th class="px-4 py-3">Total Tariff</th>
-                      </tr>
-                    </thead>
-                    <tbody class="text-center">
-                      <tr v-for="tariff in tariffDetails" :key="tariff.chassisSize" class="border-t">
-                        <td class="px-4 py-2">{{ tariff.chassisSize }}</td>
-                        <td class="px-4 py-2">{{ tariff.moveType }}</td>
+                      <th class="px-4 py-3">Chassis Size</th>
+                      <th class="px-4 py-3">Move Type</th>
+                      <th class="px-4 py-3">Container Type</th>
+                      <th class="px-4 py-3">Tariff</th>
+                      <th class="px-4 py-3">Quantity</th>
+                      <th class="px-4 py-3">Total Tariff</th>
+                    </tr>
+                  </thead>
+                  <tbody class="text-center">
+                    <tr v-for="tariff in tariffDetails" :key="tariff.chassisSize" class="border-t">
+                      <td class="px-4 py-2">{{ tariff.chassisSize }}</td>
+                      <td class="px-4 py-2">{{ tariff.moveType }}</td>
+                      <td class="px-4 py-2">{{ tariff.containerType }}</td>
                         <td class="px-4 py-2" :class="{ 'text-red-500': tariff.error }">
                           {{ tariff.error || formatRupiah(tariff.tariff) }}
                         </td>
@@ -348,6 +370,14 @@ const submitForm = async () => {
                     </tbody>
                   </table>
                 </div>
+              </div>
+  
+            <br>
+
+              <div class="form-group full-width">
+                  <label for="remarksOperasional">Remarks</label>
+                  <textarea v-model="form.remarksOperasional" id="remarksOperasional" maxlength="300"></textarea>
+              <!-- <input v-model="form.remarksOperasional" type="text" id="remarksOperasional" /> -->
               </div>
   
               <div class="mt-10"></div>
