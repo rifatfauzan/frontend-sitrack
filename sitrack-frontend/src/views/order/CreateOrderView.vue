@@ -212,8 +212,6 @@ const calculateTariffDetails = () => {
     });
 };
 
-
-
 watch(
   [() => form.customerId, () => form.moveType, () => form.qtyChassis20, () => form.qtyChassis40],
   () => {
