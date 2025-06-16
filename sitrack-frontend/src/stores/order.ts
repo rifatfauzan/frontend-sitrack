@@ -194,7 +194,7 @@ export const useOrderStore = defineStore('order', {
         throw new Error(errorData.message || 'Gagal menandai order sebagai selesai');
       }
 
-      const data = await response.json();
+      // const data = await response.json();
       return { success: true, message: 'Order berhasil ditandai sebagai selesai' };
     } catch (err) {
       this.error = `Gagal menandai order: ${(err as Error).message}`;

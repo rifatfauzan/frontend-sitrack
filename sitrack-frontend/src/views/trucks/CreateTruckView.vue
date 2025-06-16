@@ -131,7 +131,7 @@ const errorMessage = ref("");
               <VButton title="Kembali" class="back-button" @click="goBack">
                         <i class="pi pi-arrow-left"></i>
               </VButton>
-              <h1 class="header-title">Buat Truck</h1>
+              <h1 class="header-title">Buat Vehicle</h1>
             </div>
           </div>
 
@@ -191,8 +191,8 @@ const errorMessage = ref("");
 
               <!-- Vehicle Type -->
               <div class="form-group">
-                <label for="vehicleType">Vehicle Type</label>
-                <input v-model="form.vehicleType" type="text" id="vehicleType" maxlength="20"/>
+                <label for="vehicleType">Vehicle Type <span class="required">*</span></label>
+                <input v-model="form.vehicleType" type="text" id="vehicleType" maxlength="20" required/>
               </div>
 
               <!-- Cylinder -->
@@ -252,13 +252,7 @@ const errorMessage = ref("");
               <!-- Record Status -->
               <div class="form-group">
                 <label for="recordStatus">Record Status</label>
-                <input v-model="form.recordStatus" type="text" id="recordStatus" maxlength="1" pattern="[A-C]{1}" title="record status harus huruf kapital A-C" />
-              </div>
-
-              <!-- Row Status -->
-              <div class="form-group">
-                <label for="rowStatus">Row Status</label>
-                <input v-model="form.rowStatus" type="text" id="rowStatus" maxlength="1" pattern="[A-C]{1}" title="row status harus huruf kapital A-C" />
+                <input v-model="form.recordStatus" type="text" id="recordStatus" maxlength="1" pattern="[A-Z]{1}" title="record status harus huruf kapital A-C" />
               </div>
 
               <!-- Vehicle Fuel Consumption -->
@@ -299,7 +293,7 @@ const errorMessage = ref("");
             </div>
 
             <VButton type="submit" class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full mt-4" :disabled="loading">
-              {{ loading ? "Menyimpan..." : "Buat Truck" }}
+              {{ loading ? "Menyimpan..." : "Buat Vehicle" }}
             </VButton>
           </form>
         </div>

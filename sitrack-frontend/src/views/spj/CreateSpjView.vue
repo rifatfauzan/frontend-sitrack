@@ -34,12 +34,12 @@
   
                 <div class="form-group">
                   <label>Date Out<span class="text-red-500">*</span></label>
-                  <input v-model="form.dateOut" type="date" :disabled="!selectedOrderId" />
+                  <input v-model="form.dateOut" type="date" required :disabled="!selectedOrderId" />
                 </div>
   
                 <div class="form-group">
                   <label>Date In<span class="text-red-500">*</span></label>
-                  <input v-model="form.dateIn" type="date" :disabled="!selectedOrderId" />
+                  <input v-model="form.dateIn" type="date" required :disabled="!selectedOrderId" />
                 </div>
   
                 <div class="form-group">
@@ -62,9 +62,9 @@
   
                 <div class="form-group">
                   <label>Container Type<span class="text-red-500">*</span></label>
-                  <select v-model="form.containerType" required :disabled="!selectedOrderId">
+                  <select v-model="form.containerType" required :disabled="!selectedOrderId || !selectedChassisSize">
                     <option value="" disabled>Pilih Container</option>
-                    <option v-for="type in availableContainerTypes" :key="type" :value="type">
+                    <option v-for="type in filteredContainerTypes" :key="type" :value="type">
                       {{ type }}
                     </option>
                   </select>
@@ -167,6 +167,13 @@
   
   const selectedOrderId = ref<string>('');
   const selectedChassisSize = ref<number | null>(null);
+  const containerTypes20 = ['120mtfl', '120mt', 'ch120fl'];
+  const containerTypes40 = [
+    '120mtfl', '120mt', '220mtfl', '220mt', '140mtfl', '140mt',
+    '120mt120fl', '120mt220fl', '220mt120fl', '220mt220fl',
+    '120mt140fl', 'ch120fl', 'ch140fl', 'ch220fl',
+    '145mt', '145fl', '145mtfl'
+  ];
   
   const form = ref<CreateSpjRequest>({
     orderId: '',
@@ -189,11 +196,31 @@
   const showError = ref(false);
   const errorMessage = ref('');
   
-  const availableTrucks = computed(() => truckStore.truckList.filter(truck => truck.rowStatus === 'A'));
-  const availableSopirs = computed(() => sopirStore.sopirs.filter(sopir => sopir.rowStatus === 'A'));
-  const filteredChassisList = computed(() =>
-    chassisStore.chassisList.filter(ch => ch.rowStatus === 'A' && Number(ch.chassisSize) === selectedChassisSize.value)
-  );
+  const selectedMoveType = ref<string>('');
+
+  const availableTrucks = computed(() => {
+    if (selectedMoveType.value === 'REPO') {
+      return truckStore.truckList.filter(truck => truck.rowStatus === 'A' || truck.rowStatus === 'R');
+    }
+    return truckStore.truckList.filter(truck => truck.rowStatus === 'A');
+  });
+  const availableSopirs = computed(() => {
+    if (selectedMoveType.value === 'REPO') {
+      return sopirStore.sopirs.filter(sopir => sopir.rowStatus === 'A' || sopir.rowStatus === 'R');
+    }
+    return sopirStore.sopirs.filter(sopir => sopir.rowStatus === 'A');
+  });
+  const filteredChassisList = computed(() => {
+    if (selectedMoveType.value === 'REPO') {
+      return chassisStore.chassisList.filter(ch => 
+        (ch.rowStatus === 'A' || ch.rowStatus === 'R') &&
+        Number(ch.chassisSize) === selectedChassisSize.value
+      );
+    }
+    return chassisStore.chassisList.filter(ch => 
+      ch.rowStatus === 'A' && Number(ch.chassisSize) === selectedChassisSize.value
+    );
+  });
   
   onMounted(async () => {
     await Promise.all([
@@ -208,6 +235,11 @@
   async function onOrderChange() {
     const order = orderStore.orderList.find(o => o.orderId === selectedOrderId.value);
     if (!order) return;
+
+    form.value.vehicleId = '';
+    form.value.driverId = '';
+    form.value.chassisId = '';
+    selectedChassisSize.value = null;
   
     form.value = {
       orderId: order.orderId,
@@ -223,7 +255,6 @@
       othersCommission: 0,
       remarksOperasional: '',
     };
-    selectedChassisSize.value = null;
   
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/spj/available/${order.orderId}`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
@@ -231,6 +262,7 @@
     const resData = await res.json();
     const data = resData.data;
   
+    selectedMoveType.value = order.moveType?.toUpperCase() || '';
     availableChassisSizes.value = [];
     availableContainerTypes.value = [];
     availableChassis.value.clear();
@@ -246,6 +278,12 @@
       }
     }
   }
+
+  const filteredContainerTypes = computed(() => {
+    if (!selectedChassisSize.value) return [];
+    const allowedTypes = selectedChassisSize.value === 20 ? containerTypes20 : containerTypes40;
+    return availableContainerTypes.value.filter(type => allowedTypes.includes(type));
+  });
   
   function filterChassisOptions() {
     form.value.chassisId = '';
@@ -259,9 +297,22 @@
     showConfirm.value = false;
     loading.value = true;
     try {
-      const maxContainer = selectedChassisSize.value === 20 ? 1 : 2;
+      let maxContainer = 1;
+      if (selectedChassisSize.value === 20) {
+        maxContainer = 1;
+      } else if (selectedChassisSize.value === 40) {
+        const doubleAllowed = ['120mtfl', '120mt', 'ch120fl'];
+        if (doubleAllowed.includes(form.value.containerType)) {
+          maxContainer = 2;
+        } else {
+          maxContainer = 1;
+        }
+      }
+
       if (form.value.containerQty > maxContainer) {
-        throw new Error(`Maksimal ${maxContainer} container untuk chassis size ${selectedChassisSize.value}`);
+        throw new Error(
+          `Maksimal ${maxContainer} container untuk chassis size ${selectedChassisSize.value} dan container type ${form.value.containerType}`
+        );
       }
   
       const containerAvailable = availableContainerQty.value.get(form.value.containerType) || 0;
