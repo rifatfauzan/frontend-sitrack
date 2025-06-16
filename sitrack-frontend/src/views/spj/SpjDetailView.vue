@@ -166,6 +166,21 @@ const submitMarkAsDone = async () => {
   }
 };
 
+const showExportSuccess = ref(false);
+const showExportError = ref(false);
+const exportErrorMessage = ref('');
+
+const handleExportSpj = async (type: 'pdf' | 'excel') => {
+  if (!spjDetail.value?.id) return;
+  try {
+    await spjStore.exportSpj(type, spjDetail.value.id);
+    showExportSuccess.value = true;
+  } catch (err) {
+    exportErrorMessage.value = (err as Error).message || `Gagal mengunduh SPJ dalam bentuk ${type.toUpperCase()}`;
+    showExportError.value = true;
+  }
+};
+
 const goBack = () => {
     if (spjDetail.value?.status === 0 || spjDetail.value?.status === 1 || spjDetail.value?.status === 2) {
         router.push('/vehicle-out');
@@ -215,6 +230,20 @@ const goToEdit = () => {
               </div>
             </div>
             <div class="flex gap-2">
+                <VButton
+                    v-if="userRole && ['Operasional', 'Supervisor', 'Manager', 'Admin'].includes(userRole) && [3].includes(spjDetail?.status)"
+                    title=".PDF"
+                    icon="fas fa-file-pdf"
+                    class="bg-[#EB5757] text-white px-3 py-2 rounded shadow-md"
+                    @click="() => handleExportSpj('pdf')"
+                />
+                <VButton
+                    v-if="userRole && ['Operasional', 'Supervisor', 'Manager', 'Admin'].includes(userRole) && [3].includes(spjDetail?.status)"
+                    title=".XLSX"
+                    icon="fas fa-file-excel"
+                    class="bg-[#27AE60] text-white px-3 py-2 rounded shadow-md"
+                    @click="() => handleExportSpj('excel')"
+                />
                 <VButton
                     v-if="userRole && ['Operasional', 'Supervisor', 'Manager', 'Admin'].includes(userRole) && [3].includes(spjDetail?.status)"
                     title="Mark as Done"
@@ -316,6 +345,19 @@ const goToEdit = () => {
             :visible="showErrorDone"
             @close="showErrorDone = false"
             :message="errorMessageDone" />
+
+        <SuccessDialog
+            :visible="showExportSuccess"
+            @close="showExportSuccess = false"
+            :message="'Sukses mengunduh SPJ!'"
+            buttonText="Tutup"
+        />
+        
+        <ErrorDialog
+            :visible="showExportError"
+            @close="showExportError = false"
+            :message="exportErrorMessage"
+        />
 
         <FooterComponent class="mt-auto bg-white shadow-md" />
     </div>

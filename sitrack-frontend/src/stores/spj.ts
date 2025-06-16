@@ -190,6 +190,32 @@ export const useSpjStore = defineStore('spj', {
       } finally {
         this.loading = false;
       }
-    }
+    },
+
+    async exportSpj(type: 'pdf' | 'excel', spjId: string) {
+      const authStore = useAuthStore();
+      const url = `${API_URL}/api/spj/export/${type}/${spjId}`;
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${authStore.token}`,
+          },
+        });
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || `Gagal export SPJ ke ${type.toUpperCase()}`);
+        }
+        const blob = await response.blob();
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `spj-${spjId}.${type === 'pdf' ? 'pdf' : 'xlsx'}`;
+        link.click();
+        window.URL.revokeObjectURL(link.href);
+      } catch (err) {
+        this.error = (err as Error).message;
+        throw err;
+      }
+    },
   }
 });
