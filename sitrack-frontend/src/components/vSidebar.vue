@@ -73,7 +73,7 @@
                 class="flex items-center gap-4 cursor-pointer text-lg sidebar-item"
               >
                 <i class="pi pi-truck text-2xl"></i>
-                <span>Truck</span>
+                <span>Vehicle</span>
               </router-link>
             </li>
             <li>

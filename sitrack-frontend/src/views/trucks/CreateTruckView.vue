@@ -293,7 +293,7 @@ const errorMessage = ref("");
             </div>
 
             <VButton type="submit" class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full mt-4" :disabled="loading">
-              {{ loading ? "Menyimpan..." : "Buat Truck" }}
+              {{ loading ? "Menyimpan..." : "Buat Vehicle" }}
             </VButton>
           </form>
         </div>
