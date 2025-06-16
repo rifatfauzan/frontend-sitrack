@@ -55,7 +55,7 @@ console.log("Driver ID from route:", driverId);
   try {
     const sopirData = await sopirStore.getSopirById(driverId);
     if (!sopirData) {
-      toast.error('Data sopir tidak ditemukan');
+      toast.error('Data Driver tidak ditemukan');
       router.push('/sopir/viewall');
       return;
     }
@@ -138,7 +138,7 @@ const onSubmitForm = async () => {
     <Sidebar />
     <div class="flex-1 flex flex-col min-h-screen">
         
-      <HeaderComponent title="Edit Data Sopir" />
+      <HeaderComponent title="Edit Data Driver" />
       <div class="flex-1 p-4 main-content overflow-auto">
         <div class="container mx-auto max-w-4xl bg-white p-6 rounded shadow">
             <!-- Header yang lebih rapi -->
@@ -147,7 +147,7 @@ const onSubmitForm = async () => {
                     <VButton title="Kembali" class="back-button" @click="goBack">
                         <i class="pi pi-arrow-left"></i>
                     </VButton>
-                    <h1 class="header-title">Edit Data Sopir</h1>
+                    <h1 class="header-title">Edit Data Driver</h1>
                 </div>
             </div>
 
@@ -239,7 +239,7 @@ const onSubmitForm = async () => {
             </div>
 
             <VButton type="submit" class="bg-[#1C5D99] text-white px-4 py-2 rounded w-full mt-4" :disabled="loading">
-              {{ loading ? "Menyimpan..." : "Update Sopir" }}
+              {{ loading ? "Menyimpan..." : "Update Driver" }}
             </VButton>
           </form>
         </div>
@@ -250,14 +250,14 @@ const onSubmitForm = async () => {
         :visible="showConfirm"
         @close="showConfirm = false"
         @confirm="onSubmitForm"
-        :message="'Apakah data Sopir sudah sesuai?'"/>
+        :message="'Apakah data Driver sudah sesuai?'"/>
 
       <SuccessDialog 
         :visible="showSuccess" 
         @close="goBack" 
-        :message="'Berhasil Memperbarui Data Sopir!'" 
+        :message="'Berhasil Memperbarui Data Driver!'" 
         redirectTo="/sopir/viewall"
-        buttonText="Kembali ke Detail Sopir" />
+        buttonText="Kembali ke Detail Driver" />
 
       <ErrorDialog
         :visible="showError"
