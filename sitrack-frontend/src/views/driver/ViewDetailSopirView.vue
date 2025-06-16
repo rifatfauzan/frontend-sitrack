@@ -94,8 +94,8 @@ const goToEdit = () => {
   
             <div class="grid grid-cols-2 gap-4">
               <div class="space-y-3">
-                <div class="detail-item"><span>Driver Name</span><strong>{{ driverDetail.driverName || '-' }}</strong></div>
-                <div class="detail-item alt"><span>Driver KTP Number</span><strong>{{ driverDetail.driver_KTP_No || '-' }}</strong></div>
+                <div class="detail-item alt"><span>Driver Name</span><strong>{{ driverDetail.driverName || '-' }}</strong></div>
+                <div class="detail-item "><span>Driver KTP Number</span><strong>{{ driverDetail.driver_KTP_No || '-' }}</strong></div>
                 <div class="detail-item alt"><span>Driver SIM Number</span><strong>{{ driverDetail.driver_SIM_No || '-' }}</strong></div>
                 <!-- <div class="detail-item"><span>Driver SIM Date</span><strong>{{ driverDetail.driver_SIM_Date || '-' }}</strong></div> -->
 
@@ -105,7 +105,7 @@ const goToEdit = () => {
                 </div>
                 <div class="detail-item alt"><span>Co Driver Name</span><strong>{{ driverDetail.driverCo || '-' }}</strong></div>
                 <div class="detail-item"><span>Co Driver Contact</span><strong>{{ driverDetail.driverCoContact || '-' }}</strong></div>
-                <div class="detail-item"><span>Driver Contact</span><strong>{{ driverDetail.driverContact || '-' }}</strong></div>
+                <div class="detail-item alt"><span>Driver Contact</span><strong>{{ driverDetail.driverContact || '-' }}</strong></div>
                 <div class="detail-item"><span>Driver Type</span><strong>{{ driverDetail.driverType || '-' }}</strong></div>
               </div>
   
