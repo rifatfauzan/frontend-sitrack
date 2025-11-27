@@ -1,93 +1,228 @@
-# B03 - VOC - FE
+# SiTrack - Sistem Informasi Tracking PT. Glorious Interbuana
 
+SiTrack adalah sistem informasi manajemen logistik yang dirancang khusus untuk PT. Glorious Interbuana. Aplikasi ini menyediakan solusi komprehensif untuk mengelola operasi transportasi, mulai dari manajemen kendaraan, pemesanan pelanggan, hingga pelaporan dan analitik.
 
+## Fitur Utama
 
-## Getting started
+### Manajemen Master Data
+- **Manajemen Kendaraan (Trucks)**: Pendaftaran, editing, dan monitoring kendaraan
+- **Manajemen Sopir**: Pengelolaan data driver dan assignment
+- **Manajemen Pelanggan**: Database pelanggan dan informasi kontak
+- **Manajemen Chassis**: Tracking chassis dan container loads
+- **Manajemen Asset**: Inventory dan tracking aset perusahaan
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+### Operasional
+- **Customer Booking**: Sistem pemesanan dan penjadwalan dari pelanggan
+- **Vehicle Out/In**: Tracking keluar masuk kendaraan
+- **SPJ (Surat Perintah Jalan)**: Manajemen surat jalan dan dokumentasi
+- **Request Asset**: Sistem permintaan dan alokasi aset
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+### Reporting & Analytics
+- **Dashboard Analytics**: Visualisasi data operasional dengan chart dan grafik
+- **Report Truck**: Laporan kondisi dan maintenance kendaraan
+- **Komisi**: Perhitungan dan tracking komisi
+- **Notification System**: Sistem notifikasi real-time
 
-## Add your files
+### User Management
+- **Multi-role Access**: Admin, Manager, Supervisor, Operasional, Mekanik
+- **Authentication**: Secure login system
+- **Authorization**: Role-based access control
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## Tech Stack
 
+- **Frontend Framework**: Vue 3 + TypeScript
+- **Build Tool**: Vite
+- **UI Framework**: PrimeVue + Tailwind CSS
+- **State Management**: Pinia
+- **Routing**: Vue Router
+- **Charts**: Chart.js + Vue-ChartJS
+- **Icons**: PrimeIcons + Heroicons
+- **Notifications**: Vue Toastification
+- **Data Tables**: PrimeVue DataTable
+
+## Prerequisites
+
+Pastikan sistem Anda memiliki:
+- **Node.js** (versi 18 atau lebih baru)
+- **npm** atau **yarn**
+- **Git**
+
+## Installation & Setup
+
+### 1. Clone Repository
+```bash
+git clone <repository-url>
+cd frontend-sitrack/sitrack-frontend
 ```
-cd existing_repo
-git remote add origin https://gitlab.cs.ui.ac.id/propensi-2024-2025-genap/kelas-b/b03-voc-fe.git
-git branch -M main
-git push -uf origin main
+
+### 2. Install Dependencies
+```bash
+npm install
 ```
 
-## Integrate with your tools
+### 3. Environment Configuration
+Buat file `.env` di root directory dan konfigurasi:
+```env
+VITE_API_URL=http://localhost:3000
+PORT=4173
+```
 
-- [ ] [Set up project integrations](https://gitlab.cs.ui.ac.id/propensi-2024-2025-genap/kelas-b/b03-voc-fe/-/settings/integrations)
+### 4. Development Server
+```bash
+npm run dev
+```
+Aplikasi akan berjalan di `http://localhost:5173`
 
-## Collaborate with your team
+### 5. Build untuk Production
+```bash
+npm run build
+```
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+### 6. Preview Production Build
+```bash
+npm run preview
+```
 
-## Test and Deploy
+## Tutorial Penggunaan
 
-Use the built-in continuous integration in GitLab.
+### Login ke Sistem
+1. Buka aplikasi di browser
+2. Masukkan username dan password yang telah diberikan
+3. Klik tombol "Login"
+4. Sistem akan mengarahkan ke dashboard sesuai role user
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+### Dashboard Overview
+Dashboard menampilkan:
+- **Statistik Order**: Grafik bulanan pemesanan
+- **Customer Statistics**: Distribusi transaksi pelanggan
+- **Quick Access**: Menu cepat ke fitur utama
 
-***
+### Manajemen Kendaraan
+#### Menambah Kendaraan Baru:
+1. Navigasi ke **"List Vehicle"** di sidebar
+2. Klik tombol **"Tambah Vehicle"**
+3. Isi form dengan data kendaraan:
+   - Vehicle ID dan informasi dasar
+   - Nomor plat, STNK, dan KIR
+   - Spesifikasi teknis (mesin, chassis, dll)
+   - Dokumen perizinan
+4. Klik **"Simpan"** untuk menyimpan data
 
-# Editing this README
+#### Melihat Detail Kendaraan:
+1. Di halaman List Vehicle, klik pada baris kendaraan
+2. Sistem akan menampilkan detail lengkap
+3. Status dokumen akan ditampilkan dengan color coding:
+   - Hijau: Masih berlaku
+   - Kuning: Akan expired (< 30 hari)
+   - Merah: Sudah expired
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+### Customer Booking
+#### Membuat Booking Baru:
+1. Pilih **"Customer Booking"** di sidebar
+2. Klik **"Tambah Order"**
+3. Isi informasi booking:
+   - Data pelanggan
+   - Rute dan tujuan
+   - Jenis muatan
+   - Jadwal pickup dan delivery
+4. Assign kendaraan dan sopir
+5. Simpan order
 
-## Suggestions for a good README
+#### Tracking Order:
+1. Di halaman Order List, lihat status real-time
+2. Klik detail order untuk informasi lengkap
+3. Update status sesuai progress
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+### Vehicle Out/In Process
+#### Vehicle Out:
+1. Pilih **"Vehicle Out"** di sidebar
+2. Pilih kendaraan yang akan keluar
+3. Verifikasi dokumen dan kondisi kendaraan
+4. Input waktu keluar dan tujuan
+5. Generate SPJ (Surat Perintah Jalan)
 
-## Name
-Choose a self-explaining name for your project.
+#### Vehicle In:
+1. Pilih **"Vehicle In"** di sidebar
+2. Scan atau input nomor kendaraan
+3. Verifikasi kondisi kembali
+4. Input waktu masuk dan kondisi
+5. Update status di sistem
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+### Reporting
+#### Generate Report:
+1. Pilih menu **"Reporting"** di sidebar
+2. Pilih jenis laporan yang diinginkan
+3. Set periode tanggal
+4. Klik **"Generate Report"**
+5. Export ke PDF atau Excel jika diperlukan
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### Maintenance Management
+#### Report Truck:
+1. Navigasi ke **"Report Truck"**
+2. Klik **"Tambah Report"**
+3. Pilih kendaraan dan jenis maintenance
+4. Input detail perbaikan dan spare part
+5. Upload foto jika diperlukan
+6. Simpan report
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## Development Guide
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+### Project Structure
+```
+sitrack-frontend/
+├── public/                 # Static assets
+├── src/
+│   ├── assets/            # Images, styles
+│   ├── components/        # Reusable Vue components
+│   ├── interfaces/        # TypeScript interfaces
+│   ├── router/           # Vue Router configuration
+│   ├── stores/           # Pinia stores
+│   ├── views/            # Page components
+│   └── main.ts           # App entry point
+├── package.json
+└── vite.config.ts
+```
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+### Available Scripts
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
+npm run lint         # Run ESLint
+npm run format       # Format code with Prettier
+npm run type-check   # TypeScript type checking
+```
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+### Code Style
+- Menggunakan TypeScript untuk type safety
+- ESLint + Prettier untuk code formatting
+- Composition API untuk Vue components
+- Pinia untuk state management
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+### Adding New Features
+1. Buat interface di `src/interfaces/`
+2. Buat store di `src/stores/`
+3. Buat view components di `src/views/`
+4. Update router di `src/router/index.ts`
+5. Test functionality
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+## Deployment
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+### Railway Deployment
+Aplikasi dikonfigurasi untuk deployment di Railway:
+- Port: 4173 (configurable via environment)
+- Host: 0.0.0.0
+- Allowed hosts: sitrack.up.railway.app
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+### Environment Variables
+```env
+VITE_API_URL=<backend-api-url>
+PORT=4173
+```
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+## Security Features
 
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+- JWT-based authentication
+- Role-based access control (RBAC)
+- Secure API communication
+- Input validation dan sanitization
